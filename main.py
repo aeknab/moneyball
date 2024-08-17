@@ -2,7 +2,7 @@ import streamlit as st
 from PIL import Image
 
 # Set page configuration
-st.set_page_config(page_title="Home", page_icon=":house:")
+st.set_page_config(page_title="Home", page_icon="⚽")
 
 # Load and crop the image using Pillow
 image = Image.open("data/logos/moneyball/moneyball.png")
