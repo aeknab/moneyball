@@ -10,6 +10,8 @@ from modules.bump_chart import display_bump_chart
 from modules.pie_chart import display_pie_chart
 from modules.heat_map import display_heat_map
 from modules.histogram import display_histogram
+from modules.first_and_second import filter_leg_matches, calculate_leg_points, plot_leg_table
+from modules.cross_table import display_cross_table_view  # Ensure correct import
 
 def display_bundesliga_page():
     # Load data once, to be used across the app
@@ -42,8 +44,58 @@ def display_bundesliga_page():
         # Display the last 10 meetings
         plot_last_10_meetings(df, home_team_tag, away_team_tag, color_codes_df, selected_matchday, selected_season)
 
-        # Display the league tables
-        display_league_tables(df, selected_season, selected_matchday, "Full Table", color_codes_df)
+        # League Table Section with Buttons
+        st.subheader("League Table")
+
+        # Create four buttons for different views with unique keys
+        col1, col2, col3, col4 = st.columns(4)
+        if "selected_view" not in st.session_state:
+            st.session_state.selected_view = "Full Table"
+
+        with col1:
+            if st.button("Full Table", key="full_table_button"):
+                st.session_state.selected_view = "Full Table"
+        with col2:
+            if st.button("Home/Away Table", key="home_away_table_button"):
+                st.session_state.selected_view = "Home/Away Table"
+        with col3:
+            if st.button("1st/2nd Leg Table", key="first_second_leg_table_button"):
+                st.session_state.selected_view = "1st/2nd Leg Table"
+        with col4:
+            if st.button("Cross Table", key="cross_table_button"):
+                st.session_state.selected_view = "Cross Table"
+
+        # Display the selected table
+        if st.session_state.selected_view == "Full Table":
+            display_league_tables(df, selected_season, selected_matchday, "Full Table", color_codes_df)
+        elif st.session_state.selected_view == "Home/Away Table":
+            display_league_tables(df, selected_season, selected_matchday, "Home/Away Table", color_codes_df)
+        elif st.session_state.selected_view == "1st/2nd Leg Table":
+            # 1st Leg Table
+            st.subheader("1st Leg Table")
+            df_leg_1 = filter_leg_matches(df, selected_season, leg='1st', matchday=selected_matchday)
+            df_leg_1_points = calculate_leg_points(df_leg_1)
+            if not df_leg_1_points.empty:
+                leg_1_fig = plot_leg_table(df_leg_1_points, f'1st Leg Table After Matchday {selected_matchday - 1} ({selected_season})', color_codes_df)
+                st.plotly_chart(leg_1_fig, use_container_width=True)
+            else:
+                st.write("No available data yet for the 1st Leg.")
+
+            # 2nd Leg Table
+            st.subheader("2nd Leg Table")
+            df_leg_2 = filter_leg_matches(df, selected_season, leg='2nd', matchday=selected_matchday)
+            if selected_matchday >= 19:  # Data is only relevant after matchday 18
+                df_leg_2_points = calculate_leg_points(df_leg_2)
+                if not df_leg_2_points.empty:
+                    leg_2_fig = plot_leg_table(df_leg_2_points, f'2nd Leg Table After Matchday {selected_matchday - 1} ({selected_season})', color_codes_df)
+                    st.plotly_chart(leg_2_fig, use_container_width=True)
+                else:
+                    st.write("No available data yet for the 2nd Leg.")
+            else:
+                st.write("No available data yet for the 2nd Leg.")
+
+        elif st.session_state.selected_view == "Cross Table":
+            display_cross_table_view(df, selected_season, selected_matchday)
 
         # Season Data Section
         st.header("Season Data")
@@ -55,27 +107,27 @@ def display_bundesliga_page():
         # Create buttons and update the selected visualization
         col1, col2, col3, col4 = st.columns(4)
         with col1:
-            if st.button("Bump Chart"):
+            if st.button("Bump Chart", key="bump_chart_button"):
                 st.session_state.selected_viz = "Bump Chart"
         with col2:
-            if st.button("Pie Chart"):
+            if st.button("Pie Chart", key="pie_chart_button"):
                 st.session_state.selected_viz = "Pie Chart"
         with col3:
-            if st.button("Heat Map"):
+            if st.button("Heat Map", key="heat_map_button"):
                 st.session_state.selected_viz = "Heat Map"
         with col4:
-            if st.button("Histogram"):
+            if st.button("Histogram", key="histogram_button"):
                 st.session_state.selected_viz = "Histogram"
 
         # Display the selected visualization
         if st.session_state.selected_viz == "Bump Chart":
             display_bump_chart(df, selected_season, selected_matchday, color_codes_df)
         elif st.session_state.selected_viz == "Pie Chart":
-            display_pie_chart(df, selected_season, selected_matchday, color_codes_df)
+            display_pie_chart(df, selected_season, selected_matchday)
         elif st.session_state.selected_viz == "Heat Map":
-            display_heat_map(df, selected_season, selected_matchday, color_codes_df)
+            display_heat_map(df, selected_season, selected_matchday)
         elif st.session_state.selected_viz == "Histogram":
-            display_histogram(df, selected_season, selected_matchday, color_codes_df)
+            display_histogram(df, selected_season, selected_matchday)
 
     else:
         st.write("Please select a season, matchday, and fixture.")

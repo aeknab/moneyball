@@ -234,7 +234,7 @@ def display_styled_team_table(home_data, away_data, home_team, away_team):
         <style>
         .styled-table {
     border-collapse: collapse;
-    margin: -15px 0;
+    margin: -5px 0;
     font-size: 0.9em;
     font-family: 'Sans-serif', Arial, Helvetica, sans-serif;
     width: 100%;

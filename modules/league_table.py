@@ -1,33 +1,13 @@
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
-import plotly.express as px
 from PIL import Image
 from io import BytesIO
 import base64
-from modules.cross_table import display_cross_table_view  # Import the cross table function
-from modules.utils import get_team_colors, resize_image, image_to_base64
-
-# Function to resize images
-def resize_image(image, max_width, max_height=None):
-    width, height = image.size
-    aspect_ratio = width / height
-
-    if max_height:
-        target_height = min(height, max_height)
-        target_width = int(target_height * aspect_ratio)
-    else:
-        target_width = max_width
-        target_height = int(target_width / aspect_ratio)
-
-    return image.resize((target_width, target_height), Image.LANCZOS)
-
-# Function to convert image to base64 for Plotly
-def image_to_base64(image):
-    buffer = BytesIO()
-    image.save(buffer, format="PNG")
-    img_str = base64.b64encode(buffer.getvalue()).decode()
-    return img_str
+from modules.cross_table import display_cross_table_view
+from modules.utils import get_team_colors, resize_image_to_bounding_box, image_to_base64
+from modules.home_away import filter_home_away_matches, calculate_home_away_points, plot_home_away_table
+from modules.first_and_second import filter_leg_matches, calculate_leg_points, plot_leg_table
 
 # Function to filter matches before the selected matchday
 def filter_matches_before(df, selected_season, matchday):
@@ -65,7 +45,7 @@ def plot_league_table(df_points, title, color_codes_df):
         # Load and resize team logo
         logo_path = f"data/logos/team_logos/{team_tag}.svg.png"
         team_logo = Image.open(logo_path)
-        team_logo_resized = resize_image(team_logo, 40)
+        team_logo_resized = resize_image_to_bounding_box(team_logo, target_width=40, target_height=40)
         logo_base64 = image_to_base64(team_logo_resized)
 
         # Position the logo to the right of the bar
@@ -148,7 +128,7 @@ def create_league_table_animation(df_points, color_codes_df):
         for _, row in df_day.iterrows():
             logo_path = f"data/logos/team_logos/{row['Team Tag']}.svg.png"
             team_logo = Image.open(logo_path)
-            team_logo_resized = resize_image(team_logo, 40)
+            team_logo_resized = resize_image_to_bounding_box(team_logo, target_width=40, target_height=40)
             logo_base64 = image_to_base64(team_logo_resized)
 
             layout_images_frame.append(
@@ -189,30 +169,43 @@ def create_league_table_animation(df_points, color_codes_df):
 
 # Function to display the league tables with animation and cross table
 def display_league_tables(df, selected_season, matchday, view_selection, color_codes_df):
-    st.header("League Table")
+    st.header("League Table")  # Single header for the League Table
 
-    # Create four buttons in four columns
-    col1, col2, col3, col4 = st.columns(4)
-    with col1:
-        if st.button("Full Season Table"):
-            view_selection = "Full Table"
-    with col2:
-        if st.button("Home/Away Table"):
-            view_selection = "Home/Away"
-    with col3:
-        if st.button("1st/2nd Leg Table"):
-            view_selection = "1st/2nd Leg"
-    with col4:
-        if st.button("Cross Table"):
-            view_selection = "Cross Table"
-
+    # Ensure view selection is consistent across buttons
     df_filtered = filter_matches_before(df, selected_season, matchday)
 
     if view_selection == "Full Table":
         df_points = calculate_team_points(df_filtered)
         plot_league_table(df_points, f'Bundesliga League Table After Matchday {matchday - 1} ({selected_season})', color_codes_df)
 
+    elif view_selection == "Home/Away":
+        # Display Home and Away tables one after the other
+        st.subheader("Home Table")
+        df_home_points = calculate_home_away_points(df_filtered, home_away='home')
+        home_fig = plot_home_away_table(df_home_points, f'Home Table After Matchday {matchday - 1} ({selected_season})', color_codes_df, home_away='home')
+        st.plotly_chart(home_fig, use_container_width=True)
+
+        st.subheader("Away Table")
+        df_away_points = calculate_home_away_points(df_filtered, home_away='away')
+        away_fig = plot_home_away_table(df_away_points, f'Away Table After Matchday {matchday - 1} ({selected_season})', color_codes_df, home_away='away')
+        st.plotly_chart(away_fig, use_container_width=True)
+
+    elif view_selection == "1st/2nd Leg":
+        # Display 1st and 2nd Leg tables one after the other
+        st.subheader("1st Leg Table")
+        df_leg_1 = filter_leg_matches(df, selected_season, leg='1st')
+        df_leg_1_points = calculate_leg_points(df_leg_1)
+        leg_1_fig = plot_leg_table(df_leg_1_points, f'1st Leg Table After Matchday {matchday - 1} ({selected_season})', color_codes_df)
+        st.plotly_chart(leg_1_fig, use_container_width=True)
+
+        st.subheader("2nd Leg Table")
+        df_leg_2 = filter_leg_matches(df, selected_season, leg='2nd')
+        df_leg_2_points = calculate_leg_points(df_leg_2)
+        leg_2_fig = plot_leg_table(df_leg_2_points, f'2nd Leg Table After Matchday {matchday - 1} ({selected_season})', color_codes_df)
+        st.plotly_chart(leg_2_fig, use_container_width=True)
+
     elif view_selection == "Cross Table":
+        # Ensure the cross table function is correctly defined
         display_cross_table_view(df, selected_season, matchday)
 
     # Sub-header for animation

@@ -77,6 +77,10 @@ def display_cross_table_view(df, selected_season, matchday):
     for team in teams_in_season_sorted:
         kreuztabelle.loc[team, team] = np.nan
 
+    # Define colors and border colors
+    colors = ['#a8e6a1', '#c4c4c4', 'lightyellow']
+    border_colors = ['#388e3c', '#999999', '#FFD700']
+
     # Plot the Kreuztabelle
     fig, ax = plt.subplots(figsize=(12, 12))
     fig.patch.set_facecolor(mcolors.to_rgba((14/255, 17/255, 23/255, 0.35)))
@@ -92,7 +96,6 @@ def display_cross_table_view(df, selected_season, matchday):
     # Ensure grid lines match the background color or remove them
     ax.grid(False)
 
-
     # Add text annotations for the scores and color the cells based on the outcome
     for i in range(len(kreuztabelle.index)):
         for j in range(len(kreuztabelle.columns)):
@@ -100,13 +103,16 @@ def display_cross_table_view(df, selected_season, matchday):
             if pd.notna(value) and value != '--':  # Ensure value is not '--'
                 home_goals, away_goals = map(int, value.split(':'))
                 if home_goals > away_goals:
-                    color = 'lightgreen'
+                    color = colors[0]
+                    border_color = border_colors[0]
                 elif home_goals < away_goals:
-                    color = 'lightyellow'
+                    color = colors[2]
+                    border_color = border_colors[2]
                 else:
-                    color = 'lightgrey'
+                    color = colors[1]
+                    border_color = border_colors[1]
 
-                ax.add_patch(plt.Rectangle((j-0.5, i-0.5), 1, 1, color=color))
+                ax.add_patch(plt.Rectangle((j-0.5, i-0.5), 1, 1, color=color, ec=border_color, lw=2))
                 ax.text(j, i, value, ha='center', va='center', color="black")
 
     # Adjust plot limits to make space for logos
@@ -120,7 +126,6 @@ def display_cross_table_view(df, selected_season, matchday):
 
             # Resize the image
             team_logo_resized = resize_image_to_bounding_box(team_logo, target_width=30, target_height=30)
-
 
             # Convert back to RGB to avoid transparency issues in matplotlib
             team_logo_resized = team_logo_resized.convert("RGB")

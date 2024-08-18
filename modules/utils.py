@@ -22,7 +22,7 @@ def resize_image_to_bounding_box(image, target_width, target_height):
         new_width = int(target_height * aspect_ratio)
     
     return image.resize((new_width, new_height), Image.Resampling.LANCZOS)
-
+    
 # Utility functions for form_guide_last_5.py
 def resize_logo(image, max_width=None, max_height=None):
     aspect_ratio = image.width / image.height
@@ -37,7 +37,7 @@ def resize_logo(image, max_width=None, max_height=None):
         new_width = min(image.width, max_width)
         new_height = min(image.height, max_height)
 
-    return image.resize((new_width, new_height), Image.Resampling.LANCZOS)
+    return image.resize((new_width, new_height), Image.LANCZOS)
 
 def load_image(image_path):
     return Image.open(image_path)
