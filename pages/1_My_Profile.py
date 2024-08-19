@@ -1,3 +1,5 @@
+# streamlit: My Profile
+
 import streamlit as st
 from profile.profile import display_profile_page
 

@@ -22,7 +22,7 @@ def resize_image_to_bounding_box(image, target_width, target_height):
         new_width = int(target_height * aspect_ratio)
     
     return image.resize((new_width, new_height), Image.Resampling.LANCZOS)
-    
+
 # Utility functions for form_guide_last_5.py
 def resize_logo(image, max_width=None, max_height=None):
     aspect_ratio = image.width / image.height
@@ -47,6 +47,13 @@ def image_to_base64(image):
     buffer = BytesIO()
     image.save(buffer, format="PNG")
     img_str = base64.b64encode(buffer.getvalue()).decode()
+    return img_str
+
+# Utility function to convert an image to bytes for HTML display
+def image_to_bytes(image):
+    buffer = BytesIO()
+    image.save(buffer, format="PNG")
+    img_str = base64.b64encode(buffer.getvalue()).decode("utf-8")
     return img_str
 
 # Utility function to get team colors

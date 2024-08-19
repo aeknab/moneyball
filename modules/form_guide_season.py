@@ -131,7 +131,7 @@ def create_stat_box(fig, avg_goals_scored, avg_goals_conceded, offensive_rank, d
                 <div style="font-size: 12px; padding: 5px; background-color: rgba(14, 17, 23, 0.7);"><b>Offensive Rank:</b><br>{offensive_rank}</div>
                 <div style="font-size: 12px; padding: 5px; background-color: rgba(14, 17, 23, 0.7);"><b>Defensive Rank:</b><br>{defensive_rank}</div>
                 <div style="font-size: 12px; padding: 5px; background-color: rgba(14, 17, 23, 0.7);"><b>{rank_label}:</b><br>{home_away_rank}</div>
-                <div style="font-size: 12px; padding: 5px; background-color: rgba(14, 17, 23, 0.7);"><b>Clean Sheets %:</b><br>{clean_sheet_percentage:.1f}%</div>
+                <div style="font-size: 12px; padding: 5px; background-color: rgba(14, 17, 23, 0.7);"><b>Clean Sheet %:</b><br>{clean_sheet_percentage:.1f}%</div>
             </div>
         </div>""", 
         unsafe_allow_html=True

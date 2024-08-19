@@ -1,3 +1,5 @@
+# streamlit: My Groups
+
 import streamlit as st
 from modules.groups import display_groups_page
 

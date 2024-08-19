@@ -1,14 +1,7 @@
 import streamlit as st
 import pandas as pd
-from PIL import Image  # Import the Image class from PIL
+from PIL import Image
 from modules.utils import resize_image, load_image
-
-# Function to get the team logo as an HTML image tag
-def get_team_logo_img_tag(team_tag):
-    """Return an HTML image tag for the team logo."""
-    logo_path = f"data/logos/team_logos/{team_tag}.svg.png"
-    logo_img_tag = f'<img src="data:image/png;base64,{image_to_bytes(load_image(logo_path))}" style="max-width: 20px; max-height: 20px; vertical-align: middle;" />'
-    return logo_img_tag
 
 def display_match_preview(df):
     st.header("Bundesliga Match Preview")
@@ -75,14 +68,15 @@ def display_match_preview(df):
     home_logo_resized = resize_image(home_logo, target_area)
     away_logo_resized = resize_image(away_logo, target_area)
 
-    col1, col2, col3 = st.columns([1, 3, 1])
+    # Display the first row: team logos, match info, and matchday details
+    row1_col1, row1_col2, row1_col3 = st.columns([1, 3, 1])
 
-    with col1:
+    with row1_col1:
         st.markdown("<div style='display: flex; align-items: center; height: 100%; justify-content: center;'>", unsafe_allow_html=True)
         st.image(home_logo_resized, use_column_width=False)
         st.markdown("</div>", unsafe_allow_html=True)
 
-    with col2:
+    with row1_col2:
         st.markdown(
             f"<div style='text-align: center; font-size: 24px; margin-bottom: 0px;'><b>{home_team}</b></div>",
             unsafe_allow_html=True
@@ -96,59 +90,79 @@ def display_match_preview(df):
             unsafe_allow_html=True
         )
 
-    with col3:
+        # Format the match date and time
+        match_date = pd.to_datetime(match_date_str)
+        match_time_formatted = pd.to_datetime(match_time).strftime('%H:%M')  # Formats as HH:MM
+        day = match_date.strftime('%d').lstrip('0')
+        month_year = match_date.strftime('%B, %Y')
+        weekday = match_date.strftime('%A')
+        match_date_formatted = f"{weekday}, {day}. {month_year} @ {match_time_formatted}"
+
+        st.markdown(
+            f"<div style='text-align: center; font-size: 14px; color: grey;'>{match_date_formatted}</div>",
+            unsafe_allow_html=True
+        )
+        st.markdown(
+            f"<div style='text-align: center; font-size: 14px; color: grey;'>{stadium}, {location}</div>",
+            unsafe_allow_html=True
+        )
+
+    with row1_col3:
         st.markdown("<div style='display: flex; align-items: center; height: 100%; justify-content: center;'>", unsafe_allow_html=True)
         st.image(away_logo_resized, use_column_width=False)
         st.markdown("</div>", unsafe_allow_html=True)
 
-    # Display match details
-    match_date = pd.to_datetime(match_date_str)
-    match_time_formatted = pd.to_datetime(match_time).strftime('%H:%M')  # Formats as HH:MM
+    # Load the stadium image and Bundesliga logo
+    stadium_image_path = f"data/logos/stadiums/{home_team_tag}_stadium.png"
+    bundesliga_logo_path = "data/logos/team_logos/Bundesliga.svg.png"
 
-    # Here we use .lstrip('0') to remove the leading zero from the day
-    day = match_date.strftime('%d').lstrip('0')
-    month_year = match_date.strftime('%B, %Y')
-    weekday = match_date.strftime('%A')
+    stadium_image = load_image(stadium_image_path)
+    bundesliga_logo = load_image(bundesliga_logo_path)
 
-    match_date_formatted = f"{weekday}, {day}. {month_year}"
+    # Resize the images for better display
+    stadium_image_resized = resize_image(stadium_image, 5000)  # Smaller area for better alignment
+    bundesliga_logo_resized = resize_image(bundesliga_logo, 3000)  # Smaller area for better alignment
 
-    st.markdown(
-        f"<div style='text-align: center; margin-top: -40px;'>{match_date_formatted} @ {match_time_formatted}</div>",
-        unsafe_allow_html=True
-    )
-    st.markdown(
-        f"<div style='text-align: center; margin-top: -35px;'>{stadium}, {location}</div>",
-        unsafe_allow_html=True
-    )
+    # Display the match outcome or input fields and add the images to the sides
+    row2_col1, row2_col2, row2_col3 = st.columns([1, 2, 1])
 
-    # Display the match outcome or input fields
-    if selected_season == '2023/24':
-        # Display input fields for the 2023/24 season
-        col1, col2, col3 = st.columns([1, 0.1, 1])
+    with row2_col1:
+        st.markdown("<div style='display: flex; align-items: center; height: 100%; justify-content: flex-end;'>", unsafe_allow_html=True)
+        st.image(stadium_image_resized, use_column_width=False)
+        st.markdown("</div>", unsafe_allow_html=True)
 
-        with col1:
-            home_goals = st.text_input("", value="--", max_chars=2, key="home_goals")
-        with col2:
-            st.markdown(f"<div style='text-align: center; font-size: 40px;'>:</div>", unsafe_allow_html=True)
-        with col3:
-            away_goals = st.text_input("", value="--", max_chars=2, key="away_goals")
+    with row2_col2:
+        if selected_season == '2023/24':
+            st.markdown("""
+                <style>
+                .goal-input {
+                    text-align: center;
+                    width: 40px !important;
+                    font-size: 20px;
+                }
+                </style>
+            """, unsafe_allow_html=True)
 
-        # Validation for input
-        try:
-            home_goals = int(home_goals)
-            away_goals = int(away_goals)
-            if not (0 <= home_goals <= 11) or not (0 <= away_goals <= 11):
-                st.error("Please enter a number between 0 and 10.")
-        except ValueError:
-            st.error("Please enter a valid number.")
+            col2_left, col2_mid, col2_right = st.columns([1, 0.2, 1])
 
-    else:
-        # Display the outcome for previous seasons
-        match_outcome = f"{selected_match_row['Home Goals']} : {selected_match_row['Away Goals']}"
-        st.markdown(
-            f"<div style='text-align: center; font-size: 60px; font-family: Courier; color: #FFFF4F; margin-top: -30px;'>{match_outcome}</div>",
-            unsafe_allow_html=True
-        )
+            with col2_left:
+                home_goals = st.number_input("", min_value=0, max_value=11, value=0, step=1, key="home_goals", format="%d")
+            with col2_mid:
+                st.markdown("<div style='font-size: 30px;'>:</div>", unsafe_allow_html=True)
+            with col2_right:
+                away_goals = st.number_input("", min_value=0, max_value=11, value=0, step=1, key="away_goals", format="%d")
+        else:
+            # Display the outcome for previous seasons
+            match_outcome = f"{selected_match_row['Home Goals']} : {selected_match_row['Away Goals']}"
+            st.markdown(
+                f"<div style='text-align: center; font-size: 60px; font-family: Courier; color: #FFFF4F; margin-top: -30px;'>{match_outcome}</div>",
+                unsafe_allow_html=True
+            )
+
+    with row2_col3:
+        st.markdown("<div style='display: flex; align-items: center; height: 100%; justify-content: flex-start;'>", unsafe_allow_html=True)
+        st.image(bundesliga_logo_resized, use_column_width=False)
+        st.markdown("</div>", unsafe_allow_html=True)
 
     # Teams Overview Section
     st.subheader("Teams Overview")

@@ -1,3 +1,5 @@
+# streamlit: Bundesliga
+
 import streamlit as st
 from modules.bundesliga import display_bundesliga_page
 
