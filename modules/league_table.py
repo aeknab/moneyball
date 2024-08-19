@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
+import plotly.express as px  # Import plotly.express for animations
 from PIL import Image
 from io import BytesIO
 import base64
@@ -9,9 +10,14 @@ from modules.utils import get_team_colors, resize_image_to_bounding_box, image_t
 from modules.home_away import filter_home_away_matches, calculate_home_away_points, plot_home_away_table
 from modules.first_and_second import filter_leg_matches, calculate_leg_points, plot_leg_table
 
-# Function to filter matches before the selected matchday
-def filter_matches_before(df, selected_season, matchday):
-    return df[(df['Season'] == selected_season) & (df['Matchday'] < matchday)]
+# Function to filter matches based on the season and matchday
+def filter_matches(df, selected_season, matchday):
+    if selected_season == '2023/24':
+        # Exclude data from the selected matchday for 2023/24 season (preview mode)
+        return df[(df['Season'] == selected_season) & (df['Matchday'] < matchday)]
+    else:
+        # Include data from the selected matchday for 2005/06 to 2022/23 seasons
+        return df[(df['Season'] == selected_season) & (df['Matchday'] <= matchday)]
 
 # Function to calculate team points
 def calculate_team_points(df_filtered):
@@ -95,6 +101,15 @@ def create_league_table_animation(df_points, color_codes_df):
     # Merge with color data
     df_points = df_points.merge(color_codes_df[['Tag', 'Primary', 'Secondary']], how='left', left_on='Team Tag', right_on='Tag')
 
+    # Ensure all matchdays up to 34 are included in the animation frames
+    df_points['Matchday'] = df_points['Matchday'].astype(int)
+    matchdays = list(range(1, 35))  # Explicitly define matchdays from 1 to 34
+
+    # Create a complete DataFrame to ensure every team has data for every matchday
+    all_teams = df_points['Team Tag'].unique()
+    complete_index = pd.MultiIndex.from_product([matchdays, all_teams], names=['Matchday', 'Team Tag'])
+    df_points = df_points.set_index(['Matchday', 'Team Tag']).reindex(complete_index, fill_value=0).reset_index()
+
     # Create the bar chart animation with Plotly Express
     fig = px.bar(df_points,
                  x='Points',
@@ -102,8 +117,10 @@ def create_league_table_animation(df_points, color_codes_df):
                  color='Team Tag',
                  orientation='h',
                  animation_frame='Matchday',
+                 animation_group='Team Tag',  # Ensures the same team is tracked across frames
                  range_x=[0, 100],
                  range_y=[0.5, 18.5],
+                 category_orders={"Matchday": matchdays},  # Ensure matchdays go from 1 to 34
                  color_discrete_map={team: color for team, color in zip(color_codes_df['Tag'], color_codes_df['Primary'])})
 
     # Customize the layout
@@ -115,13 +132,18 @@ def create_league_table_animation(df_points, color_codes_df):
         showlegend=False,
         height=800,
         width=1000,
+        sliders=[{
+            "steps": [{"args": [[str(i)], {"frame": {"duration": 500, "redraw": True},
+                                            "mode": "immediate"}],
+                       "label": str(i),
+                       "method": "animate"} for i in matchdays],
+            "currentvalue": {"prefix": "Matchday: "}
+        }]
     )
 
     # Overlaying logos using Plotly graph_objects
     frames = []
-    unique_matchdays = df_points['Matchday'].unique()
-
-    for matchday in unique_matchdays:
+    for matchday in matchdays:
         df_day = df_points[df_points['Matchday'] == matchday]
         layout_images_frame = []
 
@@ -172,40 +194,45 @@ def display_league_tables(df, selected_season, matchday, view_selection, color_c
     st.header("League Table")  # Single header for the League Table
 
     # Ensure view selection is consistent across buttons
-    df_filtered = filter_matches_before(df, selected_season, matchday)
+    df_filtered = filter_matches(df, selected_season, matchday)
 
     if view_selection == "Full Table":
         df_points = calculate_team_points(df_filtered)
-        plot_league_table(df_points, f'Bundesliga League Table After Matchday {matchday - 1} ({selected_season})', color_codes_df)
+        plot_league_table(df_points, f'Bundesliga League Table After Matchday {matchday} ({selected_season})', color_codes_df)
 
     elif view_selection == "Home/Away":
         # Display Home and Away tables one after the other
         st.subheader("Home Table")
         df_home_points = calculate_home_away_points(df_filtered, home_away='home')
-        home_fig = plot_home_away_table(df_home_points, f'Home Table After Matchday {matchday - 1} ({selected_season})', color_codes_df, home_away='home')
+        home_fig = plot_home_away_table(df_home_points, f'Home Table After Matchday {matchday} ({selected_season})', color_codes_df, home_away='home')
         st.plotly_chart(home_fig, use_container_width=True)
 
         st.subheader("Away Table")
         df_away_points = calculate_home_away_points(df_filtered, home_away='away')
-        away_fig = plot_home_away_table(df_away_points, f'Away Table After Matchday {matchday - 1} ({selected_season})', color_codes_df, home_away='away')
+        away_fig = plot_home_away_table(df_away_points, f'Away Table After Matchday {matchday} ({selected_season})', color_codes_df, home_away='away')
         st.plotly_chart(away_fig, use_container_width=True)
 
     elif view_selection == "1st/2nd Leg":
         # Display 1st and 2nd Leg tables one after the other
         st.subheader("1st Leg Table")
-        df_leg_1 = filter_leg_matches(df, selected_season, leg='1st')
-        df_leg_1_points = calculate_leg_points(df_leg_1)
-        leg_1_fig = plot_leg_table(df_leg_1_points, f'1st Leg Table After Matchday {matchday - 1} ({selected_season})', color_codes_df)
-        st.plotly_chart(leg_1_fig, use_container_width=True)
+        df_leg_1 = filter_leg_matches(df, selected_season, leg='1st', matchday=matchday)
+        if df_leg_1.empty:
+            st.write("No available data yet.")
+        else:
+            df_leg_1_points = calculate_leg_points(df_leg_1)
+            leg_1_fig = plot_leg_table(df_leg_1_points, f'1st Leg Table After Matchday {matchday} ({selected_season})', color_codes_df)
+            st.plotly_chart(leg_1_fig, use_container_width=True)
 
         st.subheader("2nd Leg Table")
-        df_leg_2 = filter_leg_matches(df, selected_season, leg='2nd')
-        df_leg_2_points = calculate_leg_points(df_leg_2)
-        leg_2_fig = plot_leg_table(df_leg_2_points, f'2nd Leg Table After Matchday {matchday - 1} ({selected_season})', color_codes_df)
-        st.plotly_chart(leg_2_fig, use_container_width=True)
+        df_leg_2 = filter_leg_matches(df, selected_season, leg='2nd', matchday=matchday)
+        if df_leg_2.empty:
+            st.write("No available data yet.")
+        else:
+            df_leg_2_points = calculate_leg_points(df_leg_2)
+            leg_2_fig = plot_leg_table(df_leg_2_points, f'2nd Leg Table After Matchday {matchday} ({selected_season})', color_codes_df)
+            st.plotly_chart(leg_2_fig, use_container_width=True)
 
     elif view_selection == "Cross Table":
-        # Ensure the cross table function is correctly defined
         display_cross_table_view(df, selected_season, matchday)
 
     # Sub-header for animation

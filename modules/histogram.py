@@ -4,11 +4,20 @@ import plotly.graph_objs as go
 import numpy as np
 from scipy.stats import norm
 
+# Function to filter matches based on the selected season and matchday
+def filter_matches_for_season(df, selected_season, matchday):
+    if selected_season == '2023/24':
+        # Exclude data from the selected matchday for the 2023/24 season
+        return df[(df['Season'] == selected_season) & (df['Matchday'] < matchday)]
+    else:
+        # Include data from the selected matchday for previous seasons (2005/06 to 2022/23)
+        return df[(df['Season'] == selected_season) & (df['Matchday'] <= matchday)]
+
 def display_histogram(df, selected_season, selected_matchday):
     st.subheader("Goals Scored per Matchday Histogram")
 
-    # Filter the data to include only matchdays before the selected matchday
-    df_filtered = df[(df['Season'] == selected_season) & (df['Matchday'] < selected_matchday)]
+    # Filter the data using the updated filtering function
+    df_filtered = filter_matches_for_season(df, selected_season, selected_matchday)
 
     # Aggregate the total goals for each matchday
     total_goals_per_matchday = df_filtered.groupby('Matchday').apply(

@@ -4,11 +4,20 @@ import plotly.graph_objs as go
 from PIL import Image
 from modules.utils import image_to_base64
 
+# Function to filter matches based on the selected season and matchday
+def filter_matches_for_season(df, selected_season, matchday):
+    if selected_season == '2023/24':
+        # Exclude data from the selected matchday for the 2023/24 season
+        return df[(df['Season'] == selected_season) & (df['Matchday'] < matchday)]
+    else:
+        # Include data from the selected matchday for previous seasons (2005/06 to 2022/23)
+        return df[(df['Season'] == selected_season) & (df['Matchday'] <= matchday)]
+
 def display_pie_chart(df, selected_season, selected_matchday):
     st.subheader("Bundesliga Results Pie Chart")
 
-    # Filter the data to include only matchdays before the selected matchday
-    df_filtered = df[(df['Season'] == selected_season) & (df['Matchday'] < selected_matchday)]
+    # Filter the data using the updated filtering function
+    df_filtered = filter_matches_for_season(df, selected_season, selected_matchday)
 
     # Aggregate actual Bundesliga results
     results = {
@@ -75,15 +84,15 @@ def display_pie_chart(df, selected_season, selected_matchday):
     # Display the pie chart
     st.plotly_chart(fig)
 
-def plot_pie_chart_animation(df, max_matchday):
+def plot_pie_chart_animation(df, selected_season, max_matchday):
     st.subheader("Bundesliga Results Pie Chart Animation")
     
     frames = []
     colors = ['#a8e6a1', '#c4c4c4', 'lightyellow']
     border_colors = ['#388e3c', '#999999', '#FFD700']
 
-    for day in range(1, max_matchday):
-        df_filtered = df[df['Matchday'] <= day]
+    for day in range(1, max_matchday + 1):  # Ensure animation includes all matchdays up to the selected one
+        df_filtered = filter_matches_for_season(df, selected_season, day)
 
         # Aggregate results for each matchday
         results = {
@@ -130,7 +139,7 @@ def plot_pie_chart_animation(df, max_matchday):
                 'steps': [{'args': [[f"Matchday {i}"], {'frame': {'duration': 500, 'redraw': True},
                                                      'mode': 'immediate'}],
                            'label': f"{i}",
-                           'method': 'animate'} for i in range(1, max_matchday)],
+                           'method': 'animate'} for i in range(1, max_matchday + 1)],  # Include up to the selected matchday
                 'x': 0.3, 'len': 0.65,
                 'currentvalue': {'prefix': 'Matchday: ', 'font': {'size': 15}, 'visible': True, 'offset': -30},
             }]
@@ -178,4 +187,4 @@ def display_pie_chart_with_animation(df, selected_season, selected_matchday):
 
     # Add the play animation button
     if st.button("Play Animation", key="piechart_animation"):
-        plot_pie_chart_animation(df[df['Season'] == selected_season], selected_matchday)
+        plot_pie_chart_animation(df[df['Season'] == selected_season], selected_season, selected_matchday)

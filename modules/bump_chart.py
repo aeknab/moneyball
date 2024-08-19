@@ -4,20 +4,30 @@ import plotly.graph_objs as go
 from PIL import Image
 from modules.utils import get_team_colors, load_image, resize_image, image_to_base64
 
+# Function to filter matches based on the selected season and matchday
+def filter_matches_for_season(df, selected_season, matchday):
+    if selected_season == '2023/24':
+        # Exclude data from the selected matchday for the 2023/24 season
+        return df[(df['Season'] == selected_season) & (df['Matchday'] < matchday)]
+    else:
+        # Include data from the selected matchday for previous seasons (2005/06 to 2022/23)
+        return df[(df['Season'] == selected_season) & (df['Matchday'] <= matchday)]
+
 def resize_image(image, target_width):
     width_percent = target_width / float(image.size[0])
     target_height = int(float(image.size[1]) * float(width_percent))
     return image.resize((target_width, target_height), Image.LANCZOS)
 
 def plot_bump_chart(df, color_codes_df, selected_season, matchday):
-    df_season_before_matchday = df[(df['Season'] == selected_season) & (df['Matchday'] < matchday)]
+    # Ensure matchday 34 is included for past seasons
+    df_season_before_matchday = filter_matches_for_season(df, selected_season, matchday)
     
     if not df_season_before_matchday.empty:
         # Initialize a DataFrame to hold the rankings for each matchday
         rankings = []
     
-        # Iterate through each matchday before the selected fixture
-        for md in range(1, matchday):
+        # Iterate through each matchday up to the selected matchday
+        for md in range(1, matchday + 1):  # Include the selected matchday
             df_md = df_season_before_matchday[df_season_before_matchday['Matchday'] == md]
     
             # Collect the ranks for both the home and away teams
@@ -103,7 +113,7 @@ def plot_bump_chart(df, color_codes_df, selected_season, matchday):
                 range=[0.5, 34.9],  # Extra space on the right
                 showgrid=True,
                 tickvals=list(range(1, 35)),  # Show Matchdays 1-34
-                ticktext=list(range(1, 34)) + ['🏁'],  # Replace "35" with the finish line flag
+                ticktext=list(range(1, 35)),  # Ensure all matchdays are shown
             ),
             yaxis=dict(
                 title='Rank', 
@@ -128,10 +138,10 @@ def plot_bump_chart(df, color_codes_df, selected_season, matchday):
 
 def animate_bump_chart(df, color_codes_df, selected_season, selected_matchday):
     # Prepare the data for animation
-    df_season = df[df['Season'] == selected_season]
+    df_season = filter_matches_for_season(df, selected_season, selected_matchday)
     rankings = []
 
-    for md in range(1, selected_matchday):  # Dynamically go up to the matchday before the selected fixture
+    for md in range(1, selected_matchday + 1):  # Include the selected matchday in the animation
         df_md = df_season[df_season['Matchday'] == md]
         for index, row in df_md.iterrows():
             rankings.append({
@@ -180,7 +190,7 @@ def animate_bump_chart(df, color_codes_df, selected_season, selected_matchday):
 
     # Create animation frames
     frames = []
-    for md in range(1, selected_matchday):
+    for md in range(1, selected_matchday + 1):  # Include the selected matchday in the animation
         frame_data = []
         for team_tag in df_rankings['Team Tag'].unique():
             team_data = df_rankings[df_rankings['Team Tag'] == team_tag]
@@ -212,7 +222,7 @@ def animate_bump_chart(df, color_codes_df, selected_season, selected_matchday):
             range=[0.5, 34.9],  # Extra space on the right
             showgrid=True,
             tickvals=list(range(1, 35)),
-            ticktext=[str(i) for i in range(1, 35)],  # Display only numbers 1-34
+            ticktext=[str(i) for i in range(1, 35)],  # Ensure all matchdays 1-34 are shown
         ),
         yaxis=dict(
             title='Rank',
@@ -251,7 +261,7 @@ def animate_bump_chart(df, color_codes_df, selected_season, selected_matchday):
                         args=[[str(md)], {"mode": "immediate",
                                           "frame": {"duration": 500, "redraw": True},
                                           "transition": {"duration": 0}}],
-                        label=str(md)) for md in range(1, selected_matchday)],
+                        label=str(md)) for md in range(1, selected_matchday + 1)],  # Include up to the selected matchday
             active=0,
             transition={"duration": 0},
             x=0.3,  # Align with the buttons
@@ -270,3 +280,4 @@ def display_bump_chart(df, selected_season, matchday, color_codes_df):
     st.subheader("Play Animation")
     if st.button("Play Animation", key="bump_chart_animation"):
         animate_bump_chart(df, color_codes_df, selected_season, matchday)
+

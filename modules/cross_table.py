@@ -50,8 +50,13 @@ def display_cross_table_view(df, selected_season, matchday):
         'KIE': 'Kiel'
     }
 
-    # Filter the dataset for matches before the selected matchday and for the selected season
-    df_past_matches = df[(df['Matchday'] < matchday) & (df['Season'] == selected_season)]
+    # Filter the dataset based on the selected season and matchday
+    if selected_season == '2023/24':
+        # For the 2023/24 season, exclude data from the selected matchday
+        df_past_matches = df[(df['Matchday'] < matchday) & (df['Season'] == selected_season)]
+    else:
+        # For seasons 2005/06 to 2022/23, include data from the selected matchday
+        df_past_matches = df[(df['Matchday'] <= matchday) & (df['Season'] == selected_season)]
 
     # Get the list of unique team tags for the selected season, limited to the teams that have played in that season
     teams_in_season = sorted(

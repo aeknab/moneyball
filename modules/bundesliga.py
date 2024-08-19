@@ -69,26 +69,37 @@ def display_bundesliga_page():
         if st.session_state.selected_view == "Full Table":
             display_league_tables(df, selected_season, selected_matchday, "Full Table", color_codes_df)
         elif st.session_state.selected_view == "Home/Away Table":
-            display_league_tables(df, selected_season, selected_matchday, "Home/Away Table", color_codes_df)
+            # Display Home and Away tables one after the other
+            st.subheader("Home Table")
+            df_filtered = filter_home_away_matches(df, selected_season, selected_matchday)
+            df_home_points = calculate_home_away_points(df_filtered, home_away='home')
+            home_fig = plot_home_away_table(df_home_points, f'Home Table After Matchday {selected_matchday} ({selected_season})', color_codes_df, home_away='home')
+            st.plotly_chart(home_fig, use_container_width=True)
+
+            st.subheader("Away Table")
+            df_away_points = calculate_home_away_points(df_filtered, home_away='away')
+            away_fig = plot_home_away_table(df_away_points, f'Away Table After Matchday {selected_matchday} ({selected_season})', color_codes_df, home_away='away')
+            st.plotly_chart(away_fig, use_container_width=True)
+
         elif st.session_state.selected_view == "1st/2nd Leg Table":
             # 1st Leg Table
             st.subheader("1st Leg Table")
-            df_leg_1 = filter_leg_matches(df, selected_season, selected_matchday, leg='1st')
+            df_leg_1 = filter_leg_matches(df, selected_season, leg='1st', matchday=selected_matchday)
             if df_leg_1.empty:
                 st.write("No available data yet.")
             else:
                 df_leg_1_points = calculate_leg_points(df_leg_1)
-                leg_1_fig = plot_leg_table(df_leg_1_points, f'1st Leg Table After Matchday {selected_matchday - 1} ({selected_season})', color_codes_df)
+                leg_1_fig = plot_leg_table(df_leg_1_points, f'1st Leg Table After Matchday {selected_matchday} ({selected_season})', color_codes_df)
                 st.plotly_chart(leg_1_fig, use_container_width=True)
 
             # 2nd Leg Table
             st.subheader("2nd Leg Table")
-            df_leg_2 = filter_leg_matches(df, selected_season, selected_matchday, leg='2nd')
+            df_leg_2 = filter_leg_matches(df, selected_season, leg='2nd', matchday=selected_matchday)
             if df_leg_2.empty:
                 st.write("No available data yet.")
             else:
                 df_leg_2_points = calculate_leg_points(df_leg_2)
-                leg_2_fig = plot_leg_table(df_leg_2_points, f'2nd Leg Table After Matchday {selected_matchday - 1} ({selected_season})', color_codes_df)
+                leg_2_fig = plot_leg_table(df_leg_2_points, f'2nd Leg Table After Matchday {selected_matchday} ({selected_season})', color_codes_df)
                 st.plotly_chart(leg_2_fig, use_container_width=True)
 
         elif st.session_state.selected_view == "Cross Table":

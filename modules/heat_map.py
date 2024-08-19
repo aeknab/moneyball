@@ -2,11 +2,20 @@ import streamlit as st
 import pandas as pd
 import plotly.graph_objs as go
 
+# Function to filter matches based on the selected season and matchday
+def filter_matches_for_season(df, selected_season, matchday):
+    if selected_season == '2023/24':
+        # Exclude data from the selected matchday for the 2023/24 season
+        return df[(df['Season'] == selected_season) & (df['Matchday'] < matchday)]
+    else:
+        # Include data from the selected matchday for previous seasons (2005/06 to 2022/23)
+        return df[(df['Season'] == selected_season) & (df['Matchday'] <= matchday)]
+
 def plot_heatmap(matchdays_df, selected_matchday):
     st.subheader("Bundesliga Actual Results Heatmap")
     
-    # Filter the data to include only matchdays before the selected matchday
-    matchdays_df = matchdays_df[matchdays_df['Matchday'] < selected_matchday]
+    # Filter the data to include only matchdays before or up to the selected matchday, depending on the season
+    matchdays_df = filter_matches_for_season(matchdays_df, matchdays_df['Season'].iloc[0], selected_matchday)
     
     # Identify the highest number of goals scored in a single game by any team
     max_goals = max(matchdays_df['Home Goals'].max(), matchdays_df['Away Goals'].max())

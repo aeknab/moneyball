@@ -41,6 +41,9 @@ def calculate_home_away_points(df_filtered, home_away):
 
 # Function to plot the league table for home or away records
 def plot_home_away_table(df_points, title, color_codes_df, home_away):
+    if df_points.empty:
+        return None  # If the points DataFrame is empty, exit early
+    
     fig = go.Figure()
 
     for i, (team_tag, points) in enumerate(zip(df_points['Team Tag'], df_points['Points'])):
@@ -58,7 +61,11 @@ def plot_home_away_table(df_points, title, color_codes_df, home_away):
 
         # Load and resize team logo
         logo_path = f"data/logos/team_logos/{team_tag}.svg.png"
-        team_logo = Image.open(logo_path)
+        try:
+            team_logo = Image.open(logo_path)
+        except FileNotFoundError:
+            continue
+        
         team_logo_resized = resize_image_to_bounding_box(team_logo, target_width=40, target_height=40)
         logo_base64 = image_to_base64(team_logo_resized)
 
@@ -90,3 +97,23 @@ def plot_home_away_table(df_points, title, color_codes_df, home_away):
     )
 
     return fig
+
+# Utility functions for resizing images and converting to base64
+def resize_image(image, max_width, max_height=None):
+    width, height = image.size
+    aspect_ratio = width / height
+
+    if max_height:
+        target_height = min(height, max_height)
+        target_width = int(target_height * aspect_ratio)
+    else:
+        target_width = max_width
+        target_height = int(target_width / aspect_ratio)
+
+    return image.resize((target_width, target_height), Image.LANCZOS)
+
+def image_to_base64(image):
+    buffer = BytesIO()
+    image.save(buffer, format="PNG")
+    img_str = base64.b64encode(buffer.getvalue()).decode()
+    return img_str
