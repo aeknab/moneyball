@@ -21,13 +21,27 @@ def display_form_guide_section(df, selected_season, selected_matchday, selected_
         with col1:
             home_team_matches = df[(df['Season'] == selected_season) & ((df['Home Tag'] == home_team_tag) | (df['Away Tag'] == home_team_tag))]
             last_n_home_matches = min(len(home_team_matches[home_team_matches['Matchday'] < matchday]), 5)
-            st.markdown(f"<h4 style='text-align: left;'>{home_team_tag} Last {last_n_home_matches} Match{'es' if last_n_home_matches > 1 else ''}</h4>", unsafe_allow_html=True)
+            
+            # Update the header based on the season
+            if selected_season == '2023/24':
+                header_text = f"{home_team_tag} Last {last_n_home_matches} Match{'es' if last_n_home_matches > 1 else ''}"
+            else:
+                header_text = f"{home_team_tag} Previous {last_n_home_matches} Match{'es' if last_n_home_matches > 1 else ''}"
+            
+            st.markdown(f"<h4 style='text-align: left;'>{header_text}</h4>", unsafe_allow_html=True)
             display_form_guide(home_team_matches, home_team_tag, matchday)
 
         with col2:
             away_team_matches = df[(df['Season'] == selected_season) & ((df['Home Tag'] == away_team_tag) | (df['Away Tag'] == away_team_tag))]
             last_n_away_matches = min(len(away_team_matches[away_team_matches['Matchday'] < matchday]), 5)
-            st.markdown(f"<h4 style='text-align: left;'>{away_team_tag} Last {last_n_away_matches} Match{'es' if last_n_away_matches > 1 else ''}</h4>", unsafe_allow_html=True)
+            
+            # Update the header based on the season
+            if selected_season == '2023/24':
+                header_text = f"{away_team_tag} Last {last_n_away_matches} Match{'es' if last_n_away_matches > 1 else ''}"
+            else:
+                header_text = f"{away_team_tag} Previous {last_n_away_matches} Match{'es' if last_n_away_matches > 1 else ''}"
+            
+            st.markdown(f"<h4 style='text-align: left;'>{header_text}</h4>", unsafe_allow_html=True)
             display_form_guide(away_team_matches, away_team_tag, matchday)
 
 def display_form_guide(df_season, team_tag, matchday):

@@ -4,14 +4,20 @@ from PIL import Image
 import base64
 from io import BytesIO
 
-def generate_form_guide_plotly(team, team_tag, matchday, df_season):
+def generate_form_guide_plotly(team, team_tag, matchday, df_season, is_current_season):
+    # Adjust matchday filtering based on the season
+    if is_current_season:
+        matchday_condition = df_season['Matchday'] < matchday  # Exclude current matchday for previews
+    else:
+        matchday_condition = df_season['Matchday'] <= matchday  # Include current matchday for past seasons
+
     # Check if there are previous matches
     if matchday <= 1:
         st.write(f"No previous match data available for {team}.")
         return None, None, None, None, None, None, None
 
     previous_matches = df_season[
-        (df_season['Matchday'] < matchday) & 
+        matchday_condition & 
         ((df_season['Home Team'] == team) | (df_season['Away Team'] == team))
     ]
 
@@ -98,7 +104,7 @@ def generate_form_guide_plotly(team, team_tag, matchday, df_season):
     # Update layout for aesthetics
     fig.update_layout(
         showlegend=False,  # Hide the legend
-        margin=dict(t=0, b=0, l=0, r=0),  # Adjust margins for a tighter fit
+        margin=dict(t=5, b=5, l=0, r=0),  # Adjust margins for a tighter fit
         annotations=[dict(text='', showarrow=False, font_size=20)],
         hovermode='closest',
         height=200,  # Set the height to make it smaller
@@ -115,10 +121,10 @@ def create_stat_box(fig, avg_goals_scored, avg_goals_conceded, offensive_rank, d
     # Determine whether to label as Home Rank or Away Rank
     rank_label = "Home Rank" if is_home_team else "Away Rank"
     
-    # Create a box below the chart with a grid for the statistics
+    # Create a box below the chart with a grid for the statistics, now with the requested border
     st.markdown(
         f"""
-        <div style="border: 2px solid rgba(97, 101, 114, 0.9); border-radius: 15px; padding: 10px; width: 100%; height: auto; text-align: center; background-color: rgba(255, 255, 255, 0.35);">
+        <div style="border: 2px solid #999999; border-radius: 15px; padding: 10px; width: 100%; height: auto; text-align: center; background-color: rgba(255, 255, 255, 0.35); box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);">
             <div style="display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr 1fr; gap: 10px;">
                 <div style="font-size: 12px; padding: 5px; background-color: rgba(14, 17, 23, 0.7);"><b>Avg Goals Scored:</b><br>{avg_goals_scored:.2f}</div>
                 <div style="font-size: 12px; padding: 5px; background-color: rgba(14, 17, 23, 0.7);"><b>Avg Goals Conceded:</b><br>{avg_goals_conceded:.2f}</div>
@@ -128,19 +134,24 @@ def create_stat_box(fig, avg_goals_scored, avg_goals_conceded, offensive_rank, d
                 <div style="font-size: 12px; padding: 5px; background-color: rgba(14, 17, 23, 0.7);"><b>Clean Sheets %:</b><br>{clean_sheet_percentage:.1f}%</div>
             </div>
         </div>""", 
-        unsafe_allow_html=True)
+        unsafe_allow_html=True
+    )
 
 def display_donut_charts_side_by_side(home_team, away_team, home_team_tag, away_team_tag, matchday, df_season):
     col1, col2, col3 = st.columns([4, 1, 4])  # Adjust column proportions as needed
 
+    # Determine if the selected season is the current one (2023/24)
+    is_current_season = df_season['Season'].iloc[0] == '2023/24'
+
     with col1:
         st.subheader(f"{home_team_tag} Season")
-        fig_home, avg_goals_scored, avg_goals_conceded, offensive_rank, defensive_rank, home_away_rank, clean_sheet_percentage = generate_form_guide_plotly(home_team, home_team_tag, matchday, df_season)
+        fig_home, avg_goals_scored, avg_goals_conceded, offensive_rank, defensive_rank, home_away_rank, clean_sheet_percentage = generate_form_guide_plotly(home_team, home_team_tag, matchday, df_season, is_current_season)
         if fig_home:
             create_stat_box(fig_home, avg_goals_scored, avg_goals_conceded, offensive_rank, defensive_rank, home_away_rank, clean_sheet_percentage, is_home_team=True)
 
     with col3:
         st.subheader(f"{away_team_tag} Season")
-        fig_away, avg_goals_scored, avg_goals_conceded, offensive_rank, defensive_rank, home_away_rank, clean_sheet_percentage = generate_form_guide_plotly(away_team, away_team_tag, matchday, df_season)
+        fig_away, avg_goals_scored, avg_goals_conceded, offensive_rank, defensive_rank, home_away_rank, clean_sheet_percentage = generate_form_guide_plotly(away_team, away_team_tag, matchday, df_season, is_current_season)
         if fig_away:
             create_stat_box(fig_away, avg_goals_scored, avg_goals_conceded, offensive_rank, defensive_rank, home_away_rank, clean_sheet_percentage, is_home_team=False)
+       
