@@ -12,6 +12,7 @@ from modules.heat_map import display_heat_map
 from modules.histogram import display_histogram
 from modules.first_and_second import filter_leg_matches, calculate_leg_points, plot_leg_table
 from modules.cross_table import display_cross_table_view
+from modules.home_away import filter_home_away_matches, calculate_home_away_points, plot_home_away_table
 
 def display_bundesliga_page():
     # Load data once, to be used across the app

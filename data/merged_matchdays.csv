@@ -6,10 +6,10 @@ Matchday,Date,Time,Location,Home Team,Away Team,Home Goals,Away Goals,Result,Ger
 1,19/08/2023,13:30,Volkswagen Arena,WOB,HDH,2,0,Home Win,2,0,Home Win,2,0,Home Win,1,0,Home Win,3,0,Home Win,1,1,Tie,3,1,Home Win,1,1,Tie
 1,19/08/2023,13:30,BayArena,B04,RBL,3,2,Home Win,1,2,Away Win,2,2,Tie,1,2,Away Win,1,1,Tie,1,3,Away Win,2,2,Tie,2,2,Tie
 1,19/08/2023,16:30,SIGNAL IDUNA PARK,BVB,KOE,1,0,Home Win,2,1,Home Win,3,1,Home Win,3,1,Home Win,2,1,Home Win,3,1,Home Win,1,2,Away Win,3,0,Home Win
-1,20/08/2023,13:30,An der Alten Försterei,1. FC Union Berlin,M05,4,1,Home Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win
+1,20/08/2023,13:30,Stadion an der Alten Försterei,FCU,M05,4,1,Home Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win
 1,20/08/2023,15:30,Deutsche Bank Park,SGE,D98,1,0,Home Win,2,0,Home Win,5,0,Home Win,2,0,Home Win,3,1,Home Win,2,0,Home Win,3,0,Home Win,3,1,Home Win
 2,25/08/2023,18:30,Red Bull Arena,RBL,VFB,5,1,Home Win,2,1,Home Win,3,0,Home Win,2,0,Home Win,2,1,Home Win,3,1,Home Win,3,1,Home Win,3,0,Home Win
-2,26/08/2023,13:30,Merck-Stadion am Böllenfalltor,D98,1. FC Union Berlin,1,4,Away Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win
+2,26/08/2023,13:30,Merck-Stadion am Böllenfalltor,D98,FCU,1,4,Away Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win
 2,26/08/2023,13:30,Voith-Arena,HDH,TSG,2,3,Away Win,0,2,Away Win,0,0,Tie,0,1,Away Win,1,2,Away Win,1,1,Tie,1,2,Away Win,1,0,Home Win
 2,26/08/2023,13:30,Vonovia Ruhrstadion,BOC,BVB,1,1,Tie,0,2,Away Win,1,3,Away Win,0,2,Away Win,1,3,Away Win,1,3,Away Win,1,3,Away Win,0,1,Away Win
 2,26/08/2023,13:30,RheinEnergieSTADION,KOE,WOB,1,2,Away Win,2,1,Home Win,1,1,Tie,1,0,Home Win,2,1,Home Win,2,0,Home Win,2,1,Home Win,1,0,Home Win
@@ -25,11 +25,11 @@ Matchday,Date,Time,Location,Home Team,Away Team,Home Goals,Away Goals,Result,Ger
 3,02/09/2023,13:30,BayArena,B04,D98,5,1,Home Win,3,0,Home Win,4,0,Home Win,3,0,Home Win,4,1,Home Win,2,0,Home Win,3,0,Home Win,4,0,Home Win
 3,02/09/2023,16:30,BORUSSIA-PARK,BMG,FCB,1,2,Away Win,0,3,Away Win,1,3,Away Win,1,3,Away Win,1,4,Away Win,1,3,Away Win,1,3,Away Win,1,3,Away Win
 3,03/09/2023,13:30,Deutsche Bank Park,SGE,KOE,1,1,Tie,1,2,Away Win,2,1,Home Win,0,1,Away Win,1,1,Tie,1,2,Away Win,1,2,Away Win,2,2,Tie
-3,03/09/2023,15:30,An der Alten Försterei,1. FC Union Berlin,RBL,0,3,Away Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win
+3,03/09/2023,15:30,Stadion an der Alten Försterei,FCU,RBL,0,3,Away Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win
 4,15/09/2023,18:30,Allianz Arena,FCB,B04,2,2,Tie,2,1,Home Win,3,2,Home Win,2,1,Home Win,2,2,Tie,1,2,Away Win,2,2,Tie,2,2,Tie
 4,16/09/2023,13:30,RheinEnergieSTADION,KOE,TSG,1,3,Away Win,2,1,Home Win,2,1,Home Win,2,1,Home Win,1,1,Tie,2,2,Tie,3,1,Home Win,3,1,Home Win
 4,16/09/2023,13:30,MEWA ARENA,M05,VFB,1,3,Away Win,1,2,Away Win,1,1,Tie,1,2,Away Win,1,2,Away Win,1,2,Away Win,2,2,Tie,1,2,Away Win
-4,16/09/2023,13:30,Volkswagen Arena,WOB,1. FC Union Berlin,2,1,Home Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win
+4,16/09/2023,13:30,Volkswagen Arena,WOB,FCU,2,1,Home Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win
 4,16/09/2023,13:30,Europa-Park Stadion,SCF,BVB,2,4,Away Win,1,2,Away Win,2,1,Home Win,1,2,Away Win,1,1,Tie,2,2,Tie,1,2,Away Win,1,1,Tie
 4,16/09/2023,13:30,Red Bull Arena,RBL,FCA,3,0,Home Win,2,0,Home Win,3,0,Home Win,3,0,Home Win,3,0,Home Win,2,0,Home Win,3,1,Home Win,3,0,Home Win
 4,16/09/2023,16:30,Vonovia Ruhrstadion,BOC,SGE,1,1,Tie,0,1,Away Win,0,2,Away Win,0,1,Away Win,2,1,Home Win,0,1,Away Win,1,3,Away Win,2,1,Home Win
@@ -38,14 +38,14 @@ Matchday,Date,Time,Location,Home Team,Away Team,Home Goals,Away Goals,Result,Ger
 5,22/09/2023,18:30,Mercedes-Benz Arena,VFB,D98,3,1,Home Win,2,0,Home Win,3,1,Home Win,3,1,Home Win,3,1,Home Win,2,1,Home Win,3,1,Home Win,3,0,Home Win
 5,23/09/2023,13:30,WWK ARENA,FCA,M05,2,1,Home Win,2,1,Home Win,1,1,Tie,2,1,Home Win,1,1,Tie,1,1,Tie,2,1,Home Win,1,1,Tie
 5,23/09/2023,13:30,BORUSSIA-PARK,BMG,RBL,0,1,Away Win,1,2,Away Win,0,2,Away Win,1,3,Away Win,2,3,Away Win,1,3,Away Win,2,2,Tie,1,2,Away Win
-5,23/09/2023,13:30,An der Alten Försterei,1. FC Union Berlin,TSG,0,2,Away Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win
+5,23/09/2023,13:30,Stadion an der Alten Försterei,FCU,TSG,0,2,Away Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win
 5,23/09/2023,13:30,SIGNAL IDUNA PARK,BVB,WOB,1,0,Home Win,2,1,Home Win,1,2,Away Win,2,1,Home Win,2,1,Home Win,2,2,Tie,1,2,Away Win,2,2,Tie
 5,23/09/2023,13:30,Allianz Arena,FCB,BOC,7,0,Home Win,4,0,Home Win,5,1,Home Win,4,0,Home Win,5,1,Home Win,4,2,Home Win,5,0,Home Win,4,0,Home Win
 5,23/09/2023,16:30,wohninvest WESERSTADION,SVW,KOE,2,1,Home Win,0,1,Away Win,2,1,Home Win,1,1,Tie,2,2,Tie,2,2,Tie,2,3,Away Win,2,2,Tie
 5,24/09/2023,13:30,BayArena,B04,HDH,4,1,Home Win,4,1,Home Win,3,1,Home Win,3,1,Home Win,4,0,Home Win,3,0,Home Win,4,1,Home Win,4,0,Home Win
 5,24/09/2023,15:30,Deutsche Bank Park,SGE,SCF,0,0,Tie,1,0,Home Win,0,0,Tie,2,1,Home Win,1,2,Away Win,1,1,Tie,2,2,Tie,2,1,Home Win
 6,29/09/2023,18:30,PreZero Arena,TSG,BVB,1,3,Away Win,1,2,Away Win,2,2,Tie,1,2,Away Win,2,2,Tie,1,2,Away Win,2,2,Tie,2,2,Tie
-6,30/09/2023,13:30,Voith-Arena,HDH,1. FC Union Berlin,1,0,Home Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win
+6,30/09/2023,13:30,Voith-Arena,HDH,FCU,1,0,Home Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win
 6,30/09/2023,13:30,Vonovia Ruhrstadion,BOC,BMG,1,3,Away Win,0,2,Away Win,1,1,Tie,1,2,Away Win,2,2,Tie,0,1,Away Win,1,2,Away Win,3,1,Home Win
 6,30/09/2023,13:30,RheinEnergieSTADION,KOE,VFB,0,2,Away Win,1,0,Home Win,1,2,Away Win,2,1,Home Win,1,2,Away Win,2,1,Home Win,2,1,Home Win,1,2,Away Win
 6,30/09/2023,13:30,MEWA ARENA,M05,B04,0,3,Away Win,2,3,Away Win,0,3,Away Win,1,3,Away Win,1,3,Away Win,0,4,Away Win,1,3,Away Win,1,4,Away Win
@@ -57,7 +57,7 @@ Matchday,Date,Time,Location,Home Team,Away Team,Home Goals,Away Goals,Result,Ger
 7,07/10/2023,13:30,Mercedes-Benz Arena,VFB,WOB,3,1,Home Win,2,2,Tie,3,2,Home Win,2,1,Home Win,2,0,Home Win,4,1,Home Win,1,2,Away Win,2,2,Tie
 7,07/10/2023,13:30,WWK ARENA,FCA,D98,1,2,Away Win,2,1,Home Win,1,1,Tie,2,1,Home Win,2,1,Home Win,1,2,Away Win,2,1,Home Win,1,1,Tie
 7,07/10/2023,13:30,Red Bull Arena,RBL,BOC,0,0,Tie,3,1,Home Win,4,0,Home Win,3,0,Home Win,4,0,Home Win,3,1,Home Win,5,0,Home Win,4,0,Home Win
-7,07/10/2023,13:30,SIGNAL IDUNA PARK,BVB,1. FC Union Berlin,4,2,Home Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win
+7,07/10/2023,13:30,SIGNAL IDUNA PARK,BVB,FCU,4,2,Home Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win
 7,07/10/2023,16:30,wohninvest WESERSTADION,SVW,TSG,2,3,Away Win,1,2,Away Win,1,2,Away Win,1,2,Away Win,1,2,Away Win,1,2,Away Win,1,2,Away Win,1,2,Away Win
 7,08/10/2023,13:30,BayArena,B04,KOE,3,0,Home Win,3,1,Home Win,3,1,Home Win,3,1,Home Win,3,0,Home Win,3,0,Home Win,1,3,Away Win,2,2,Tie
 7,08/10/2023,15:30,Allianz Arena,FCB,SCF,3,0,Home Win,3,1,Home Win,5,0,Home Win,3,1,Home Win,3,0,Home Win,2,2,Tie,4,1,Home Win,3,1,Home Win
@@ -67,14 +67,14 @@ Matchday,Date,Time,Location,Home Team,Away Team,Home Goals,Away Goals,Result,Ger
 8,21/10/2023,13:30,PreZero Arena,TSG,SGE,1,3,Away Win,1,1,Tie,2,1,Home Win,2,1,Home Win,1,1,Tie,1,1,Tie,2,2,Tie,1,1,Tie
 8,21/10/2023,13:30,Volkswagen Arena,WOB,B04,1,2,Away Win,1,3,Away Win,1,2,Away Win,1,3,Away Win,1,3,Away Win,1,3,Away Win,2,3,Away Win,1,2,Away Win
 8,21/10/2023,13:30,Europa-Park Stadion,SCF,BOC,2,1,Home Win,2,0,Home Win,2,0,Home Win,2,1,Home Win,2,0,Home Win,2,0,Home Win,3,1,Home Win,3,1,Home Win
-8,21/10/2023,13:30,An der Alten Försterei,1. FC Union Berlin,VFB,0,3,Away Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win
+8,21/10/2023,13:30,Stadion an der Alten Försterei,FCU,VFB,0,3,Away Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win
 8,21/10/2023,16:30,MEWA ARENA,M05,FCB,1,3,Away Win,1,3,Away Win,0,3,Away Win,1,3,Away Win,0,3,Away Win,0,4,Away Win,2,4,Away Win,0,5,Away Win
 8,22/10/2023,13:30,RheinEnergieSTADION,KOE,BMG,3,1,Home Win,2,2,Tie,1,2,Away Win,2,1,Home Win,1,1,Tie,1,2,Away Win,2,1,Home Win,2,1,Home Win
 8,22/10/2023,15:30,Voith-Arena,HDH,FCA,2,5,Away Win,2,2,Tie,2,2,Tie,2,1,Home Win,2,2,Tie,1,0,Home Win,1,2,Away Win,2,1,Home Win
 9,27/10/2023,18:30,Vonovia Ruhrstadion,BOC,M05,2,2,Tie,1,2,Away Win,2,2,Tie,2,1,Home Win,0,1,Away Win,2,1,Home Win,1,2,Away Win,3,1,Home Win
 9,28/10/2023,13:30,Mercedes-Benz Arena,VFB,TSG,2,3,Away Win,2,1,Home Win,2,1,Home Win,2,1,Home Win,2,1,Home Win,2,1,Home Win,1,2,Away Win,3,1,Home Win
 9,28/10/2023,13:30,WWK ARENA,FCA,WOB,3,2,Home Win,1,2,Away Win,1,1,Tie,1,2,Away Win,2,1,Home Win,0,2,Away Win,2,2,Tie,1,1,Tie
-9,28/10/2023,13:30,wohninvest WESERSTADION,SVW,1. FC Union Berlin,2,0,Home Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win
+9,28/10/2023,13:30,wohninvest WESERSTADION,SVW,FCU,2,0,Home Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win
 9,28/10/2023,13:30,BORUSSIA-PARK,BMG,HDH,2,1,Home Win,1,0,Home Win,2,1,Home Win,2,1,Home Win,2,1,Home Win,3,1,Home Win,3,1,Home Win,2,1,Home Win
 9,28/10/2023,13:30,Allianz Arena,FCB,D98,8,0,Home Win,3,0,Home Win,5,0,Home Win,4,0,Home Win,5,1,Home Win,5,0,Home Win,5,0,Home Win,5,1,Home Win
 9,28/10/2023,16:30,Red Bull Arena,RBL,KOE,6,0,Home Win,2,1,Home Win,3,0,Home Win,2,2,Tie,3,1,Home Win,2,2,Tie,1,3,Away Win,3,2,Home Win
@@ -85,7 +85,7 @@ Matchday,Date,Time,Location,Home Team,Away Team,Home Goals,Away Goals,Result,Ger
 10,04/11/2023,14:30,RheinEnergieSTADION,KOE,FCA,1,1,Tie,2,1,Home Win,1,1,Tie,2,1,Home Win,2,1,Home Win,1,3,Away Win,3,1,Home Win,3,1,Home Win
 10,04/11/2023,14:30,MEWA ARENA,M05,RBL,2,0,Home Win,0,3,Away Win,0,4,Away Win,1,3,Away Win,1,3,Away Win,0,3,Away Win,2,1,Home Win,0,3,Away Win
 10,04/11/2023,14:30,Europa-Park Stadion,SCF,BMG,3,3,Tie,2,1,Home Win,2,1,Home Win,3,1,Home Win,2,0,Home Win,2,2,Tie,2,2,Tie,1,2,Away Win
-10,04/11/2023,14:30,An der Alten Försterei,1. FC Union Berlin,SGE,0,3,Away Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win
+10,04/11/2023,14:30,Stadion an der Alten Försterei,FCU,SGE,0,3,Away Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win
 10,04/11/2023,17:30,SIGNAL IDUNA PARK,BVB,FCB,0,4,Away Win,1,2,Away Win,1,5,Away Win,2,2,Tie,2,1,Home Win,2,4,Away Win,2,2,Tie,2,4,Away Win
 10,05/11/2023,14:30,Volkswagen Arena,WOB,SVW,2,2,Tie,2,1,Home Win,3,0,Home Win,2,1,Home Win,2,1,Home Win,2,1,Home Win,1,3,Away Win,2,1,Home Win
 10,05/11/2023,16:30,Voith-Arena,HDH,VFB,2,0,Home Win,1,2,Away Win,1,3,Away Win,1,2,Away Win,1,3,Away Win,0,3,Away Win,1,2,Away Win,1,2,Away Win
@@ -95,14 +95,14 @@ Matchday,Date,Time,Location,Home Team,Away Team,Home Goals,Away Goals,Result,Ger
 11,11/11/2023,14:30,WWK ARENA,FCA,TSG,1,1,Tie,1,2,Away Win,0,0,Tie,1,2,Away Win,1,2,Away Win,0,1,Away Win,3,1,Home Win,1,2,Away Win
 11,11/11/2023,14:30,Allianz Arena,FCB,HDH,4,2,Home Win,4,1,Home Win,5,0,Home Win,3,0,Home Win,4,0,Home Win,6,0,Home Win,6,0,Home Win,6,0,Home Win
 11,11/11/2023,17:30,Vonovia Ruhrstadion,BOC,KOE,1,1,Tie,1,2,Away Win,2,2,Tie,1,2,Away Win,1,1,Tie,1,3,Away Win,1,3,Away Win,2,1,Home Win
-11,12/11/2023,14:30,BayArena,B04,1. FC Union Berlin,4,0,Home Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win
+11,12/11/2023,14:30,BayArena,B04,FCU,4,0,Home Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win
 11,12/11/2023,16:30,wohninvest WESERSTADION,SVW,SGE,2,2,Tie,1,2,Away Win,2,2,Tie,1,1,Tie,1,2,Away Win,1,2,Away Win,2,3,Away Win,2,2,Tie
 11,12/11/2023,18:30,Red Bull Arena,RBL,SCF,3,1,Home Win,2,1,Home Win,4,0,Home Win,2,1,Home Win,2,1,Home Win,3,3,Tie,2,1,Home Win,3,1,Home Win
 12,24/11/2023,19:30,RheinEnergieSTADION,KOE,FCB,0,1,Away Win,1,3,Away Win,0,5,Away Win,1,3,Away Win,1,3,Away Win,1,5,Away Win,2,2,Tie,1,5,Away Win
 12,25/11/2023,14:30,wohninvest WESERSTADION,SVW,B04,0,3,Away Win,1,3,Away Win,1,3,Away Win,1,3,Away Win,1,3,Away Win,0,3,Away Win,1,3,Away Win,1,4,Away Win
 12,25/11/2023,14:30,Volkswagen Arena,WOB,RBL,2,1,Home Win,1,2,Away Win,1,1,Tie,1,2,Away Win,1,2,Away Win,1,3,Away Win,2,2,Tie,1,2,Away Win
 12,25/11/2023,14:30,Europa-Park Stadion,SCF,D98,1,1,Tie,2,0,Home Win,4,1,Home Win,2,1,Home Win,3,1,Home Win,2,0,Home Win,2,1,Home Win,2,1,Home Win
-12,25/11/2023,14:30,An der Alten Försterei,1. FC Union Berlin,FCA,1,1,Tie,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win
+12,25/11/2023,14:30,Stadion an der Alten Försterei,FCU,FCA,1,1,Tie,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win
 12,25/11/2023,14:30,SIGNAL IDUNA PARK,BVB,BMG,4,2,Home Win,2,1,Home Win,2,2,Tie,2,1,Home Win,2,1,Home Win,2,1,Home Win,3,1,Home Win,2,2,Tie
 12,25/11/2023,17:30,Deutsche Bank Park,SGE,VFB,1,2,Away Win,1,1,Tie,1,2,Away Win,2,2,Tie,2,0,Home Win,2,3,Away Win,2,1,Home Win,2,2,Tie
 12,26/11/2023,14:30,Voith-Arena,HDH,BOC,0,0,Tie,2,1,Home Win,2,2,Tie,2,1,Home Win,1,1,Tie,1,1,Tie,1,2,Away Win,1,1,Tie
@@ -115,20 +115,20 @@ Matchday,Date,Time,Location,Home Team,Away Team,Home Goals,Away Goals,Result,Ger
 13,03/12/2023,14:30,MEWA ARENA,M05,SCF,0,1,Away Win,1,2,Away Win,1,1,Tie,1,2,Away Win,1,1,Tie,1,3,Away Win,2,1,Home Win,1,1,Tie
 13,03/12/2023,16:30,BayArena,B04,BVB,1,1,Tie,1,2,Away Win,3,3,Tie,2,1,Home Win,2,2,Tie,2,3,Away Win,2,2,Tie,3,2,Home Win
 13,03/12/2023,18:30,WWK ARENA,FCA,SGE,2,1,Home Win,1,2,Away Win,0,0,Tie,1,2,Away Win,0,2,Away Win,1,2,Away Win,1,2,Away Win,0,1,Away Win
-13,24/01/2024,19:30,Allianz Arena,FCB,1. FC Union Berlin,1,0,Home Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win
+13,24/01/2024,19:30,Allianz Arena,FCB,FCU,1,0,Home Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win
 14,08/12/2023,19:30,PreZero Arena,TSG,BOC,3,1,Home Win,2,1,Home Win,2,1,Home Win,2,1,Home Win,0,1,Away Win,2,0,Home Win,3,1,Home Win,2,1,Home Win
 14,09/12/2023,14:30,Voith-Arena,HDH,D98,3,2,Home Win,1,0,Home Win,3,1,Home Win,2,1,Home Win,2,1,Home Win,2,2,Tie,2,1,Home Win,1,1,Tie
 14,09/12/2023,14:30,wohninvest WESERSTADION,SVW,FCA,2,0,Home Win,2,1,Home Win,2,2,Tie,2,1,Home Win,1,2,Away Win,0,2,Away Win,1,2,Away Win,1,1,Tie
 14,09/12/2023,14:30,Volkswagen Arena,WOB,SCF,0,1,Away Win,1,2,Away Win,2,1,Home Win,2,1,Home Win,1,1,Tie,1,2,Away Win,2,1,Home Win,3,1,Home Win
 14,09/12/2023,14:30,Deutsche Bank Park,SGE,FCB,5,1,Home Win,1,3,Away Win,1,5,Away Win,1,3,Away Win,1,3,Away Win,1,3,Away Win,1,3,Away Win,1,3,Away Win
-14,09/12/2023,14:30,An der Alten Försterei,1. FC Union Berlin,BMG,3,1,Home Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win
+14,09/12/2023,14:30,Stadion an der Alten Försterei,FCU,BMG,3,1,Home Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win
 14,09/12/2023,17:30,SIGNAL IDUNA PARK,BVB,RBL,2,3,Away Win,2,1,Home Win,1,1,Tie,2,1,Home Win,2,1,Home Win,3,2,Home Win,2,2,Tie,3,2,Home Win
 14,10/12/2023,14:30,Mercedes-Benz Arena,VFB,B04,1,1,Tie,1,2,Away Win,1,2,Away Win,1,3,Away Win,2,2,Tie,1,2,Away Win,1,3,Away Win,2,3,Away Win
 14,10/12/2023,16:30,RheinEnergieSTADION,KOE,M05,0,0,Tie,1,0,Home Win,0,1,Away Win,2,1,Home Win,1,0,Home Win,3,1,Home Win,3,0,Home Win,3,1,Home Win
 15,15/12/2023,19:30,BORUSSIA-PARK,BMG,SVW,2,2,Tie,2,1,Home Win,1,1,Tie,2,1,Home Win,2,0,Home Win,1,2,Away Win,3,1,Home Win,3,1,Home Win
 15,16/12/2023,14:30,Merck-Stadion am Böllenfalltor,D98,WOB,0,1,Away Win,0,1,Away Win,0,2,Away Win,1,2,Away Win,2,2,Tie,1,2,Away Win,1,3,Away Win,0,2,Away Win
 15,16/12/2023,14:30,WWK ARENA,FCA,BVB,1,1,Tie,1,2,Away Win,1,3,Away Win,2,3,Away Win,2,3,Away Win,2,4,Away Win,1,2,Away Win,1,2,Away Win
-15,16/12/2023,14:30,Vonovia Ruhrstadion,BOC,1. FC Union Berlin,3,0,Home Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win
+15,16/12/2023,14:30,Vonovia Ruhrstadion,BOC,FCU,3,0,Home Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win
 15,16/12/2023,14:30,MEWA ARENA,M05,HDH,0,1,Away Win,1,1,Tie,2,1,Home Win,2,1,Home Win,2,0,Home Win,0,1,Away Win,2,0,Home Win,1,1,Tie
 15,16/12/2023,17:30,Red Bull Arena,RBL,TSG,3,1,Home Win,2,0,Home Win,2,1,Home Win,2,1,Home Win,1,0,Home Win,2,2,Tie,2,1,Home Win,3,1,Home Win
 15,17/12/2023,14:30,Europa-Park Stadion,SCF,KOE,2,0,Home Win,1,0,Home Win,1,0,Home Win,2,1,Home Win,2,0,Home Win,2,0,Home Win,1,3,Away Win,2,1,Home Win
@@ -137,7 +137,7 @@ Matchday,Date,Time,Location,Home Team,Away Team,Home Goals,Away Goals,Result,Ger
 16,19/12/2023,17:30,wohninvest WESERSTADION,SVW,RBL,1,1,Tie,1,2,Away Win,1,1,Tie,1,2,Away Win,1,2,Away Win,0,3,Away Win,1,2,Away Win,0,1,Away Win
 16,19/12/2023,19:30,PreZero Arena,TSG,D98,3,3,Tie,2,0,Home Win,2,1,Home Win,2,0,Home Win,2,0,Home Win,2,0,Home Win,2,0,Home Win,0,1,Away Win
 16,19/12/2023,19:30,SIGNAL IDUNA PARK,BVB,M05,1,1,Tie,2,1,Home Win,2,0,Home Win,2,0,Home Win,2,1,Home Win,3,1,Home Win,3,1,Home Win,0,1,Away Win
-16,20/12/2023,17:30,An der Alten Försterei,1. FC Union Berlin,KOE,2,0,Home Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win
+16,20/12/2023,17:30,Stadion an der Alten Försterei,FCU,KOE,2,0,Home Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win
 16,20/12/2023,19:30,Voith-Arena,HDH,SCF,3,2,Home Win,1,1,Tie,2,1,Home Win,1,2,Away Win,1,3,Away Win,0,2,Away Win,1,2,Away Win,2,2,Tie
 16,20/12/2023,19:30,Mercedes-Benz Arena,VFB,FCA,3,0,Home Win,2,1,Home Win,2,1,Home Win,2,1,Home Win,2,0,Home Win,3,0,Home Win,2,2,Tie,4,1,Home Win
 16,20/12/2023,19:30,Volkswagen Arena,WOB,FCB,1,2,Away Win,1,3,Away Win,1,2,Away Win,1,3,Away Win,0,2,Away Win,1,4,Away Win,1,3,Away Win,2,3,Away Win
@@ -147,7 +147,7 @@ Matchday,Date,Time,Location,Home Team,Away Team,Home Goals,Away Goals,Result,Ger
 17,13/01/2024,14:30,WWK ARENA,FCA,B04,0,1,Away Win,1,3,Away Win,1,2,Away Win,1,4,Away Win,1,3,Away Win,1,3,Away Win,1,3,Away Win,1,3,Away Win
 17,13/01/2024,14:30,RheinEnergieSTADION,KOE,HDH,1,1,Tie,1,1,Tie,1,1,Tie,2,1,Home Win,2,1,Home Win,2,1,Home Win,2,1,Home Win,2,1,Home Win
 17,13/01/2024,14:30,MEWA ARENA,M05,WOB,1,1,Tie,1,1,Tie,1,2,Away Win,0,1,Away Win,2,1,Home Win,0,2,Away Win,2,3,Away Win,1,1,Tie
-17,13/01/2024,14:30,Europa-Park Stadion,SCF,1. FC Union Berlin,0,0,Tie,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win
+17,13/01/2024,14:30,Europa-Park Stadion,SCF,FCU,0,0,Tie,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win
 17,13/01/2024,14:30,Red Bull Arena,RBL,SGE,0,1,Away Win,2,1,Home Win,2,1,Home Win,2,1,Home Win,2,2,Tie,1,2,Away Win,3,2,Home Win,3,1,Home Win
 17,13/01/2024,17:30,Merck-Stadion am Böllenfalltor,D98,BVB,0,3,Away Win,0,2,Away Win,2,4,Away Win,1,3,Away Win,0,2,Away Win,1,3,Away Win,1,3,Away Win,1,2,Away Win
 17,14/01/2024,14:30,Vonovia Ruhrstadion,BOC,SVW,1,1,Tie,1,0,Home Win,1,1,Tie,2,1,Home Win,2,0,Home Win,1,1,Tie,1,1,Tie,2,0,Home Win
@@ -160,7 +160,7 @@ Matchday,Date,Time,Location,Home Team,Away Team,Home Goals,Away Goals,Result,Ger
 18,20/01/2024,17:30,Red Bull Arena,RBL,B04,2,3,Away Win,1,3,Away Win,2,2,Tie,2,1,Home Win,1,2,Away Win,2,2,Tie,2,3,Away Win,2,2,Tie
 18,21/01/2024,14:30,Allianz Arena,FCB,SVW,0,1,Away Win,3,1,Home Win,5,0,Home Win,3,0,Home Win,4,0,Home Win,0,4,Away Win,5,1,Home Win,4,0,Home Win
 18,21/01/2024,16:30,BORUSSIA-PARK,BMG,FCA,1,2,Away Win,2,1,Home Win,2,1,Home Win,2,2,Tie,2,1,Home Win,2,1,Home Win,3,1,Home Win,2,1,Home Win
-18,07/02/2024,17:30,MEWA ARENA,M05,1. FC Union Berlin,1,1,Tie,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win
+18,07/02/2024,17:30,MEWA ARENA,M05,FCU,1,1,Tie,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win
 19,26/01/2024,19:30,Deutsche Bank Park,SGE,M05,1,0,Home Win,2,1,Home Win,1,0,Home Win,2,1,Home Win,3,1,Home Win,2,0,Home Win,2,1,Home Win,3,1,Home Win
 19,27/01/2024,14:30,Mercedes-Benz Arena,VFB,RBL,5,2,Home Win,2,1,Home Win,2,2,Tie,0,2,Away Win,2,2,Tie,2,2,Tie,2,3,Away Win,2,2,Tie
 19,27/01/2024,14:30,WWK ARENA,FCA,FCB,2,3,Away Win,1,2,Away Win,1,2,Away Win,1,2,Away Win,1,2,Away Win,0,3,Away Win,1,4,Away Win,1,3,Away Win
@@ -168,7 +168,7 @@ Matchday,Date,Time,Location,Home Team,Away Team,Home Goals,Away Goals,Result,Ger
 19,27/01/2024,14:30,PreZero Arena,TSG,HDH,1,1,Tie,1,1,Tie,4,2,Home Win,2,1,Home Win,2,1,Home Win,1,2,Away Win,2,1,Home Win,1,1,Tie
 19,27/01/2024,14:30,Volkswagen Arena,WOB,KOE,1,1,Tie,1,0,Home Win,2,1,Home Win,2,0,Home Win,2,0,Home Win,2,2,Tie,1,2,Away Win,2,1,Home Win
 19,27/01/2024,17:30,BayArena,B04,BMG,0,0,Tie,2,1,Home Win,4,1,Home Win,3,1,Home Win,3,1,Home Win,4,1,Home Win,3,1,Home Win,3,1,Home Win
-19,28/01/2024,14:30,An der Alten Försterei,1. FC Union Berlin,D98,1,0,Home Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win
+19,28/01/2024,14:30,Stadion an der Alten Försterei,FCU,D98,1,0,Home Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win
 19,28/01/2024,16:30,SIGNAL IDUNA PARK,BVB,BOC,3,1,Home Win,2,1,Home Win,2,1,Home Win,2,1,Home Win,2,0,Home Win,3,0,Home Win,3,1,Home Win,3,1,Home Win
 20,02/02/2024,19:30,Voith-Arena,HDH,BVB,0,0,Tie,1,3,Away Win,2,3,Away Win,1,2,Away Win,0,1,Away Win,1,2,Away Win,1,3,Away Win,1,3,Away Win
 20,03/02/2024,14:30,Merck-Stadion am Böllenfalltor,D98,B04,0,2,Away Win,1,2,Away Win,0,3,Away Win,0,2,Away Win,0,3,Away Win,0,4,Away Win,0,3,Away Win,0,4,Away Win
@@ -178,20 +178,20 @@ Matchday,Date,Time,Location,Home Team,Away Team,Home Goals,Away Goals,Result,Ger
 20,03/02/2024,14:30,Allianz Arena,FCB,BMG,3,1,Home Win,3,1,Home Win,4,1,Home Win,3,1,Home Win,2,0,Home Win,0,3,Away Win,4,1,Home Win,3,1,Home Win
 20,03/02/2024,17:30,RheinEnergieSTADION,KOE,SGE,2,0,Home Win,2,1,Home Win,1,1,Tie,1,0,Home Win,1,2,Away Win,0,2,Away Win,2,1,Home Win,2,1,Home Win
 20,04/02/2024,14:30,Volkswagen Arena,WOB,TSG,2,2,Tie,2,1,Home Win,2,2,Tie,1,1,Tie,2,3,Away Win,1,3,Away Win,2,1,Home Win,2,1,Home Win
-20,04/02/2024,16:30,Red Bull Arena,RBL,1. FC Union Berlin,2,0,Home Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win
+20,04/02/2024,16:30,Red Bull Arena,RBL,FCU,2,0,Home Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win
 21,09/02/2024,19:30,SIGNAL IDUNA PARK,BVB,SCF,3,0,Home Win,2,1,Home Win,0,0,Tie,2,1,Home Win,2,1,Home Win,2,0,Home Win,3,1,Home Win,3,1,Home Win
 21,10/02/2024,14:30,WWK ARENA,FCA,RBL,2,2,Tie,1,2,Away Win,1,3,Away Win,1,2,Away Win,2,1,Home Win,1,2,Away Win,1,3,Away Win,1,2,Away Win
 21,10/02/2024,14:30,wohninvest WESERSTADION,SVW,HDH,1,2,Away Win,2,1,Home Win,3,1,Home Win,2,1,Home Win,2,1,Home Win,1,3,Away Win,1,0,Home Win,2,2,Tie
 21,10/02/2024,14:30,BORUSSIA-PARK,BMG,D98,0,0,Tie,2,1,Home Win,2,1,Home Win,2,0,Home Win,3,1,Home Win,1,0,Home Win,2,0,Home Win,3,0,Home Win
 21,10/02/2024,14:30,Deutsche Bank Park,SGE,BOC,1,1,Tie,2,1,Home Win,2,0,Home Win,3,1,Home Win,2,0,Home Win,2,0,Home Win,3,1,Home Win,1,1,Tie
-21,10/02/2024,14:30,An der Alten Försterei,1. FC Union Berlin,WOB,1,0,Home Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win
+21,10/02/2024,14:30,Stadion an der Alten Försterei,FCU,WOB,1,0,Home Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win
 21,10/02/2024,17:30,BayArena,B04,FCB,3,0,Home Win,1,2,Away Win,2,3,Away Win,2,2,Tie,2,1,Home Win,2,2,Tie,2,2,Tie,3,2,Home Win
 21,11/02/2024,14:30,Mercedes-Benz Arena,VFB,M05,3,1,Home Win,2,0,Home Win,2,0,Home Win,3,0,Home Win,3,0,Home Win,3,0,Home Win,1,2,Away Win,4,0,Home Win
 21,11/02/2024,16:30,PreZero Arena,TSG,KOE,1,1,Tie,1,1,Tie,2,1,Home Win,1,1,Tie,2,0,Home Win,1,1,Tie,1,2,Away Win,1,2,Away Win
 22,16/02/2024,19:30,RheinEnergieSTADION,KOE,SVW,0,1,Away Win,2,1,Home Win,0,0,Tie,2,1,Home Win,2,1,Home Win,2,1,Home Win,3,1,Home Win,3,1,Home Win
 22,17/02/2024,14:30,Merck-Stadion am Böllenfalltor,D98,VFB,1,2,Away Win,1,2,Away Win,0,3,Away Win,0,2,Away Win,1,3,Away Win,0,2,Away Win,1,2,Away Win,0,3,Away Win
 22,17/02/2024,14:30,Voith-Arena,HDH,B04,1,2,Away Win,1,3,Away Win,1,4,Away Win,1,3,Away Win,0,3,Away Win,0,4,Away Win,1,3,Away Win,1,3,Away Win
-22,17/02/2024,14:30,PreZero Arena,TSG,1. FC Union Berlin,0,1,Away Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win
+22,17/02/2024,14:30,PreZero Arena,TSG,FCU,0,1,Away Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win
 22,17/02/2024,14:30,MEWA ARENA,M05,FCA,1,0,Home Win,1,1,Tie,1,1,Tie,2,1,Home Win,1,2,Away Win,1,1,Tie,1,0,Home Win,1,1,Tie
 22,17/02/2024,14:30,Volkswagen Arena,WOB,BVB,1,1,Tie,1,2,Away Win,2,1,Home Win,1,2,Away Win,0,2,Away Win,1,3,Away Win,1,2,Away Win,1,2,Away Win
 22,17/02/2024,17:30,Red Bull Arena,RBL,BMG,2,0,Home Win,2,1,Home Win,2,1,Home Win,2,0,Home Win,2,0,Home Win,2,0,Home Win,2,1,Home Win,2,2,Tie
@@ -201,7 +201,7 @@ Matchday,Date,Time,Location,Home Team,Away Team,Home Goals,Away Goals,Result,Ger
 23,24/02/2024,14:30,Mercedes-Benz Arena,VFB,KOE,1,1,Tie,2,0,Home Win,4,1,Home Win,3,0,Home Win,2,0,Home Win,1,1,Tie,1,2,Away Win,3,1,Home Win
 23,24/02/2024,14:30,wohninvest WESERSTADION,SVW,D98,1,1,Tie,2,1,Home Win,1,0,Home Win,2,0,Home Win,2,0,Home Win,0,0,Tie,2,0,Home Win,2,1,Home Win
 23,24/02/2024,14:30,BORUSSIA-PARK,BMG,BOC,5,2,Home Win,2,1,Home Win,2,1,Home Win,2,1,Home Win,1,1,Tie,0,1,Away Win,2,1,Home Win,1,2,Away Win
-23,24/02/2024,14:30,An der Alten Försterei,1. FC Union Berlin,HDH,2,2,Tie,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win
+23,24/02/2024,14:30,Stadion an der Alten Försterei,FCU,HDH,2,2,Tie,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win
 23,24/02/2024,17:30,Allianz Arena,FCB,RBL,2,1,Home Win,3,1,Home Win,3,2,Home Win,2,1,Home Win,2,2,Tie,2,4,Away Win,3,1,Home Win,2,2,Tie
 23,25/02/2024,14:30,Deutsche Bank Park,SGE,WOB,2,2,Tie,2,2,Tie,1,2,Away Win,2,0,Home Win,2,0,Home Win,1,2,Away Win,1,2,Away Win,1,1,Tie
 23,25/02/2024,16:30,SIGNAL IDUNA PARK,BVB,TSG,2,3,Away Win,2,1,Home Win,2,1,Home Win,3,1,Home Win,2,1,Home Win,3,1,Home Win,3,1,Home Win,3,2,Home Win
@@ -211,11 +211,11 @@ Matchday,Date,Time,Location,Home Team,Away Team,Home Goals,Away Goals,Result,Ger
 24,02/03/2024,14:30,Voith-Arena,HDH,SGE,1,2,Away Win,1,1,Tie,1,1,Tie,2,2,Tie,2,2,Tie,2,1,Home Win,1,3,Away Win,1,1,Tie
 24,02/03/2024,14:30,Vonovia Ruhrstadion,BOC,RBL,1,4,Away Win,1,0,Home Win,1,3,Away Win,1,2,Away Win,1,1,Tie,0,2,Away Win,1,3,Away Win,2,2,Tie
 24,02/03/2024,14:30,MEWA ARENA,M05,BMG,1,1,Tie,1,2,Away Win,2,1,Home Win,2,1,Home Win,1,2,Away Win,1,1,Tie,2,2,Tie,1,1,Tie
-24,02/03/2024,14:30,An der Alten Försterei,1. FC Union Berlin,BVB,0,2,Away Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win
+24,02/03/2024,14:30,Stadion an der Alten Försterei,FCU,BVB,0,2,Away Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win
 24,02/03/2024,17:30,Volkswagen Arena,WOB,VFB,2,3,Away Win,1,2,Away Win,0,0,Tie,1,1,Tie,1,2,Away Win,2,3,Away Win,2,1,Home Win,2,1,Home Win
 24,03/03/2024,14:30,RheinEnergieSTADION,KOE,B04,0,2,Away Win,1,3,Away Win,1,3,Away Win,1,3,Away Win,1,3,Away Win,1,4,Away Win,2,2,Tie,1,3,Away Win
 24,03/03/2024,16:30,PreZero Arena,TSG,SVW,2,1,Home Win,1,2,Away Win,2,1,Home Win,2,1,Home Win,2,1,Home Win,2,0,Home Win,2,0,Home Win,2,1,Home Win
-25,08/03/2024,19:30,Mercedes-Benz Arena,VFB,1. FC Union Berlin,2,0,Home Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win
+25,08/03/2024,19:30,Mercedes-Benz Arena,VFB,FCU,2,0,Home Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win
 25,09/03/2024,14:30,WWK ARENA,FCA,HDH,1,0,Home Win,2,1,Home Win,2,1,Home Win,3,2,Home Win,2,1,Home Win,2,2,Tie,3,1,Home Win,1,1,Tie
 25,09/03/2024,14:30,BORUSSIA-PARK,BMG,KOE,3,3,Tie,1,1,Tie,0,1,Away Win,1,2,Away Win,2,1,Home Win,1,1,Tie,1,2,Away Win,1,2,Away Win
 25,09/03/2024,14:30,Red Bull Arena,RBL,D98,2,0,Home Win,2,1,Home Win,3,0,Home Win,3,0,Home Win,3,0,Home Win,2,0,Home Win,3,1,Home Win,5,0,Home Win
@@ -229,13 +229,13 @@ Matchday,Date,Time,Location,Home Team,Away Team,Home Goals,Away Goals,Result,Ger
 26,16/03/2024,14:30,Voith-Arena,HDH,BMG,1,1,Tie,2,1,Home Win,2,1,Home Win,2,2,Tie,2,1,Home Win,2,1,Home Win,1,2,Away Win,2,1,Home Win
 26,16/03/2024,14:30,MEWA ARENA,M05,BOC,2,0,Home Win,0,1,Away Win,3,2,Home Win,2,1,Home Win,1,1,Tie,0,2,Away Win,2,0,Home Win,1,1,Tie
 26,16/03/2024,14:30,Volkswagen Arena,WOB,FCA,1,3,Away Win,2,2,Tie,1,1,Tie,1,1,Tie,2,2,Tie,1,1,Tie,3,1,Home Win,1,1,Tie
-26,16/03/2024,14:30,An der Alten Försterei,1. FC Union Berlin,SVW,2,1,Home Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win
+26,16/03/2024,14:30,Stadion an der Alten Försterei,FCU,SVW,2,1,Home Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win
 26,16/03/2024,17:30,PreZero Arena,TSG,VFB,0,3,Away Win,1,2,Away Win,1,1,Tie,1,3,Away Win,1,2,Away Win,1,2,Away Win,2,2,Tie,1,3,Away Win
 26,17/03/2024,14:30,Europa-Park Stadion,SCF,B04,2,3,Away Win,1,2,Away Win,2,2,Tie,1,2,Away Win,1,2,Away Win,2,3,Away Win,2,3,Away Win,2,2,Tie
 26,17/03/2024,16:30,SIGNAL IDUNA PARK,BVB,SGE,3,1,Home Win,2,1,Home Win,2,1,Home Win,2,1,Home Win,2,1,Home Win,2,2,Tie,2,1,Home Win,3,1,Home Win
 27,30/03/2024,14:30,wohninvest WESERSTADION,SVW,WOB,0,2,Away Win,1,1,Tie,1,2,Away Win,1,2,Away Win,3,1,Home Win,1,1,Tie,1,2,Away Win,1,1,Tie
 27,30/03/2024,14:30,BORUSSIA-PARK,BMG,SCF,0,3,Away Win,1,2,Away Win,1,2,Away Win,2,2,Tie,1,2,Away Win,1,2,Away Win,2,1,Home Win,1,2,Away Win
-27,30/03/2024,14:30,Deutsche Bank Park,SGE,1. FC Union Berlin,0,0,Tie,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win
+27,30/03/2024,14:30,Deutsche Bank Park,SGE,FCU,0,0,Tie,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win
 27,30/03/2024,14:30,BayArena,B04,TSG,2,1,Home Win,2,1,Home Win,3,0,Home Win,2,0,Home Win,3,1,Home Win,3,1,Home Win,2,0,Home Win,3,1,Home Win
 27,30/03/2024,14:30,Red Bull Arena,RBL,M05,0,0,Tie,2,1,Home Win,2,2,Tie,2,0,Home Win,3,0,Home Win,2,0,Home Win,3,1,Home Win,4,1,Home Win
 27,30/03/2024,17:30,Allianz Arena,FCB,BVB,0,2,Away Win,2,1,Home Win,4,1,Home Win,3,1,Home Win,1,1,Tie,2,1,Home Win,2,2,Tie,3,1,Home Win
@@ -247,11 +247,11 @@ Matchday,Date,Time,Location,Home Team,Away Team,Home Goals,Away Goals,Result,Ger
 28,06/04/2024,13:30,RheinEnergieSTADION,KOE,BOC,2,1,Home Win,2,1,Home Win,2,3,Away Win,2,0,Home Win,2,1,Home Win,3,2,Home Win,2,0,Home Win,2,1,Home Win
 28,06/04/2024,13:30,MEWA ARENA,M05,D98,4,0,Home Win,1,0,Home Win,4,1,Home Win,3,1,Home Win,3,1,Home Win,2,2,Tie,3,1,Home Win,1,1,Tie
 28,06/04/2024,13:30,Europa-Park Stadion,SCF,RBL,1,4,Away Win,1,2,Away Win,2,1,Home Win,1,2,Away Win,2,2,Tie,1,2,Away Win,2,2,Tie,2,2,Tie
-28,06/04/2024,13:30,An der Alten Försterei,1. FC Union Berlin,B04,0,1,Away Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win
+28,06/04/2024,13:30,Stadion an der Alten Försterei,FCU,B04,0,1,Away Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win
 28,06/04/2024,16:30,SIGNAL IDUNA PARK,BVB,VFB,0,1,Away Win,2,1,Home Win,2,2,Tie,3,2,Home Win,2,1,Home Win,2,2,Tie,2,0,Home Win,3,2,Home Win
 28,07/04/2024,13:30,PreZero Arena,TSG,FCA,3,1,Home Win,1,1,Tie,2,2,Tie,2,1,Home Win,2,0,Home Win,1,2,Away Win,2,2,Tie,1,1,Tie
 28,07/04/2024,15:30,Volkswagen Arena,WOB,BMG,1,3,Away Win,2,1,Home Win,1,1,Tie,2,1,Home Win,2,2,Tie,1,1,Tie,2,1,Home Win,3,1,Home Win
-29,12/04/2024,18:30,WWK ARENA,FCA,1. FC Union Berlin,2,0,Home Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win
+29,12/04/2024,18:30,WWK ARENA,FCA,FCU,2,0,Home Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win
 29,13/04/2024,13:30,Vonovia Ruhrstadion,BOC,HDH,1,1,Tie,1,2,Away Win,2,2,Tie,2,2,Tie,2,2,Tie,1,3,Away Win,2,2,Tie,1,0,Home Win
 29,13/04/2024,13:30,BORUSSIA-PARK,BMG,BVB,1,2,Away Win,1,2,Away Win,1,2,Away Win,1,1,Tie,1,2,Away Win,0,2,Away Win,1,2,Away Win,2,1,Home Win
 29,13/04/2024,13:30,MEWA ARENA,M05,TSG,4,1,Home Win,1,0,Home Win,1,1,Tie,2,1,Home Win,1,2,Away Win,1,1,Tie,2,2,Tie,1,1,Tie
@@ -265,7 +265,7 @@ Matchday,Date,Time,Location,Home Team,Away Team,Home Goals,Away Goals,Result,Ger
 30,20/04/2024,13:30,PreZero Arena,TSG,BMG,4,3,Home Win,1,1,Tie,1,1,Tie,2,0,Home Win,3,2,Home Win,1,1,Tie,1,2,Away Win,2,2,Tie
 30,20/04/2024,13:30,RheinEnergieSTADION,KOE,D98,0,2,Away Win,2,1,Home Win,2,1,Home Win,2,0,Home Win,2,0,Home Win,3,1,Home Win,3,1,Home Win,3,1,Home Win
 30,20/04/2024,13:30,Volkswagen Arena,WOB,BOC,1,0,Home Win,2,1,Home Win,3,1,Home Win,2,1,Home Win,3,1,Home Win,2,0,Home Win,2,0,Home Win,1,1,Tie
-30,20/04/2024,16:30,An der Alten Försterei,1. FC Union Berlin,FCB,1,5,Away Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win
+30,20/04/2024,16:30,Stadion an der Alten Försterei,FCU,FCB,1,5,Away Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win
 30,21/04/2024,13:30,wohninvest WESERSTADION,SVW,VFB,2,1,Home Win,1,2,Away Win,1,3,Away Win,1,2,Away Win,0,2,Away Win,0,2,Away Win,2,0,Home Win,0,2,Away Win
 30,21/04/2024,15:30,SIGNAL IDUNA PARK,BVB,B04,1,1,Tie,2,1,Home Win,2,2,Tie,2,1,Home Win,2,1,Home Win,2,3,Away Win,2,1,Home Win,2,2,Tie
 30,21/04/2024,17:30,Europa-Park Stadion,SCF,M05,1,1,Tie,1,0,Home Win,2,2,Tie,1,1,Tie,3,1,Home Win,2,0,Home Win,2,2,Tie,2,0,Home Win
@@ -275,7 +275,7 @@ Matchday,Date,Time,Location,Home Team,Away Team,Home Goals,Away Goals,Result,Ger
 31,27/04/2024,13:30,Red Bull Arena,RBL,BVB,4,1,Home Win,1,2,Away Win,2,1,Home Win,2,1,Home Win,1,1,Tie,2,2,Tie,1,2,Away Win,2,2,Tie
 31,27/04/2024,13:30,Allianz Arena,FCB,SGE,2,1,Home Win,3,1,Home Win,4,0,Home Win,3,1,Home Win,2,1,Home Win,3,0,Home Win,4,1,Home Win,4,1,Home Win
 31,27/04/2024,16:30,BayArena,B04,VFB,2,2,Tie,2,1,Home Win,3,1,Home Win,2,1,Home Win,3,2,Home Win,2,2,Tie,2,1,Home Win,4,2,Home Win
-31,28/04/2024,13:30,BORUSSIA-PARK,BMG,1. FC Union Berlin,0,0,Tie,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win
+31,28/04/2024,13:30,BORUSSIA-PARK,BMG,FCU,0,0,Tie,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win
 31,28/04/2024,15:30,MEWA ARENA,M05,KOE,1,1,Tie,1,1,Tie,3,0,Home Win,2,0,Home Win,2,0,Home Win,2,1,Home Win,1,3,Away Win,2,0,Home Win
 31,28/04/2024,17:30,Merck-Stadion am Böllenfalltor,D98,HDH,0,1,Away Win,1,2,Away Win,1,2,Away Win,1,2,Away Win,1,2,Away Win,1,3,Away Win,1,2,Away Win,0,1,Away Win
 32,03/05/2024,18:30,PreZero Arena,TSG,RBL,1,1,Tie,0,1,Away Win,1,2,Away Win,1,2,Away Win,1,2,Away Win,1,1,Tie,1,2,Away Win,1,3,Away Win
@@ -284,11 +284,11 @@ Matchday,Date,Time,Location,Home Team,Away Team,Home Goals,Away Goals,Result,Ger
 32,04/05/2024,13:30,Volkswagen Arena,WOB,D98,3,0,Home Win,2,1,Home Win,2,0,Home Win,2,1,Home Win,2,0,Home Win,2,0,Home Win,3,0,Home Win,2,1,Home Win
 32,04/05/2024,13:30,SIGNAL IDUNA PARK,BVB,FCA,5,1,Home Win,2,1,Home Win,2,2,Tie,2,1,Home Win,2,1,Home Win,2,2,Tie,3,1,Home Win,3,1,Home Win
 32,04/05/2024,16:30,RheinEnergieSTADION,KOE,SCF,0,0,Tie,1,1,Tie,0,2,Away Win,1,0,Home Win,2,1,Home Win,2,1,Home Win,2,0,Home Win,2,1,Home Win
-32,05/05/2024,13:30,An der Alten Försterei,1. FC Union Berlin,BOC,3,4,Away Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win
+32,05/05/2024,13:30,Stadion an der Alten Försterei,FCU,BOC,3,4,Away Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win,1,0,Home Win
 32,05/05/2024,15:30,Deutsche Bank Park,SGE,B04,1,5,Away Win,1,2,Away Win,2,2,Tie,1,1,Tie,2,2,Tie,1,1,Tie,1,2,Away Win,2,2,Tie
 32,05/05/2024,17:30,Voith-Arena,HDH,M05,1,1,Tie,2,1,Home Win,3,3,Tie,1,1,Tie,1,3,Away Win,4,1,Home Win,2,1,Home Win,2,0,Home Win
 33,10/05/2024,18:30,WWK ARENA,FCA,VFB,0,1,Away Win,1,2,Away Win,1,2,Away Win,1,2,Away Win,1,2,Away Win,0,2,Away Win,2,2,Tie,0,3,Away Win
-33,11/05/2024,13:30,RheinEnergieSTADION,KOE,1. FC Union Berlin,3,2,Home Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win
+33,11/05/2024,13:30,RheinEnergieSTADION,KOE,FCU,3,2,Home Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win
 33,11/05/2024,13:30,BORUSSIA-PARK,BMG,SGE,1,1,Tie,1,2,Away Win,2,2,Tie,1,1,Tie,1,1,Tie,1,0,Home Win,2,1,Home Win,2,2,Tie
 33,11/05/2024,13:30,Europa-Park Stadion,SCF,HDH,1,1,Tie,1,0,Home Win,4,1,Home Win,2,0,Home Win,2,0,Home Win,1,1,Tie,2,0,Home Win,2,1,Home Win
 33,11/05/2024,13:30,Red Bull Arena,RBL,SVW,1,1,Tie,2,1,Home Win,2,1,Home Win,3,1,Home Win,3,1,Home Win,3,1,Home Win,3,1,Home Win,3,1,Home Win
@@ -303,5 +303,5 @@ Matchday,Date,Time,Location,Home Team,Away Team,Home Goals,Away Goals,Result,Ger
 34,18/05/2024,13:30,Volkswagen Arena,WOB,M05,1,3,Away Win,2,1,Home Win,1,1,Tie,2,2,Tie,2,1,Home Win,1,0,Home Win,2,1,Home Win,1,2,Away Win
 34,18/05/2024,13:30,Deutsche Bank Park,SGE,RBL,2,2,Tie,1,2,Away Win,2,2,Tie,1,1,Tie,1,2,Away Win,0,1,Away Win,2,2,Tie,1,2,Away Win
 34,18/05/2024,13:30,BayArena,B04,FCA,2,1,Home Win,3,1,Home Win,3,1,Home Win,3,0,Home Win,4,0,Home Win,2,0,Home Win,4,1,Home Win,4,1,Home Win
-34,18/05/2024,13:30,An der Alten Försterei,1. FC Union Berlin,SCF,2,1,Home Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win
+34,18/05/2024,13:30,Stadion an der Alten Försterei,FCU,SCF,2,1,Home Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win,0,1,Away Win
 34,18/05/2024,13:30,SIGNAL IDUNA PARK,BVB,D98,4,0,Home Win,2,1,Home Win,4,0,Home Win,3,0,Home Win,3,0,Home Win,2,0,Home Win,5,1,Home Win,4,0,Home Win
