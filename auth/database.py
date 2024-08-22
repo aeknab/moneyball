@@ -29,6 +29,7 @@ def initialize_db():
         CREATE TABLE IF NOT EXISTS user_groups (
             user_id INTEGER,
             group_id INTEGER,
+            is_admin BOOLEAN DEFAULT 0,
             FOREIGN KEY (user_id) REFERENCES users(id),
             FOREIGN KEY (group_id) REFERENCES groups(id),
             PRIMARY KEY (user_id, group_id)
