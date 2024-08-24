@@ -153,28 +153,68 @@ def display_groups_page():
             # Update the `Rank` column to reflect the correct ranking (1 to 7)
             table_data["Rank"] = ["", "Rank"] + list(range(1, len(sorted_indices) - 1))
 
-            # Construct the HTML table
-            table_html = "<table>"
+            # Construct the HTML table with styles
+            table_html = """
+            <style>
+            .styled-table {
+                border-collapse: collapse;
+                margin: 25px 0;
+                font-size: 0.9em;
+                font-family: 'Sans-serif', Arial, Helvetica, sans-serif;
+                width: 100%;
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+                border-radius: 15px;
+                overflow: hidden;
+                background-color: rgba(255, 255, 255, 0.5);
+                border: 2px solid #696969;
+            }
+            .styled-table thead tr {
+                background-color: rgba(14, 17, 23, 0.70);
+                color: #ffffff;
+                text-align: left;
+            }
+            .styled-table th,
+            .styled-table td {
+                padding: 12px 15px;
+                text-align: center;
+            }
+            .styled-table tbody tr {
+                background-color: rgba(14, 17, 23, 0.35);
+                border-bottom: 1px solid rgba(97, 101, 114, 0.9);
+            }
+            .styled-table tbody tr:last-of-type {
+                border-bottom: 2px solid rgba(97, 101, 114, 0.9);
+            }
+            </style>
+            <table class="styled-table">
+            <thead>
+                <tr>
+                    <th></th> <!-- Empty header for Rank -->
+                    <th></th> <!-- Empty header for Name -->
+            """
 
-            # Add the first row for fixtures
-            fixtures_row_html = "<tr><td></td><td></td>"  # Start with two empty cells
+            # Add headers for matches
             for match_name in match_names:
-                fixtures_row_html += f"<td>{match_name}</td>"
-            fixtures_row_html += "<td></td></tr>"  # Empty cell at the end
-            table_html += fixtures_row_html
+                table_html += f"<th>{match_name}</th>"
+            table_html += "<th></th></tr></thead><tbody>"  # Empty header for Points
+
+            # Add the row for actual results
+            table_html += "<tr><td>Rank</td><td>Name</td>"  # Rank and Name headers in the second row
+            for match_name in match_names:
+                table_html += f"<td>{table_data[match_name][1]}</td>"  # Actual match results
+            table_html += "<td>Points</td></tr>"  # Points header in the second row
 
             # Add the rest of the rows
-            for i in range(len(table_data["Rank"])):
-                row_html = "<tr>"
+            for i in range(2, len(table_data["Rank"])):
+                table_html += "<tr>"
                 for col in table_data.keys():
-                    row_html += f"<td>{table_data[col][i]}</td>"
-                row_html += "</tr>"
-                table_html += row_html
-            table_html += "</table>"
+                    table_html += f"<td>{table_data[col][i]}</td>"
+                table_html += "</tr>"
+
+            table_html += "</tbody></table>"
 
             # Display the HTML table with st.markdown
             st.markdown(table_html, unsafe_allow_html=True)
-
 
         elif section == "Predictions":
             st.subheader(f"Enter Predictions for Matchday {matchday}")
