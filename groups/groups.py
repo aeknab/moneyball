@@ -1,14 +1,30 @@
 import streamlit as st
 import pandas as pd
-from auth.database import fetch_all
+from auth.database import fetch_all, execute_query
 from groups.group_predictions import display_matchday_predictions
+from ChatGPT.prompt_template import prompt_template
+from openai import OpenAI
+
+client = OpenAI(api_key="sk-o0hrLU1sy_khDaVw-sFP1pnIOP-SLylV1lC-gaOgLWT3BlbkFJ7b2I0vPST6fT6vgTB90vaf-DIDxpOg00Z8ax3cOhIA")
+
+def format_points(points):
+    """Formats points with color based on the score."""
+    if points == 0:
+        return f"<span style='color:grey'>({points})</span>"
+    elif points == 2:
+        return f"<span style='color:yellow'>({points})</span>"
+    elif points == 3:
+        return f"<span style='color:orange'>({points})</span>"
+    elif points == 4:
+        return f"<span style='color:red'>({points})</span>"
+    return f"({points})"
 
 def display_groups_page():
     st.title("My Groups")
 
     # Fetch the user's groups from the database
     groups = fetch_all('''
-        SELECT g.* 
+        SELECT g.*, ug.is_admin 
         FROM groups g 
         JOIN user_groups ug ON g.id = ug.group_id 
         WHERE ug.user_id = ?
@@ -20,18 +36,29 @@ def display_groups_page():
 
         # Find the selected group data
         selected_group = next(group for group in groups if group['name'] == selected_group_name)
+        is_admin = selected_group['is_admin']
 
         st.write(f"Group Name: {selected_group['name']}")
         st.write(f"Description: {selected_group['description']}")
 
-        # Section Selection (Overview, Matchday, Predictions)
-        section = st.radio("Section", ["Overview", "Matchday", "Predictions"])
+        if is_admin:
+            if st.button("Delete Group"):
+                execute_query('DELETE FROM groups WHERE id = ?', (selected_group['id'],))
+                execute_query('DELETE FROM user_groups WHERE group_id = ?', (selected_group['id'],))
+                st.success("Group deleted successfully!")
+                st.experimental_rerun()
+
+        # Section Selection (Overview, Matchday, Predictions, Summary)
+        section = st.radio("Section", ["Overview", "Matchday", "Predictions", "Summary"])
 
         # Matchday Dropdown - Most recent matchday on top
         matchday = st.selectbox("Select Matchday", options=list(range(1, 35))[::-1])
 
         # Load the merged_rankings.csv file for both Overview and Matchday sections
         rankings_df = pd.read_csv("data/merged_rankings.csv")
+
+        # Load and filter the merged_matchdays.csv file
+        matchdays_df = pd.read_csv("data/merged_matchdays.csv")
 
         if section == "Overview":
             st.subheader(f"Group Overview for Matchday {matchday}")
@@ -52,9 +79,6 @@ def display_groups_page():
         elif section == "Matchday":
             st.subheader(f"Matchday {matchday} Overview")
 
-            # Load and filter the merged_matchdays.csv file
-            matchdays_df = pd.read_csv("data/merged_matchdays.csv")
-
             # Filter by the selected matchday
             filtered_matches = matchdays_df[matchdays_df["Matchday"] == matchday]
 
@@ -62,49 +86,95 @@ def display_groups_page():
             match_names = [f"{row['Home Team']} - {row['Away Team']}" for _, row in filtered_matches.iterrows()]
 
             # Initialize the data structure for the table
-            matchday_data = {
-                "": ["Result", "Andreas", "Gerd", "Geri", "Hermann", "Johnny", "Moddy", "Samson"],
+            table_data = {
+                "Rank": ["", "Rank"] + list(range(1, 8)),
+                "Name": ["", "Result"] + ["Andreas", "Gerd", "Geri", "Hermann", "Johnny", "Moddy", "Samson"]
             }
 
             # Add match columns with predictions
             for match_name in match_names:
-                matchday_data[match_name] = []
+                table_data[match_name] = [""]  # First row empty
 
-            # Add the actual match results first in each match column
-            for _, match_row in filtered_matches.iterrows():
-                matchday_data[f"{match_row['Home Team']} - {match_row['Away Team']}"].append(
-                    f"**{match_row['Home Goals']} - {match_row['Away Goals']}**"
-                )
+                # Extract home and away teams from match_name
+                home_team, away_team = match_name.split(" - ")
 
-            # Fill in predictions for each player
-            for player in matchday_data[""][1:]:  # Skip "Result" row
-                for _, match_row in filtered_matches.iterrows():
-                    home_goals = match_row[f"{player} Home Goals Predicted"]
-                    away_goals = match_row[f"{player} Away Goals Predicted"]
-                    matchday_data[f"{match_row['Home Team']} - {match_row['Away Team']}"].append(f"{home_goals}-{away_goals}")
+                # Get the actual results for the match
+                home_goals_actual = filtered_matches.loc[
+                    (filtered_matches['Home Team'] == home_team) & (filtered_matches['Away Team'] == away_team), 
+                    'Home Goals'
+                ].values[0]
 
-            # Filter and load points from rankings_df
-            points_df = rankings_df[(rankings_df["Spieltag"] == matchday) & (rankings_df["Name"].isin(matchday_data[""][1:]))]
-            points_dict = dict(zip(points_df["Name"], points_df["Punkte"]))
+                away_goals_actual = filtered_matches.loc[
+                    (filtered_matches['Home Team'] == home_team) & (filtered_matches['Away Team'] == away_team), 
+                    'Away Goals'
+                ].values[0]
 
-            # Calculate the sum of points for all players for the "Result" row
-            total_points_sum = sum(points_dict.values())
+                # Append the actual results to the table_data
+                table_data[match_name].append(f"{home_goals_actual}:{away_goals_actual}")
 
-            # Add points to the table and sort by points
-            matchday_data["Points"] = [f"**{total_points_sum}**"] + [f"**{points_dict.get(player, 0)}**" for player in matchday_data[""][1:]]
+                # Loop through players and get their predictions
+                for player in table_data["Name"][2:]:
+                    home_goals_pred = filtered_matches.loc[
+                        (filtered_matches['Home Team'] == home_team) & (filtered_matches['Away Team'] == away_team), 
+                        f"{player} Home Goals Predicted"
+                    ].values[0]
 
-            # Ensure all columns have the same length
-            max_length = max(len(col) for col in matchday_data.values())
-            for key in matchday_data:
-                while len(matchday_data[key]) < max_length:
-                    matchday_data[key].append("")
+                    away_goals_pred = filtered_matches.loc[
+                        (filtered_matches['Home Team'] == home_team) & (filtered_matches['Away Team'] == away_team), 
+                        f"{player} Away Goals Predicted"
+                    ].values[0]
 
-            # Create DataFrame and display
-            matchday_df = pd.DataFrame(matchday_data)
-            matchday_df["Points"] = pd.to_numeric(matchday_df["Points"].str.replace("**", "", regex=False), errors='coerce').fillna(0).astype(int)
-            matchday_df = matchday_df.sort_values(by="Points", ascending=False)
+                    points = calculate_points(
+                        home_goals_pred, away_goals_pred, home_goals_actual, away_goals_actual
+                    )
 
-            st.table(matchday_df)
+                    formatted_points = format_points(points)  # Apply color formatting
+                    prediction = f"{home_goals_pred}:{away_goals_pred} {formatted_points}"
+                    table_data[match_name].append(prediction)
+
+            # Add points column
+            table_data["Points"] = ["", "Points"] + [f"{int(rankings_df.loc[(rankings_df['Spieltag'] == matchday) & (rankings_df['Name'] == player), 'Punkte'].values[0])}" for player in table_data["Name"][2:]]
+
+            # Extract points as integers for sorting
+            points_values = [int(point) for point in table_data["Points"][2:]]
+
+            # Get sorted indices based on points (in descending order)
+            sorted_indices = sorted(range(len(points_values)), key=lambda i: points_values[i], reverse=True)
+
+            # Adjust sorted_indices to match the positions in `table_data`
+            sorted_indices = [i + 2 for i in sorted_indices]  # Shift by 2 to account for headers
+
+            # Include the first two rows (header and 'Result') in the sorted data
+            sorted_indices = [0, 1] + sorted_indices
+
+            # Rearrange table_data according to sorted_indices
+            table_data = {k: [table_data[k][i] for i in sorted_indices] for k in table_data.keys()}
+
+            # Update the `Rank` column to reflect the correct ranking (1 to 7)
+            table_data["Rank"] = ["", "Rank"] + list(range(1, len(sorted_indices) - 1))
+
+            # Construct the HTML table
+            table_html = "<table>"
+
+            # Add the first row for fixtures
+            fixtures_row_html = "<tr><td></td><td></td>"  # Start with two empty cells
+            for match_name in match_names:
+                fixtures_row_html += f"<td>{match_name}</td>"
+            fixtures_row_html += "<td></td></tr>"  # Empty cell at the end
+            table_html += fixtures_row_html
+
+            # Add the rest of the rows
+            for i in range(len(table_data["Rank"])):
+                row_html = "<tr>"
+                for col in table_data.keys():
+                    row_html += f"<td>{table_data[col][i]}</td>"
+                row_html += "</tr>"
+                table_html += row_html
+            table_html += "</table>"
+
+            # Display the HTML table with st.markdown
+            st.markdown(table_html, unsafe_allow_html=True)
+
 
         elif section == "Predictions":
             st.subheader(f"Enter Predictions for Matchday {matchday}")
@@ -126,5 +196,70 @@ def display_groups_page():
                     st.write(f"Match ID: {prediction['match_id']}, Home Goals: {prediction['home_goals']}, Away Goals: {prediction['away_goals']}")
             else:
                 st.write("No predictions found.")
+                
+        elif section == "Summary":
+            st.subheader(f"Matchday {matchday} Summary")
+
+            # Filter by the selected matchday
+            filtered_matches = matchdays_df[matchdays_df["Matchday"] == matchday]
+
+            # Ensure that filtered_matches and sorted_df are populated
+            filtered_df = rankings_df[rankings_df["Spieltag"] == matchday]
+            sorted_df = filtered_df.sort_values(by="Rang")
+
+            if not filtered_matches.empty and not sorted_df.empty:
+                # Generate the matchday summary
+                matchday_summary = generate_summary(filtered_matches, selected_group_name, sorted_df, matchday, len(groups))
+
+                # Display the generated summary
+                if matchday_summary:
+                    st.write(matchday_summary)
+                else:
+                    st.write("No summary could be generated.")
+            else:
+                st.write("No data available for this matchday.")
+
+def calculate_points(pred_home, pred_away, actual_home, actual_away):
+    """Calculates points based on prediction and actual results."""
+    pred_diff = pred_home - pred_away
+    actual_diff = actual_home - actual_away
+
+    if pred_home == actual_home and pred_away == actual_away:
+        return 4  # Exact score
+    elif pred_diff == actual_diff:
+        if pred_diff == 0:  # Both predicted and actual results are ties but with different scores
+            return 2
+        return 3  # Correct goal difference
+    elif (pred_home > pred_away and actual_home > actual_away) or (pred_home < pred_away and actual_home < actual_away):
+        return 2  # Correct outcome/tendency
     else:
-        st.write("You are not part of any groups yet.")
+        return 0  # Wrong prediction
+
+def generate_summary(filtered_matches, selected_group_name, sorted_df, matchday, group_size):
+    """Generates a summary using OpenAI API."""
+
+    # Prepare the match results and player scores
+    match_results = "\n".join([f"{row['Home Team']} {row['Home Goals']}:{row['Away Goals']} {row['Away Team']}" for _, row in filtered_matches.iterrows()])
+    player_scores = "\n".join([f"{row['Rang']}. {row['Name']} - {row['Gesamtpunkte']} points" for _, row in sorted_df.iterrows()])
+
+    # Fill in the prompt with the dynamic data
+    prompt = prompt_template.format(
+        group_size=group_size,
+        matchday=matchday,
+        match_results=match_results,
+        player_scores=player_scores
+    )
+
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": prompt}
+            ],
+            max_tokens=1000,
+            temperature=0.7
+        )
+        return response.choices[0].message.content.strip()
+    except Exception as e:
+        return f"An error occurred while generating the summary: {e}"

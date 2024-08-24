@@ -135,10 +135,8 @@ def display_match_preview(df):
         if selected_season == '2023/24':
             st.markdown("""
                 <style>
-                .goal-input {
-                    text-align: center;
-                    width: 40px !important;
-                    font-size: 20px;
+                div[data-baseweb="input"] {
+                    margin-top: 0px !important;  /* Force the input fields to move up */
                 }
                 </style>
             """, unsafe_allow_html=True)
@@ -146,16 +144,16 @@ def display_match_preview(df):
             col2_left, col2_mid, col2_right = st.columns([1, 0.2, 1])
 
             with col2_left:
-                home_goals = st.number_input("", min_value=0, max_value=11, value=0, step=1, key="home_goals", format="%d")
+                home_goals = col2_left.number_input("", min_value=0, max_value=11, value=0, step=1, key="home_goals", format="%d")
             with col2_mid:
                 st.markdown("<div style='font-size: 30px;'>:</div>", unsafe_allow_html=True)
             with col2_right:
-                away_goals = st.number_input("", min_value=0, max_value=11, value=0, step=1, key="away_goals", format="%d")
+                away_goals = col2_right.number_input("", min_value=0, max_value=11, value=0, step=1, key="away_goals", format="%d")
         else:
             # Display the outcome for previous seasons
             match_outcome = f"{selected_match_row['Home Goals']} : {selected_match_row['Away Goals']}"
             st.markdown(
-                f"<div style='text-align: center; font-size: 60px; font-family: Courier; color: #FFFF4F; margin-top: -30px;'>{match_outcome}</div>",
+                f"<div style='text-align: center; font-size: 60px; font-family: Courier; color: #FFFF4F; margin-top: -10px;'>{match_outcome}</div>",
                 unsafe_allow_html=True
             )
 

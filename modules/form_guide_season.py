@@ -73,7 +73,7 @@ def generate_form_guide_plotly(team, team_tag, matchday, df_season, is_current_s
     fig = go.Figure(data=[go.Pie(
         labels=labels,
         values=values,
-        hole=.7,
+        hole=.6,
         marker=dict(
             colors=colors,
             line=dict(color=border_colors, width=2)  # Add border colors and set width

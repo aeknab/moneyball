@@ -35,15 +35,18 @@ def display_pie_chart(df, selected_season, selected_matchday):
 
     # Create the pie chart using Plotly
     fig = go.Figure(data=[go.Pie(
-        labels=list(results.keys()),
-        values=list(results.values()),
-        hole=.4,  # Makes it a donut chart
+        labels=['Home Win', 'Tie', 'Away Win'],  # Explicit order: Wins first, then ties, then losses
+        values=[results['Home Win'], results['Tie'], results['Away Win']],  # Corresponding values in order
+        hole=.4,  # Adjusted to make the donut ring thicker
         marker=dict(colors=colors, line=dict(color=border_colors, width=2)),
-        textinfo='percent',  # Only show percentages in bold
-        textfont=dict(size=18, color='black', family='Arial', weight='bold'),  # Bold font
-        hoverinfo='label+value+text',  # Show the number of events and the total
-        texttemplate='%{percent:.1%}',  # Format the percentage
-        hovertemplate='%{label}:<br>%{value}/' + str(total_matches) + '<extra></extra>',  # Custom hover text
+        textinfo='percent',
+        textfont=dict(size=18, color='black', family='Arial', weight='bold'),
+        hoverinfo='label+value+text',
+        texttemplate='%{percent:.1%}',
+        hovertemplate='%{label}:<br>%{value}/' + str(total_matches) + '<extra></extra>',
+        sort=False,  # Explicitly do not sort slices by size
+        direction='clockwise',  # Ensure sections are placed in a clockwise order
+        rotation=90  # Start "Home Win" at the 12 o'clock position
     )])
 
     # Add a circular background in the center of the donut chart

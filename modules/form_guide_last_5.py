@@ -57,10 +57,22 @@ def display_form_guide(df_season, team_tag, matchday):
     for i, (index, match) in enumerate(last_5_matches.iterrows()):
         # Determine if the team being analyzed was the home or away team in this match
         is_home_team = match['Home Tag'] == team_tag
+
+        # Get the correct score format with home goals on the left and away goals on the right
         if is_home_team:
-            result, score = get_result_and_score(match['Home Goals'], match['Away Goals'])
+            score = f"{match['Home Goals']} - {match['Away Goals']}"
         else:
-            result, score = get_result_and_score(match['Away Goals'], match['Home Goals'])
+            score = f"{match['Home Goals']} - {match['Away Goals']}"
+
+        # Determine the result from the team's perspective
+        team_goals = match['Home Goals'] if is_home_team else match['Away Goals']
+        opponent_goals = match['Away Goals'] if is_home_team else match['Home Goals']
+        if team_goals > opponent_goals:
+            result = 'W'  # Win
+        elif team_goals < opponent_goals:
+            result = 'L'  # Loss
+        else:
+            result = 'T'  # Tie
 
         # Set color based on the result from the perspective of the team_tag
         color, border_color = get_result_color(result)
@@ -71,28 +83,16 @@ def display_form_guide(df_season, team_tag, matchday):
         # Create the panel layout
         with cols[i]:
             # Place logos according to home/away status
-            if is_home_team:
-                st.markdown(
-                    f"<div style='background-color:{color}; padding:5px; text-align:center; border-radius:5px; border: 2px solid {border_color};'>"
-                    f"<div style='display: flex; justify-content: center; align-items: center;'>"
-                    f"<div style='padding-right: 3px;'><img src='data:image/png;base64,{image_to_base64(home_logo_resized)}' style='height:auto; width:50px;' /></div>"
-                    f"<div style='padding-left: 3px;'><img src='data:image/png;base64,{image_to_base64(away_logo_resized)}' style='height:auto; width:50px;' /></div>"
-                    f"</div>"
-                    f"<div style='margin-top:5px; font-size:14px; background-color:rgb(14, 17, 23); color:white; border-radius:12px; padding:3px; border: 1px solid {border_color};'>{score}</div>"
-                    f"</div>", 
-                    unsafe_allow_html=True
-                )
-            else:
-                st.markdown(
-                    f"<div style='background-color:{color}; padding:5px; text-align:center; border-radius:5px; border: 2px solid {border_color};'>"
-                    f"<div style='display: flex; justify-content: center; align-items: center;'>"
-                    f"<div style='padding-right: 3px;'><img src='data:image/png;base64,{image_to_base64(away_logo_resized)}' style='height:auto; width:50px;' /></div>"
-                    f"<div style='padding-left: 3px;'><img src='data:image/png;base64,{image_to_base64(home_logo_resized)}' style='height:auto; width:50px;' /></div>"
-                    f"</div>"
-                    f"<div style='margin-top:5px; font-size:14px; background-color:rgb(14, 17, 23); color:white; border-radius:12px; padding:3px; border: 1px solid {border_color};'>{score}</div>"
-                    f"</div>", 
-                    unsafe_allow_html=True
-                )
+            st.markdown(
+                f"<div style='background-color:{color}; padding:5px; text-align:center; border-radius:5px; border: 2px solid {border_color};'>"
+                f"<div style='display: flex; justify-content: center; align-items: center;'>"
+                f"<div style='padding-right: 3px;'><img src='data:image/png;base64,{image_to_base64(home_logo_resized)}' style='height:auto; width:50px;' /></div>"
+                f"<div style='padding-left: 3px;'><img src='data:image/png;base64,{image_to_base64(away_logo_resized)}' style='height:auto; width:50px;' /></div>"
+                f"</div>"
+                f"<div style='margin-top:5px; font-size:14px; background-color:rgb(14, 17, 23); color:white; border-radius:12px; padding:3px; border: 1px solid {border_color};'>{score}</div>"
+                f"</div>", 
+                unsafe_allow_html=True
+            )
 
 def get_result_and_score(team_goals, opponent_goals):
     """Helper function to determine the result (W, L, T) and format the score."""

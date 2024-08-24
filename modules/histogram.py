@@ -27,19 +27,19 @@ def display_histogram(df, selected_season, selected_matchday):
     # Create the static histogram
     fig = go.Figure()
 
-    # Add histogram with bins of 3
+    # Add histogram with bins of 1 goal
     fig.add_trace(go.Histogram(
         x=total_goals_per_matchday['Total Goals'],
         xbins=dict(
-            start=(min(total_goals_per_matchday['Total Goals']) // 3) * 3 - 1.5,
-            end=(max(total_goals_per_matchday['Total Goals']) // 3) * 3 + 1.5,
-            size=3  # Size of 3 to ensure bins of 3 goals
+            start=(min(total_goals_per_matchday['Total Goals'])) - 0.5,  # Start half a goal before the minimum for proper bin alignment
+            end=(max(total_goals_per_matchday['Total Goals'])) + 0.5,  # End half a goal after the maximum for proper bin alignment
+            size=1  # Size of 1 to ensure each bin represents a single goal
         ),
         histnorm='probability density',
         name='Histogram',
         marker=dict(
-            color='blue',  # Replace with a specific color (you can choose another suitable one)
-            line=dict(color='black', width=1),
+            color='rgba(255, 99, 132, 0.6)',  # Pastel red with transparency
+            line=dict(color='rgba(255, 99, 132, 1.0)', width=1),
         ),
     ))
 
@@ -55,7 +55,7 @@ def display_histogram(df, selected_season, selected_matchday):
         x=x_values,
         y=y_values,
         mode='lines',
-        line=dict(color='darkblue', width=2),
+        line=dict(color='rgba(75, 192, 192, 0.6)', width=2),  # Pastel green with transparency
         name='Density Curve'
     ))
 
@@ -68,7 +68,7 @@ def display_histogram(df, selected_season, selected_matchday):
         x=[mean_value, mean_value],
         y=[0, max(y_values)],
         mode="lines",
-        line=dict(color="green", dash="dash"),
+        line=dict(color="rgba(255, 206, 86, 0.6)", dash="dash"),  # Pastel yellow with transparency
         name=f"Mean: {mean_value:.2f}"
     ))
 
@@ -76,7 +76,7 @@ def display_histogram(df, selected_season, selected_matchday):
         x=[median_value, median_value],
         y=[0, max(y_values)],
         mode="lines",
-        line=dict(color="orange", dash="dash"),
+        line=dict(color="rgba(54, 162, 235, 0.6)", dash="dash"),  # Pastel blue with transparency
         name=f"Median: {median_value:.2f}"
     ))
 
@@ -84,7 +84,7 @@ def display_histogram(df, selected_season, selected_matchday):
         x=[mode_value, mode_value],
         y=[0, max(y_values)],
         mode="lines",
-        line=dict(color="purple", dash="dash"),
+        line=dict(color="rgba(153, 102, 255, 0.6)", dash="dash"),  # Pastel purple with transparency
         name=f"Mode: {mode_value:.2f}"
     ))
 
@@ -93,8 +93,8 @@ def display_histogram(df, selected_season, selected_matchday):
         x=[mu - std, mu + std],
         y=[0, 0],
         mode="lines+markers",
-        line=dict(color="red", dash="dot"),
-        marker=dict(color="red", size=10, symbol="x"),
+        line=dict(color="rgba(255, 159, 64, 0.6)", dash="dot"),  # Pastel orange with transparency
+        marker=dict(color="rgba(255, 159, 64, 1.0)", size=10, symbol="x"),  # Darker orange for markers
         name="1 Std Dev"
     ))
 
@@ -102,8 +102,8 @@ def display_histogram(df, selected_season, selected_matchday):
         x=[mu - 2*std, mu + 2*std],
         y=[0, 0],
         mode="lines+markers",
-        line=dict(color="red", dash="dot"),
-        marker=dict(color="red", size=10, symbol="x"),
+        line=dict(color="rgba(255, 159, 64, 0.6)", dash="dot"),  # Pastel orange with transparency
+        marker=dict(color="rgba(255, 159, 64, 1.0)", size=10, symbol="x"),  # Darker orange for markers
         name="2 Std Dev"
     ))
 
