@@ -1,0 +1,120 @@
+import streamlit as st
+import plotly.graph_objs as go
+import pandas as pd
+
+def display_group_heat_map(matchdays_df, selected_players):
+    st.subheader("Heatmaps")
+
+    # Create two columns for side-by-side heatmaps
+    heatmap_col1, heatmap_col2 = st.columns(2)
+
+    # Heatmap for Group Predictions
+    with heatmap_col1:
+        players_display = ', '.join(selected_players)
+        st.markdown(f"<h4 style='font-size:16px'>{players_display} Predictions Heatmap</h4>", unsafe_allow_html=True)
+        
+        # Initialize a dataframe to accumulate the counts of each home-away goal combination
+        goal_combinations = pd.DataFrame(0, index=range(7), columns=range(7))
+        
+        for player in selected_players:
+            home_col = f'{player} Home Goals Predicted'
+            away_col = f'{player} Away Goals Predicted'
+            
+            # Count occurrences of each home-away goal combination
+            counts = matchdays_df.groupby([home_col, away_col]).size()
+            
+            # Add these counts to the goal_combinations dataframe
+            for (home_goals, away_goals), count in counts.items():
+                if home_goals <= 6 and away_goals <= 6:
+                    goal_combinations.at[home_goals, away_goals] += count
+
+        # Convert index and columns to strings for labeling
+        goal_combinations.index = goal_combinations.index.astype(str)
+        goal_combinations.columns = goal_combinations.columns.astype(str)
+        
+        # Create the heatmap using Plotly
+        fig = go.Figure(data=go.Heatmap(
+            z=goal_combinations.values,
+            x=goal_combinations.columns,
+            y=goal_combinations.index,
+            colorscale='Viridis',
+            showscale=False,
+            text=goal_combinations.values,
+            texttemplate="%{text}",
+            hovertemplate="Home Goals: %{y}<br>Away Goals: %{x}<br>Count: %{z}<extra></extra>"
+        ))
+
+        fig.update_layout(
+            margin=dict(l=10, r=10, t=30, b=10),
+            xaxis=dict(
+                title="Away Goals",
+                range=[-0.5, 6.5],  # Ensure axis length matches the maximum value
+                scaleanchor="y",
+                constrain="domain",
+                tickmode="linear",
+                dtick=1,
+            ),
+            yaxis=dict(
+                title="Home Goals",
+                range=[-0.5, 6.5],  # Ensure axis length matches the maximum value
+                tickmode="linear",
+                dtick=1,
+            ),
+            height=400,
+            width=400  # Ensure square layout
+        )
+
+        st.plotly_chart(fig, use_container_width=True)
+
+    # Heatmap for Bundesliga Actual Results
+    with heatmap_col2:
+        st.markdown("<h4 style='font-size:16px'>Bundesliga Actual Results Heatmap</h4>", unsafe_allow_html=True)
+        
+        # Initialize a dataframe to accumulate the counts of each home-away goal combination
+        goal_combinations_actual = pd.DataFrame(0, index=range(9), columns=range(9))
+        
+        home_goals = matchdays_df['Home Goals']
+        away_goals = matchdays_df['Away Goals']
+        
+        for h_goal, a_goal in zip(home_goals, away_goals):
+            h_index = h_goal if h_goal < 8 else 8
+            a_index = a_goal if a_goal < 8 else 8
+            goal_combinations_actual.at[h_index, a_index] += 1
+
+        # Convert index and columns to strings for labeling
+        goal_combinations_actual.index = goal_combinations_actual.index.astype(str)
+        goal_combinations_actual.columns = goal_combinations_actual.columns.astype(str)
+        
+        # Create the heatmap using Plotly
+        fig_actual = go.Figure(data=go.Heatmap(
+            z=goal_combinations_actual.values,
+            x=goal_combinations_actual.columns,
+            y=goal_combinations_actual.index,
+            colorscale='Viridis',
+            showscale=False,
+            text=goal_combinations_actual.values,
+            texttemplate="%{text}",
+            hovertemplate="Home Goals: %{y}<br>Away Goals: %{x}<br>Count: %{z}<extra></extra>"
+        ))
+
+        fig_actual.update_layout(
+            margin=dict(l=10, r=10, t=30, b=10),
+            xaxis=dict(
+                title="Away Goals",
+                range=[-0.5, 8.5],  # Ensure axis length matches the maximum value
+                scaleanchor="y",
+                constrain="domain",
+                tickmode="linear",
+                dtick=1,
+            ),
+            yaxis=dict(
+                title="Home Goals",
+                range=[0, 8],  # Ensure axis length matches the maximum value
+                tickmode="linear",
+                dtick=1,
+            ),
+            height=400,
+            width=400  # Ensure square layout
+        )
+
+        st.plotly_chart(fig_actual, use_container_width=True)
