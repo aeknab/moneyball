@@ -3,7 +3,7 @@ import plotly.graph_objects as go
 from PIL import Image
 from io import BytesIO
 import base64
-from modules.utils import get_team_colors, resize_image, image_to_base64
+from bundesliga.utils import get_team_colors, resize_image, image_to_base64
 
 # Function to filter matches based on the selected season and leg (1st or 2nd) and matchday
 def filter_leg_matches(df, selected_season, leg, matchday):

@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.graph_objs as go
 from PIL import Image
-from modules.utils import get_team_colors, load_image, resize_image, image_to_base64
+from bundesliga.utils import get_team_colors, load_image, resize_image, image_to_base64
 
 # Function to filter matches based on the selected season and matchday
 def filter_matches_for_season(df, selected_season, matchday):

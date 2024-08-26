@@ -73,8 +73,59 @@ def display_groups_page():
             overview_data = sorted_df[["Rang", "Name", "Punkte", "Gesamtpunkte"]]
             overview_data.columns = ["Rank", "Name", "Matchday Points", "Total Points"]
 
-            # Display the table without the "Matchdays" column and remove the first column
-            st.table(overview_data.set_index("Rank"))
+            # Construct the HTML table with styles for the Overview section
+            table_html = """
+            <style>
+            .styled-table {
+                border-collapse: collapse;
+                margin: 25px 0;
+                font-size: 0.9em;
+                font-family: 'Sans-serif', Arial, Helvetica, sans-serif;
+                width: 100%;
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+                border-radius: 15px;
+                overflow: hidden;
+                background-color: rgba(255, 255, 255, 0.5);
+                border: 2px solid #696969;
+            }
+            .styled-table thead tr {
+                background-color: rgba(14, 17, 23, 0.70);
+                color: #ffffff;
+                text-align: left;
+            }
+            .styled-table th,
+            .styled-table td {
+                padding: 12px 15px;
+                text-align: center;
+            }
+            .styled-table tbody tr {
+                background-color: rgba(14, 17, 23, 0.35);
+                border-bottom: 1px solid rgba(97, 101, 114, 0.9);
+            }
+            .styled-table tbody tr:last-of-type {
+                border-bottom: 2px solid rgba(97, 101, 114, 0.9);
+            }
+            </style>
+            <table class="styled-table">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Name</th>
+                    <th>Matchday Points</th>
+                    <th>Total Points</th>
+                </tr>
+            </thead>
+            <tbody>
+            """
+
+            # Add rows from overview_data
+            for _, row in overview_data.iterrows():
+                table_html += f"<tr><td>{row['Rank']}</td><td>{row['Name']}</td><td>{row['Matchday Points']}</td><td>{row['Total Points']}</td></tr>"
+
+            table_html += "</tbody></table>"
+
+            # Display the HTML table with st.markdown
+            st.markdown(table_html, unsafe_allow_html=True)
 
         elif section == "Matchday":
             st.subheader(f"Matchday {matchday} Overview")
@@ -141,7 +192,7 @@ def display_groups_page():
             # Get sorted indices based on points (in descending order)
             sorted_indices = sorted(range(len(points_values)), key=lambda i: points_values[i], reverse=True)
 
-            # Adjust sorted_indices to match the positions in `table_data`
+            # Adjust sorted_indices to match the positions in table_data
             sorted_indices = [i + 2 for i in sorted_indices]  # Shift by 2 to account for headers
 
             # Include the first two rows (header and 'Result') in the sorted data
@@ -150,7 +201,7 @@ def display_groups_page():
             # Rearrange table_data according to sorted_indices
             table_data = {k: [table_data[k][i] for i in sorted_indices] for k in table_data.keys()}
 
-            # Update the `Rank` column to reflect the correct ranking (1 to 7)
+            # Update the Rank column to reflect the correct ranking (1 to 7)
             table_data["Rank"] = ["", "Rank"] + list(range(1, len(sorted_indices) - 1))
 
             # Construct the HTML table with styles

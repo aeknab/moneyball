@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 from PIL import Image
-from modules.utils import resize_image, load_image
+from bundesliga.utils import resize_image, load_image
 
 def display_match_preview(df):
     st.header("Bundesliga Match Preview")

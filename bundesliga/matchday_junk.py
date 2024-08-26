@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
-from modules.utils import resize_image, get_team_colors, load_image
-from modules.match_preview_functions import get_last_5_matches, get_last_10_meetings, plot_last_10_meetings, generate_form_guide
+from bundesliga.utils import resize_image, get_team_colors, load_image
+from bundesliga.match_preview_functions import get_last_5_matches, get_last_10_meetings, plot_last_10_meetings, generate_form_guide
 
 def display_match_preview(df, colors):
     st.header("Bundesliga Match Preview")

@@ -3,7 +3,7 @@ import plotly.graph_objects as go
 from PIL import Image
 from io import BytesIO
 import base64
-from modules.utils import get_team_colors, resize_image_to_bounding_box, image_to_base64
+from bundesliga.utils import get_team_colors, resize_image_to_bounding_box, image_to_base64
 
 # Function to filter matches based on the selected season and matchday
 def filter_home_away_matches(df, selected_season, matchday):

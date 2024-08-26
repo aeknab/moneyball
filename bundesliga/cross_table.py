@@ -6,7 +6,7 @@ from PIL import Image
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 import os
 import streamlit as st
-from modules.utils import resize_image_to_bounding_box
+from bundesliga.utils import resize_image_to_bounding_box
 
 def display_cross_table_view(df, selected_season, matchday):
     # Mapping of team tags to cities

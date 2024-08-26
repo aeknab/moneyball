@@ -1,18 +1,18 @@
 import streamlit as st
 import pandas as pd
-from modules.data_loader import load_data
-from modules.match_preview import display_match_preview
-from modules.form_guide_last_5 import display_form_guide_section
-from modules.form_guide_last_10 import plot_last_10_meetings
-from modules.form_guide_season import display_donut_charts_side_by_side
-from modules.league_table import display_league_tables
-from modules.bump_chart import display_bump_chart
-from modules.pie_chart import display_pie_chart
-from modules.heat_map import display_heat_map
-from modules.histogram import display_histogram
-from modules.first_and_second import filter_leg_matches, calculate_leg_points, plot_leg_table
-from modules.cross_table import display_cross_table_view
-from modules.home_away import filter_home_away_matches, calculate_home_away_points, plot_home_away_table
+from bundesliga.data_loader import load_data
+from bundesliga.match_preview import display_match_preview
+from bundesliga.form_guide_last_5 import display_form_guide_section
+from bundesliga.form_guide_last_10 import plot_last_10_meetings
+from bundesliga.form_guide_season import display_donut_charts_side_by_side
+from bundesliga.league_table import display_league_tables
+from bundesliga.bump_chart import display_bump_chart
+from bundesliga.pie_chart import display_pie_chart
+from bundesliga.heat_map import display_heat_map
+from bundesliga.histogram import display_histogram
+from bundesliga.first_and_second import filter_leg_matches, calculate_leg_points, plot_leg_table
+from bundesliga.cross_table import display_cross_table_view
+from bundesliga.home_away import filter_home_away_matches, calculate_home_away_points, plot_home_away_table
 
 def display_bundesliga_page():
     # Load data once, to be used across the app

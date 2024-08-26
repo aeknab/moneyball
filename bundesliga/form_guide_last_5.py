@@ -1,7 +1,7 @@
 import streamlit as st
 from PIL import Image
 import numpy as np
-from modules.utils import resize_logo, load_image  # Ensure resize_logo is imported
+from bundesliga.utils import resize_logo, load_image  # Ensure resize_logo is imported
 
 def display_form_guide_section(df, selected_season, selected_matchday, selected_match, df_matches):
     if selected_season != '--' and selected_matchday != '--' and selected_match != '--':

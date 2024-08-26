@@ -5,10 +5,10 @@ import plotly.express as px  # Import plotly.express for animations
 from PIL import Image
 from io import BytesIO
 import base64
-from modules.cross_table import display_cross_table_view
-from modules.utils import get_team_colors, resize_image_to_bounding_box, image_to_base64
-from modules.home_away import filter_home_away_matches, calculate_home_away_points, plot_home_away_table
-from modules.first_and_second import filter_leg_matches, calculate_leg_points, plot_leg_table
+from bundesliga.cross_table import display_cross_table_view
+from bundesliga.utils import get_team_colors, resize_image_to_bounding_box, image_to_base64
+from bundesliga.home_away import filter_home_away_matches, calculate_home_away_points, plot_home_away_table
+from bundesliga.first_and_second import filter_leg_matches, calculate_leg_points, plot_leg_table
 
 # Function to filter matches based on the season and matchday
 def filter_matches(df, selected_season, matchday):
