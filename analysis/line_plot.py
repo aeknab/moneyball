@@ -2,13 +2,11 @@ import streamlit as st
 import plotly.graph_objs as go
 import pandas as pd
 
-def display_line_plot(matchdays_df, selected_players):
-    st.subheader("Line Plot: Goals Prediction vs. Actual Goals")
-
-    # Initialize lists to store data
+def calculate_line_plot_data(matchdays_df, selected_players):
+    """Calculate the data for the line plot of goals prediction vs. actual goals."""
+    predicted_goals = pd.DataFrame()  # To store predicted goals for each player
     player_lines = []
     player_colors = {}
-    predicted_goals = pd.DataFrame()  # To store predicted goals for each player
     actual_goals = []
 
     # Define color palette for players
@@ -43,17 +41,38 @@ def display_line_plot(matchdays_df, selected_players):
     avg_predicted_goals = group_predicted_goals.mean()
     avg_actual_goals = actual_goals.mean()
 
+    # Calculate the prediction range using min and max of player_predicted_goals for each matchday
+    min_predicted_goals = predicted_goals.min(axis=1)
+    max_predicted_goals = predicted_goals.max(axis=1)
+
+    return {
+        "player_lines": player_lines,
+        "group_predicted_goals": group_predicted_goals,
+        "actual_goals": actual_goals,
+        "avg_predicted_goals": avg_predicted_goals,
+        "avg_actual_goals": avg_actual_goals,
+        "min_predicted_goals": min_predicted_goals,
+        "max_predicted_goals": max_predicted_goals,
+        "player_colors": player_colors
+    }
+
+def display_line_plot(matchdays_df, selected_players):
+    st.subheader("Line Plot: Goals Prediction vs. Actual Goals")
+
+    # Calculate the line plot data
+    data = calculate_line_plot_data(matchdays_df, selected_players)
+
     # Create the line plot
     fig = go.Figure()
 
     # Add lines for each player
-    for line in player_lines:
+    for line in data["player_lines"]:
         fig.add_trace(line)
 
     # Add group average predicted goals line
     fig.add_trace(go.Scatter(
-        x=group_predicted_goals.index,
-        y=group_predicted_goals.values,
+        x=data["group_predicted_goals"].index,
+        y=data["group_predicted_goals"].values,
         mode='lines',
         name='Group Average Predicted Goals',
         line=dict(color='black', dash='dash'),
@@ -61,8 +80,8 @@ def display_line_plot(matchdays_df, selected_players):
 
     # Add actual goals line
     fig.add_trace(go.Scatter(
-        x=actual_goals.index,
-        y=actual_goals.values,
+        x=data["actual_goals"].index,
+        y=data["actual_goals"].values,
         mode='lines',
         name='Actual Goals',
         line=dict(color='red', dash='dash'),
@@ -70,29 +89,25 @@ def display_line_plot(matchdays_df, selected_players):
 
     # Add dotted lines for average goals
     fig.add_trace(go.Scatter(
-        x=[group_predicted_goals.index.min(), group_predicted_goals.index.max()],
-        y=[avg_predicted_goals] * 2,
+        x=[data["group_predicted_goals"].index.min(), data["group_predicted_goals"].index.max()],
+        y=[data["avg_predicted_goals"]] * 2,
         mode='lines',
         name='Average Predicted Goals (Season)',
         line=dict(color='blue', dash='dot'),
     ))
 
     fig.add_trace(go.Scatter(
-        x=[actual_goals.index.min(), actual_goals.index.max()],
-        y=[avg_actual_goals] * 2,
+        x=[data["actual_goals"].index.min(), data["actual_goals"].index.max()],
+        y=[data["avg_actual_goals"]] * 2,
         mode='lines',
         name='Average Actual Goals (Season)',
         line=dict(color='green', dash='dot'),
     ))
 
-    # Calculate the prediction range using min and max of player_predicted_goals for each matchday
-    min_predicted_goals = predicted_goals.min(axis=1)
-    max_predicted_goals = predicted_goals.max(axis=1)
-
     # Add shaded area for prediction range
     fig.add_trace(go.Scatter(
-        x=pd.concat([min_predicted_goals.index.to_series(), max_predicted_goals.index.to_series()[::-1]]),
-        y=pd.concat([min_predicted_goals, max_predicted_goals[::-1]]),
+        x=pd.concat([data["min_predicted_goals"].index.to_series(), data["max_predicted_goals"].index.to_series()[::-1]]),
+        y=pd.concat([data["min_predicted_goals"], data["max_predicted_goals"][::-1]]),
         fill='toself',
         fillcolor='rgba(200,200,200,0.2)',  # Lighter fill color
         line=dict(color='rgba(255,255,255,0)'),

@@ -3,9 +3,8 @@ import plotly.graph_objs as go
 import numpy as np
 import pandas as pd
 
-def display_confusion_matrix(matchdays_df, selected_players, matchday):
-    st.subheader("Confusion Matrix")
-
+def calculate_confusion_matrix_data(matchdays_df, selected_players, matchday):
+    """Calculate data needed for the confusion matrix analysis."""
     # Filter the data up to the selected matchday
     filtered_df = matchdays_df[matchdays_df['Matchday'] <= matchday]
 
@@ -23,6 +22,17 @@ def display_confusion_matrix(matchdays_df, selected_players, matchday):
 
         for pred, actual in zip(filtered_df[pred_col], filtered_df[actual_col]):
             confusion_matrix.loc[pred, actual] += 1
+
+    return {
+        'confusion_matrix': confusion_matrix,
+    }
+
+def display_confusion_matrix(matchdays_df, selected_players, matchday):
+    st.subheader("Confusion Matrix")
+
+    # Calculate the confusion matrix data
+    data = calculate_confusion_matrix_data(matchdays_df, selected_players, matchday)
+    confusion_matrix = data['confusion_matrix']
 
     # Calculate total predictions for percentage calculation
     total_predictions = confusion_matrix.values.sum()
@@ -79,4 +89,3 @@ def display_confusion_matrix(matchdays_df, selected_players, matchday):
 
     # Display the confusion matrix in Streamlit
     st.plotly_chart(fig, use_container_width=True)
-

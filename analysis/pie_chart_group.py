@@ -9,9 +9,8 @@ def image_to_base64(img_path):
     with open(img_path, "rb") as img_file:
         return base64.b64encode(img_file.read()).decode("utf-8")
 
-def display_group_pie_chart(matchdays_df, selected_players):
-    st.subheader("Pie Charts")
-
+def calculate_pie_chart_data(matchdays_df, selected_players):
+    """Calculate the data used for the pie charts."""
     # Aggregate predictions for all selected players
     predictions = {
         'Home Win': 0,
@@ -33,6 +32,14 @@ def display_group_pie_chart(matchdays_df, selected_players):
         'Tie': matchdays_df['Result'][matchdays_df['Result'] == 'Tie'].count(),
         'Away Win': matchdays_df['Result'][matchdays_df['Result'] == 'Away Win'].count()
     }
+
+    return predictions, results
+
+def display_group_pie_chart(matchdays_df, selected_players):
+    st.subheader("Pie Charts")
+
+    # Calculate the data for the pie charts
+    predictions, results = calculate_pie_chart_data(matchdays_df, selected_players)
 
     # Define the colors with 85% transparency
     colors = ['rgba(168, 230, 161, 0.85)', 'rgba(196, 196, 196, 0.85)', 'rgba(255, 250, 205, 0.85)']
