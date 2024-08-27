@@ -1,6 +1,7 @@
 import streamlit as st
 import plotly.graph_objs as go
 import pandas as pd
+from scipy.stats import linregress
 
 def calculate_line_plot_data(matchdays_df, selected_players):
     """Calculate the data for the line plot of goals prediction vs. actual goals."""
@@ -45,6 +46,18 @@ def calculate_line_plot_data(matchdays_df, selected_players):
     min_predicted_goals = predicted_goals.min(axis=1)
     max_predicted_goals = predicted_goals.max(axis=1)
 
+    # Calculate the trend over time
+    trend_slope, _, _, _, _ = linregress(group_predicted_goals.index, group_predicted_goals.values)
+    if trend_slope > 0:
+        trend_over_time = "increasing"
+        trend_description = "steadily improving"
+    elif trend_slope < 0:
+        trend_over_time = "decreasing"
+        trend_description = "declining"
+    else:
+        trend_over_time = "stable"
+        trend_description = "remaining consistent"
+
     return {
         "player_lines": player_lines,
         "group_predicted_goals": group_predicted_goals,
@@ -53,7 +66,9 @@ def calculate_line_plot_data(matchdays_df, selected_players):
         "avg_actual_goals": avg_actual_goals,
         "min_predicted_goals": min_predicted_goals,
         "max_predicted_goals": max_predicted_goals,
-        "player_colors": player_colors
+        "player_colors": player_colors,
+        "trend_over_time": trend_over_time,
+        "trend_description": trend_description
     }
 
 def display_line_plot(matchdays_df, selected_players):
@@ -135,3 +150,5 @@ def display_line_plot(matchdays_df, selected_players):
 
     # Display the line plot in Streamlit
     st.plotly_chart(fig, use_container_width=True)
+
+    return data["trend_over_time"], data["trend_description"]

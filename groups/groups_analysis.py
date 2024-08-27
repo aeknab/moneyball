@@ -56,29 +56,69 @@ def generate_pie_chart_analysis(selected_players, matchdays_df):
     return generate_analysis(prompt)
 
 def generate_confusion_matrix_analysis(selected_players, matchdays_df, matchday):
+    # Calculate confusion matrix data
     data = calculate_confusion_matrix_data(matchdays_df, selected_players, matchday)
+
+    # Calculate accuracy using the correct method
+    accuracy = (data['confusion_matrix'].to_numpy().trace() / data['confusion_matrix'].values.sum()) * 100
+    
+    # Calculate precision and recall
+    precision = data['confusion_matrix'].iloc[0, 0] / data['confusion_matrix'].iloc[0].sum() * 100
+    recall = data['confusion_matrix'].iloc[0, 0] / data['confusion_matrix'].sum(axis=1).iloc[0] * 100
+
+    # Use the first selected player as the player_name, or a generic 'All Players' if multiple are selected
+    player_name = selected_players[0] if len(selected_players) == 1 else "All Players"
+
+    # Ensure all placeholders in the template have corresponding values
     prompt = confusion_matrix_prompt_template.format(
-        player_name=selected_players if selected_players != 'All' else 'All players',
-        accuracy=(data['confusion_matrix'].trace() / data['confusion_matrix'].sum()) * 100
+        player_name=player_name,
+        accuracy=accuracy,
+        precision=precision,
+        recall=recall
     )
+
     return generate_analysis(prompt)
 
 def generate_heat_map_analysis(selected_players, matchdays_df):
+    # Calculate heat map data
     data = calculate_heat_map_data(matchdays_df, selected_players)
+
+    # Access the tuple elements by index
+    hot_zone_success_rate = data[0] * 100  # Assuming the hot zone success rate is the first element
+    most_frequent_score = data[1]  # Assuming the most frequent score is the second element, which is a tuple
+
+    # Convert the most frequent score tuple to a string (e.g., "3-1")
+    most_frequent_score_str = f"{most_frequent_score[0]}-{most_frequent_score[1]}"
+
+    # Use the first selected player as the player_name, or a generic 'All Players' if multiple are selected
+    player_name = selected_players[0] if len(selected_players) == 1 else "All Players"
+
+    # Format the prompt with the retrieved data
     prompt = heat_map_prompt_template.format(
-        player_name=selected_players if selected_players != 'All' else 'All players',
-        most_frequent_score=f"{data['most_frequent_score'][0]}-{data['most_frequent_score'][1]}"
+        player_name=player_name,
+        hot_zone_success_rate=hot_zone_success_rate,
+        most_frequent_score=most_frequent_score_str
     )
+
     return generate_analysis(prompt)
 
 def generate_line_plot_analysis(selected_players, matchdays_df):
+    # Calculate line plot data and get the trend
     data = calculate_line_plot_data(matchdays_df, selected_players)
+
+    # Access the trend data from the returned dictionary
+    trend_over_time = data["trend_over_time"]
+    trend_description = data["trend_description"]
+
+    # Use the trend data to generate the analysis
+    player_name = selected_players[0] if len(selected_players) == 1 else "All Players"
+    
     prompt = line_plot_prompt_template.format(
-        player_name=selected_players if selected_players != 'All' else 'All players',
-        avg_predicted_goals=data['avg_predicted_goals'],
-        avg_actual_goals=data['avg_actual_goals'],
-        prediction_accuracy=calculate_prediction_accuracy(data['group_predicted_goals'], data['actual_goals'])
+        player_name=player_name,
+        trend_over_time=trend_over_time,
+        trend_description=trend_description
     )
+
     return generate_analysis(prompt)
 
 def generate_analysis(prompt):
