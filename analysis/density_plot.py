@@ -4,8 +4,18 @@ import pandas as pd
 import numpy as np
 from scipy.stats import gaussian_kde
 
+# Define the ColorBrewer Set2 color palette
+color_palette = {
+    "bars": "rgba(179, 179, 179, 0.75)",         # light gray with 75% transparency
+    "density_curve": "rgba(102, 194, 165, 1)",   # light green fully opaque
+    "mean": "rgba(252, 141, 98, 1)",             # light orange fully opaque
+    "median": "rgba(231, 138, 195, 1)",          # light pink fully opaque
+    "mode": "rgba(166, 216, 84, 1)",             # lime green fully opaque
+    "std_dev": "rgba(255, 217, 47, 1)"           # light yellow fully opaque
+}
+
 def display_season_density_plot(matchday, rankings_df, selected_players):
-    st.subheader("Season Density Plot")
+    st.subheader("Density Plot")
 
     # Filter data for the selected players up to the selected matchday
     filtered_df = rankings_df[(rankings_df['Spieltag'] <= matchday) & (rankings_df['Name'].isin(selected_players))]
@@ -20,8 +30,9 @@ def display_season_density_plot(matchday, rankings_df, selected_players):
     fig.add_trace(go.Bar(
         x=list(range(0, 22)),
         y=[len(points[points == i]) for i in range(22)],
-        marker=dict(color='rgba(0, 123, 255, 0.7)', line=dict(color='white', width=1)),
-        hovertemplate='%{x} Points, %{y} times'
+        marker=dict(color=color_palette["bars"], line=dict(color='white', width=1)),
+        hovertemplate='%{x} Points, %{y} times',
+        showlegend=False  # Hide from legend
     ))
 
     # Calculate the density curve
@@ -34,8 +45,9 @@ def display_season_density_plot(matchday, rankings_df, selected_players):
         x=x_values,
         y=y_values * len(points),  # Scale to match histogram frequency
         mode='lines',
-        line=dict(color='rgba(255, 0, 0, 0.8)', width=2),
-        name='Density Curve'
+        line=dict(color=color_palette["density_curve"], width=2),
+        name='Density Curve',
+        hoverinfo='skip',  # Ensure no "trace 0"
     ))
 
     # Calculate statistics
@@ -49,8 +61,9 @@ def display_season_density_plot(matchday, rankings_df, selected_players):
         x=[mean_value, mean_value],
         y=[0, max(y_values * len(points))],
         mode="lines",
-        name=f"Matchday Avg: {mean_value:.1f}",
-        line=dict(color="blue", dash="dot")
+        name=f"Mean: {mean_value:.1f}",
+        line=dict(color=color_palette["mean"], dash="dot"),
+        hoverinfo='skip',
     ))
 
     fig.add_trace(go.Scatter(
@@ -58,7 +71,8 @@ def display_season_density_plot(matchday, rankings_df, selected_players):
         y=[0, max(y_values * len(points))],
         mode="lines",
         name=f"Median: {median_value:.1f}",
-        line=dict(color="green", dash="dot")
+        line=dict(color=color_palette["median"], dash="dot"),
+        hoverinfo='skip',
     ))
 
     fig.add_trace(go.Scatter(
@@ -66,28 +80,43 @@ def display_season_density_plot(matchday, rankings_df, selected_players):
         y=[0, max(y_values * len(points))],
         mode="lines",
         name=f"Mode: {mode_value:.1f}",
-        line=dict(color="purple", dash="dot")
+        line=dict(color=color_palette["mode"], dash="dot"),
+        hoverinfo='skip',
     ))
 
     # Add standard deviation lines
-    for std in range(1, 3):
-        fig.add_trace(go.Scatter(
-            x=[mean_value - std * std_dev, mean_value + std * std_dev],
-            y=[0, 0],
-            mode="lines+markers",
-            marker=dict(color="orange", symbol="x", size=10),
-            line=dict(color="orange", dash="dot"),
-            name=f"{std} Std Dev"
-        ))
+    fig.add_trace(go.Scatter(
+        x=[mean_value - std_dev, mean_value + std_dev],
+        y=[0, 0],
+        mode="lines+markers",
+        marker=dict(color=color_palette["std_dev"], symbol="x", size=10),
+        line=dict(color=color_palette["std_dev"], dash="solid", width=2),
+        name="1 Std Dev",
+        hoverinfo='skip',
+    ))
+
+    fig.add_trace(go.Scatter(
+        x=[mean_value - 2 * std_dev, mean_value + 2 * std_dev],
+        y=[0, 0],
+        mode="lines+markers",
+        marker=dict(color=color_palette["std_dev"], symbol="x", size=10),
+        line=dict(color=color_palette["std_dev"], dash="dot", width=2),
+        name="2 Std Dev",
+        hoverinfo='skip',
+    ))
 
     # Update layout
     fig.update_layout(
-        title_text=f"Distribution of Points Scored Up to Matchday {matchday}",
+        title_text=f"Distribution of Points Scored in Season",
         xaxis_title="Points",
         yaxis_title="Frequency",
         xaxis=dict(
-            tickvals=list(range(0, 22)),
-            tickangle=30,
+            tickvals=list(range(0, 22, 2)),  # Show ticks at every 2 points
+            tickangle=0,  # Keep labels horizontal
+            title_standoff=5,  # Reduce standoff for x-axis
+        ),
+        yaxis=dict(
+            title_standoff=10,  # Reduce standoff for y-axis
         ),
         height=400,
         width=600,
@@ -97,7 +126,10 @@ def display_season_density_plot(matchday, rankings_df, selected_players):
             yanchor="top",
             y=-0.2,
             xanchor="center",
-            x=0.5
+            x=0.5,
+            font=dict(size=10),  # Reduce legend font size
+            itemsizing='constant',  # Keep items uniform size
+            traceorder="normal"  # Keep the order of traces in the legend
         )
     )
 

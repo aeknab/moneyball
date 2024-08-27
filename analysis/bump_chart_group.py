@@ -2,15 +2,15 @@ import streamlit as st
 import plotly.graph_objects as go
 import pandas as pd
 
-# Define a color palette for players
+# Define the new ColorBrewer Set2 color palette for players with 75% transparency
 color_palette = {
-    "Andreas": "#1f77b4",
-    "Gerd": "#ff7f0e",
-    "Geri": "#2ca02c",
-    "Hermann": "#d62728",
-    "Johnny": "#9467bd",
-    "Moddy": "#8c564b",
-    "Samson": "#e377c2"
+    "Andreas": "rgba(102, 194, 165, 0.75)",  # light green
+    "Gerd": "rgba(252, 141, 98, 0.75)",      # light orange
+    "Geri": "rgba(141, 160, 203, 0.75)",     # light blue
+    "Hermann": "rgba(231, 138, 195, 0.75)",  # light pink
+    "Johnny": "rgba(166, 216, 84, 0.75)",    # light lime green
+    "Moddy": "rgba(255, 217, 47, 0.75)",     # light yellow
+    "Samson": "rgba(229, 196, 148, 0.75)"    # light brown
 }
 
 def display_group_bump_chart(matchday, rankings_df, selected_players):
@@ -32,8 +32,8 @@ def display_group_bump_chart(matchday, rankings_df, selected_players):
             y=rank_pivot.loc[player],
             mode='lines+markers',
             name=player,
-            marker=dict(size=8, color=color_palette.get(player, '#1f77b4')),  # Use player-specific color
-            line=dict(width=2, color=color_palette.get(player, '#1f77b4'))  # Use player-specific color
+            marker=dict(size=8, color=color_palette.get(player, 'rgba(102, 194, 165, 0.75)')),  # Use player-specific color
+            line=dict(width=2, color=color_palette.get(player, 'rgba(102, 194, 165, 0.75)'))  # Use player-specific color
         ))
 
     # Customize the layout

@@ -8,19 +8,21 @@ def display_line_plot(matchdays_df, selected_players):
     # Initialize lists to store data
     player_lines = []
     player_colors = {}
-    predicted_goals = []
+    predicted_goals = pd.DataFrame()  # To store predicted goals for each player
     actual_goals = []
-    
+
     # Define color palette for players
     colors = ['#d62728', '#ff7f0e', '#2ca02c', '#1f77b4', '#9467bd', '#8c564b', '#e377c2']
-    
+
     # Calculate predicted and actual goals for each player
     for i, player in enumerate(selected_players):
-        pred_col = f'{player} Predicted Goals'
         player_color = colors[i % len(colors)]
         
-        # Player's predicted goals
-        player_predicted_goals = matchdays_df.groupby('Matchday')[pred_col].sum()
+        # Calculate player's predicted goals by summing home and away goals for each matchday
+        player_predicted_goals = matchdays_df.groupby('Matchday')[[f'{player} Home Goals Predicted', f'{player} Away Goals Predicted']].sum().sum(axis=1)
+        
+        predicted_goals[player] = player_predicted_goals  # Store this player's predicted goals
+        
         player_lines.append(go.Scatter(
             x=player_predicted_goals.index,
             y=player_predicted_goals.values,
@@ -30,20 +32,20 @@ def display_line_plot(matchdays_df, selected_players):
             marker=dict(size=6),
         ))
         player_colors[player] = player_color
-    
+
     # Calculate the group average predicted goals
-    group_predicted_goals = matchdays_df[[f'{player} Predicted Goals' for player in selected_players]].sum(axis=1) / len(selected_players)
-    
+    group_predicted_goals = predicted_goals.mean(axis=1)
+
     # Calculate actual goals
-    actual_goals = matchdays_df.groupby('Matchday')['Actual Goals'].sum()
+    actual_goals = matchdays_df.groupby('Matchday')[['Home Goals', 'Away Goals']].sum().sum(axis=1)
 
     # Calculate season averages
     avg_predicted_goals = group_predicted_goals.mean()
     avg_actual_goals = actual_goals.mean()
-    
+
     # Create the line plot
     fig = go.Figure()
-    
+
     # Add lines for each player
     for line in player_lines:
         fig.add_trace(line)
@@ -83,20 +85,21 @@ def display_line_plot(matchdays_df, selected_players):
         line=dict(color='green', dash='dot'),
     ))
 
+    # Calculate the prediction range using min and max of player_predicted_goals for each matchday
+    min_predicted_goals = predicted_goals.min(axis=1)
+    max_predicted_goals = predicted_goals.max(axis=1)
+
     # Add shaded area for prediction range
-    min_predicted_goals = matchdays_df[[f'{player} Predicted Goals' for player in selected_players]].min(axis=1)
-    max_predicted_goals = matchdays_df[[f'{player} Predicted Goals' for player in selected_players]].max(axis=1)
-    
     fig.add_trace(go.Scatter(
-        x=pd.concat([group_predicted_goals.index, group_predicted_goals.index[::-1]]),
+        x=pd.concat([min_predicted_goals.index.to_series(), max_predicted_goals.index.to_series()[::-1]]),
         y=pd.concat([min_predicted_goals, max_predicted_goals[::-1]]),
         fill='toself',
-        fillcolor='rgba(0,100,80,0.2)',
+        fillcolor='rgba(200,200,200,0.2)',  # Lighter fill color
         line=dict(color='rgba(255,255,255,0)'),
         name='Prediction Range'
     ))
 
-    # Update layout
+    # Update layout with lighter background and legend below the graph
     fig.update_layout(
         title_text='Goals Prediction vs. Actual Goals',
         xaxis_title='Matchday',
@@ -104,7 +107,15 @@ def display_line_plot(matchdays_df, selected_players):
         height=600,
         width=800,
         showlegend=True,
-        legend=dict(x=0, y=1.0),
+        legend=dict(
+            orientation="h",
+            yanchor="top",
+            y=-0.2,
+            xanchor="center",
+            x=0.5
+        ),
+        paper_bgcolor="rgba(240, 240, 240, 0.9)",  # Light background color
+        plot_bgcolor="rgba(240, 240, 240, 0.9)"    # Light background color
     )
 
     # Display the line plot in Streamlit

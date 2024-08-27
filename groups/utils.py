@@ -1,5 +1,8 @@
 # groups/utils.py
 
+import base64
+from io import BytesIO
+
 def format_points(points):
     """Formats points with color based on the score."""
     if points == 0:
@@ -27,3 +30,11 @@ def calculate_points(pred_home, pred_away, actual_home, actual_away):
         return 2  # Correct outcome/tendency
     else:
         return 0  # Wrong prediction
+
+def image_to_base64(image):
+    """
+    Convert a PIL image to a base64 encoded string.
+    """
+    buffered = BytesIO()
+    image.save(buffered, format="PNG")
+    return base64.b64encode(buffered.getvalue()).decode("utf-8")
