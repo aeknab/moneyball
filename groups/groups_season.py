@@ -19,132 +19,6 @@ color_palette = {
     "Gray": "rgba(179, 179, 179, 0.85)"      # light gray for other players when a single player is selected
 }
 
-def display_season_section(matchday, rankings_df, matchdays_df):
-    # Add a dropdown to select a player
-    players = sorted(rankings_df['Name'].unique())
-    players.insert(0, 'All')  # Add 'All' option at the beginning
-    selected_player = st.selectbox("Select Player", players)  # Use a dropdown for player selection
-
-    # Filter by the selected matchday
-    filtered_df = rankings_df[rankings_df["Spieltag"] == matchday]
-
-    # Sort by Rank
-    sorted_df = filtered_df.sort_values(by="Rang")
-
-    # Add rank change information
-    if matchday > 1:
-        previous_matchday = matchday - 1
-        previous_df = rankings_df[rankings_df["Spieltag"] == previous_matchday]
-        
-        merged_df = pd.merge(
-            sorted_df[['Name', 'Rang']],
-            previous_df[['Name', 'Rang']],
-            on='Name',
-            suffixes=('', '_previous'),
-            how='left'
-        )
-
-        merged_df['Rank Change'] = merged_df.apply(
-            lambda row: '⬆️' if row['Rang'] < row['Rang_previous'] else ('⬇️' if row['Rang'] > row['Rang_previous'] else '⏺️'),
-            axis=1
-        )
-
-        sorted_df = pd.merge(sorted_df, merged_df[['Name', 'Rank Change']], on='Name', how='left')
-    else:
-        sorted_df['Rank Change'] = '--'
-
-    sorted_df['MD Winner'] = sorted_df['Spieltagssieger'].apply(
-        lambda x: f"🏆{x:.1f}" if x > 0 and x < 1 else ('🏆' if x == 1 else '')
-    )
-
-    sorted_df['MD Wins'] = sorted_df['Gesamtspieltagssiege'].apply(
-        lambda x: f"x {x}" if x > 0 else ''
-    )
-
-    if matchday == 34:
-        sorted_df['Total Points'] = sorted_df.apply(
-            lambda row: f"🥇 {row['Gesamtpunkte']}" if row['Rang'] == 1 else (
-                        f"🥈 {row['Gesamtpunkte']}" if row['Rang'] == 2 else (
-                        f"🥉 {row['Gesamtpunkte']}" if row['Rang'] == 3 else str(row['Gesamtpunkte']))),
-            axis=1
-        )
-    else:
-        sorted_df['Total Points'] = sorted_df['Gesamtpunkte']
-
-    overview_data = sorted_df[["Rang", "Rank Change", "Name", "Punkte", "MD Winner", "MD Wins", "Total Points"]]
-    overview_data.columns = ["Rank", "+/-", "Name", "Matchday Points", "MD Winner", "MD Wins", "Total Points"]
-
-    # Table creation with row highlighting
-    table_html = """
-    <style>
-    .styled-table {
-        border-collapse: collapse;
-        margin: 25px 0;
-        font-size: 0.9em;
-        font-family: 'Sans-serif', Arial, Helvetica, sans-serif;
-        width: 100%;
-        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-        border-radius: 15px;
-        overflow: hidden;
-        background-color: rgba(255, 255, 255, 0.5);
-        border: 2px solid #696969;
-    }
-    .styled-table thead tr {
-        background-color: rgba(14, 17, 23, 0.70);
-        color: #ffffff;
-        text-align: left;
-    }
-    .styled-table th,
-    .styled-table td {
-        padding: 12px 15px;
-        text-align: center;
-    }
-    .styled-table tbody tr {
-        background-color: rgba(14, 17, 23, 0.35);
-        border-bottom: 1px solid rgba(97, 101, 114, 0.9);
-    }
-    .styled-table tbody tr:last-of-type {
-        border-bottom: 2px solid rgba(97, 101, 114, 0.9);
-    }
-    </style>
-    <table class="styled-table">
-    <thead>
-        <tr>
-            <th>Rank</th>
-            <th>+/-</th>
-            <th>Name</th>
-            <th>Matchday Points</th>
-            <th>MD Winner</th>
-            <th>MD Wins</th>
-            <th>Total Points</th>
-        </tr>
-    </thead>
-    <tbody>
-    """
-
-    for _, row in overview_data.iterrows():
-        row_color = f"background-color: {color_palette[row['Name']]};" if row['Name'] == selected_player else ""
-        table_html += f"<tr style='{row_color}'><td>{row['Rank']}</td><td>{row['+/-']}</td><td>{row['Name']}</td><td>{row['Matchday Points']}</td><td>{row['MD Winner']}</td><td>{row['MD Wins']}</td><td>{row['Total Points']}</td></tr>"
-
-    table_html += "</tbody></table>"
-
-    st.markdown(table_html, unsafe_allow_html=True)
-
-    # Display the Group Table with horizontal bars and filtering
-    display_group_table_with_highlight(matchday, rankings_df, selected_player)
-
-    # Display the Histogram with filtering
-    display_matchday_histogram(matchday, rankings_df, selected_players=[selected_player])
-
-    # Display the Bump Chart with filtering
-    display_group_bump_chart(matchday, rankings_df, selected_players=[selected_player])
-
-    # Display the Density Plot
-    display_season_density_plot(matchday, rankings_df, selected_players=sorted_df['Name'].tolist())
-
-    # Display the Donut Chart
-    display_donut_chart(matchdays_df, sorted_df['Name'].tolist(), matchday)
-
 def display_group_table_with_highlight(matchday, rankings_df, selected_player):
     # Filter and sort the DataFrame by matchday and total points in descending order
     filtered_df = rankings_df[rankings_df['Spieltag'] == matchday]
@@ -263,3 +137,132 @@ def display_matchday_histogram(matchday, rankings_df, selected_players):
 
     # Display the chart in Streamlit
     st.plotly_chart(fig, use_container_width=True)
+
+def display_season_section(matchday, rankings_df, matchdays_df):
+    # Add a dropdown to select a player
+    players = sorted(rankings_df['Name'].unique())
+    players.insert(0, 'All')  # Add 'All' option at the beginning
+    selected_player = st.selectbox("Select Player", players)  # Use a dropdown for player selection
+
+    # Filter by the selected matchday
+    filtered_df = rankings_df[rankings_df["Spieltag"] == matchday]
+
+    # Sort by Rank
+    sorted_df = filtered_df.sort_values(by="Rang")
+
+    # Add rank change information
+    if matchday > 1:
+        previous_matchday = matchday - 1
+        previous_df = rankings_df[rankings_df["Spieltag"] == previous_matchday]
+
+        merged_df = pd.merge(
+            sorted_df[['Name', 'Rang']],
+            previous_df[['Name', 'Rang']],
+            on='Name',
+            suffixes=('', '_previous'),
+            how='left'
+        )
+
+        merged_df['Rank Change'] = merged_df.apply(
+            lambda row: '⬆️' if row['Rang'] < row['Rang_previous'] else ('⬇️' if row['Rang'] > row['Rang_previous'] else '⏺️'),
+            axis=1
+        )
+
+        sorted_df = pd.merge(sorted_df, merged_df[['Name', 'Rank Change']], on='Name', how='left')
+    else:
+        sorted_df['Rank Change'] = '--'
+
+    sorted_df['MD Winner'] = sorted_df['Spieltagssieger'].apply(
+        lambda x: f"🏆{x:.1f}" if x > 0 and x < 1 else ('🏆' if x == 1 else '')
+    )
+
+    sorted_df['MD Wins'] = sorted_df['Gesamtspieltagssiege'].apply(
+        lambda x: f"x {x}" if x > 0 else ''
+    )
+
+    if matchday == 34:
+        sorted_df['Total Points'] = sorted_df.apply(
+            lambda row: f"🥇 {row['Gesamtpunkte']}" if row['Rang'] == 1 else (
+                        f"🥈 {row['Gesamtpunkte']}" if row['Rang'] == 2 else (
+                        f"🥉 {row['Gesamtpunkte']}" if row['Rang'] == 3 else str(row['Gesamtpunkte']))),
+            axis=1
+        )
+    else:
+        sorted_df['Total Points'] = sorted_df['Gesamtpunkte']
+
+    overview_data = sorted_df[["Rang", "Rank Change", "Name", "Punkte", "MD Winner", "MD Wins", "Total Points"]]
+    overview_data.columns = ["Rank", "+/-", "Name", "Matchday Points", "MD Winner", "MD Wins", "Total Points"]
+
+    # Table creation with row highlighting
+    table_html = """
+    <style>
+    .styled-table {
+        border-collapse: collapse;
+        margin: 25px 0;
+        font-size: 0.9em;
+        font-family: 'Sans-serif', Arial, Helvetica, sans-serif;
+        width: 100%;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+        border-radius: 15px;
+        overflow: hidden;
+        background-color: rgba(255, 255, 255, 0.5);
+        border: 2px solid #696969;
+    }
+    .styled-table thead tr {
+        background-color: rgba(14, 17, 23, 0.70);
+        color: #ffffff;
+        text-align: left;
+    }
+    .styled-table th,
+    .styled-table td {
+        padding: 12px 15px;
+        text-align: center;
+    }
+    .styled-table tbody tr {
+        background-color: rgba(14, 17, 23, 0.35);
+        border-bottom: 1px solid rgba(97, 101, 114, 0.9);
+    }
+    .styled-table tbody tr:last-of-type {
+        border-bottom: 2px solid rgba(97, 101, 114, 0.9);
+    }
+    </style>
+    <table class="styled-table">
+    <thead>
+        <tr>
+            <th>Rank</th>
+            <th>+/-</th>
+            <th>Name</th>
+            <th>Matchday Points</th>
+            <th>MD Winner</th>
+            <th>MD Wins</th>
+            <th>Total Points</th>
+        </tr>
+    </thead>
+    <tbody>
+    """
+
+    for _, row in overview_data.iterrows():
+        row_color = f"background-color: {color_palette[row['Name']]};" if row['Name'] == selected_player else ""
+        table_html += f"<tr style='{row_color}'><td>{row['Rank']}</td><td>{row['+/-']}</td><td>{row['Name']}</td><td>{row['Matchday Points']}</td><td>{row['MD Winner']}</td><td>{row['MD Wins']}</td><td>{row['Total Points']}</td></tr>"
+
+    table_html += "</tbody></table>"
+
+    st.markdown(table_html, unsafe_allow_html=True)
+
+    # Display the Group Table with horizontal bars and filtering
+    display_group_table_with_highlight(matchday, rankings_df, selected_player)
+
+    # Display the Histogram with filtering
+    display_matchday_histogram(matchday, rankings_df, selected_players=[selected_player])
+
+    # Display the Bump Chart with filtering
+    display_group_bump_chart(matchday, rankings_df, selected_players=[selected_player])
+
+    # Display the Density Plot with the correct selected players
+    if selected_player == 'All':
+        display_season_density_plot(matchday, rankings_df, rankings_df['Name'].unique().tolist())
+    else:
+        display_season_density_plot(matchday, rankings_df, [selected_player])
+
+    # Display the Donut Chart
+    display_donut_chart(matchdays_df, sorted_df['Name'].tolist(), matchday)
