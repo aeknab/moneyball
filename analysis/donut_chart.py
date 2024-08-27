@@ -77,7 +77,7 @@ def display_donut_chart(matchdays_df, selected_players, matchday):
         hole=.4,  # Create a donut chart
         marker=dict(colors=colors, line=dict(color=border_colors, width=2)),
         textinfo='percent',
-        textfont=dict(size=18, color='black', family='Arial', weight='bold'),
+        textfont=dict(size=14, color='black', family='Arial', weight='bold'),
         hoverinfo='label+value+text',
         hovertemplate='<b>%{label}:</b> %{customdata[0]} of ' + f'{total_points} Points<extra></extra>',
         customdata=[[total_points_contribution['0 Points']],

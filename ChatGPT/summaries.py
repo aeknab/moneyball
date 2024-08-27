@@ -10,7 +10,7 @@ client = OpenAI(api_key="sk-o0hrLU1sy_khDaVw-sFP1pnIOP-SLylV1lC-gaOgLWT3BlbkFJ7b
 
 def generate_summary_prompt(matchday_data, group_name, rankings):
     prompt = f"""
-    Just the Facts: Recap of Matchday {matchday_data['Spieltag'].iloc[0]} for the prediction group "{group_name}"
+    Just the Facts: Recap of Matchday {matchday_data['Matchday'].iloc[0]} for the prediction group "{group_name}"
     
     Participants and their points:
     """
@@ -21,7 +21,7 @@ def generate_summary_prompt(matchday_data, group_name, rankings):
     for _, row in matchday_data.iterrows():
         prompt += f"{row['Home Team']} {row['Home Goals']}:{row['Away Goals']} {row['Away Team']}\n"
         for player in ['Andreas', 'Gerd', 'Geri', 'Hermann', 'Johnny', 'Moddy', 'Samson']:
-            prompt += f"{player}: {row[f'{player} Home Goals Predicted']}:{row[f'{player} Away Goals Predicted']} Points: {row['Points']}\n"
+            prompt += f"{player}: {row[f'{player} Home Goals Predicted']}:{row[f'{player} Away Goals Predicted']} Points: {row['Result']}\n"
 
     prompt += "\nPlease generate a summary for this matchday."
     return prompt

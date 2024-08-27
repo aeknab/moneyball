@@ -43,7 +43,7 @@ def display_group_heat_map(matchdays_df, selected_players):
             text=goal_combinations.values,
             texttemplate="%{text}",
             hovertemplate="Home Goals: %{y}<br>Away Goals: %{x}<br>Count: %{z}<extra></extra>",
-            textfont={"size": 14},
+            textfont={"size": 12},
         ))
 
         # Update layout with strict axis ranges and no extra space
@@ -104,7 +104,7 @@ def display_group_heat_map(matchdays_df, selected_players):
             text=goal_combinations_actual.values,
             texttemplate="%{text}",
             hovertemplate="Home Goals: %{y}<br>Away Goals: %{x}<br>Count: %{z}<extra></extra>",
-            textfont={"size": 14},
+            textfont={"size": 12},
         ))
 
         # Update layout with strict axis ranges and no extra space

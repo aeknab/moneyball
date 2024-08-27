@@ -2,13 +2,18 @@ import streamlit as st
 import pandas as pd
 
 from auth.database import fetch_all, execute_query
-from groups.groups_overview import display_overview_section
+from groups.groups_season import display_season_section
 from groups.groups_matchday import display_matchday_section
 from groups.groups_analysis import display_analysis_section
 from groups.groups_summary import display_summaries_section
 
 def display_groups_page():
     st.title("My Groups")
+
+    # Check if user_id exists in session_state, if not initialize it
+    if 'user_id' not in st.session_state:
+        st.warning("User ID not found. Please log in.")
+        return  # Stop the execution until user_id is provided
 
     # Fetch the user's groups from the database
     groups = fetch_all('''
@@ -51,7 +56,7 @@ def display_groups_page():
 
         # Display the selected section
         if section == "Overview":
-            display_overview_section(matchday, rankings_df)
+            display_season_section(matchday, rankings_df, matchdays_df)
         elif section == "Matchday":
             display_matchday_section(matchday)
         elif section == "Analysis":

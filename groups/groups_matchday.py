@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 from .utils import format_points, calculate_points
+from ChatGPT.summaries import generate_summary 
 
 def display_matchday_section(matchday):
     st.subheader(f"Matchday {matchday} Overview")
@@ -148,3 +149,9 @@ def display_matchday_section(matchday):
 
     # Display the HTML table with st.markdown
     st.markdown(table_html, unsafe_allow_html=True)
+
+    # Add a button for generating the Matchday Summary
+    if st.button("Matchday Summary"):
+        # Generate and display the matchday summary
+        summary = generate_summary(filtered_matches, "Test Group", rankings_df)
+        st.markdown(summary)

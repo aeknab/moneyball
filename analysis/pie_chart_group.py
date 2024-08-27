@@ -36,7 +36,7 @@ def display_group_pie_chart(matchdays_df, selected_players):
 
     # Define the colors with 85% transparency
     colors = ['rgba(168, 230, 161, 0.85)', 'rgba(196, 196, 196, 0.85)', 'rgba(255, 250, 205, 0.85)']
-    border_colors = ['rgba(56, 142, 60, 0.85)', 'rgba(153, 153, 153, 0.85)', 'rgba(255, 215, 0, 0.85)']
+    border_colors = ['rgba(56, 142, 60, 1)', 'rgba(153, 153, 153, 1)', 'rgba(255, 215, 0, 1)']
 
     # Load the Bundesliga logo
     bundesliga_logo_path = "data/logos/team_logos/Bundesliga.svg.png"
