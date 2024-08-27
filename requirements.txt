@@ -5,3 +5,4 @@ matplotlib
 Pillow
 plotly
 scipy
+openai
