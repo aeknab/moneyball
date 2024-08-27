@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.graph_objs as go
-from analysis.group_table import display_group_table
+from analysis.group_table import display_group_table  # This is the Bar Chart
 from analysis.bump_chart_group import display_group_bump_chart
 from analysis.donut_chart import display_donut_chart
 from analysis.histogram_group import display_matchday_histogram
@@ -42,7 +42,7 @@ def display_group_table_with_highlight(matchday, rankings_df, selected_player):
     )])
 
     fig.update_layout(
-        title_text=f"Group Table for Matchday {matchday}",
+        title_text=f"Bar Chart",  # Adding a title to the Bar Chart
         xaxis_title="Total Points",
         yaxis_title="Players",
         height=400,
@@ -52,97 +52,17 @@ def display_group_table_with_highlight(matchday, rankings_df, selected_player):
 
     st.plotly_chart(fig, use_container_width=True)
 
-def display_matchday_histogram(matchday, rankings_df, selected_players):
-    # Filter data for the selected matchday
-    filtered_df = rankings_df[(rankings_df['Spieltag'] == matchday)]
-
-    # Sort players by points for the matchday
-    filtered_df = filtered_df.sort_values('Punkte', ascending=False)
-
-    # Extract the points scored by each player
-    points = filtered_df['Punkte']
-    players = filtered_df['Name']
-
-    # Determine bar colors
-    if len(selected_players) == 1 and selected_players[0] != 'All':
-        # If a single player is selected, gray out the other players
-        bar_colors = [color_palette[player] if player in selected_players else color_palette["Gray"] for player in players]
-    else:
-        # If "All" is selected, use the normal colors
-        bar_colors = [color_palette[player] for player in players]
-
-    # Calculate average points for the matchday
-    matchday_avg = points.mean()
-
-    # Calculate average points for the season up to this matchday
-    season_avg = rankings_df[(rankings_df['Spieltag'] <= matchday)]['Punkte'].mean()
-
-    # Create the histogram using Plotly
-    fig = go.Figure()
-
-    # Add bars for each player
-    fig.add_trace(go.Bar(
-        x=players,
-        y=points,
-        marker=dict(color=bar_colors),
-        hovertemplate='<b>Points:</b> %{y}<br><b>MD Rank:</b> %{customdata[0]}<extra></extra>',
-        customdata=[(i+1,) for i in range(len(players))],  # Add rank information
-        showlegend=False  # Hide this trace from the legend
-    ))
-
-    # Add dotted lines for matchday and season averages
-    fig.add_trace(go.Scatter(
-        x=[players.iloc[0], players.iloc[-1]],  # Ensure the lines span the entire width of the bars
-        y=[matchday_avg, matchday_avg],
-        mode="lines",
-        name=f"Matchday Avg: {matchday_avg:.1f}",
-        line=dict(color="blue", width=2, dash="dot"),
-        showlegend=True
-    ))
-
-    fig.add_trace(go.Scatter(
-        x=[players.iloc[0], players.iloc[-1]],  # Ensure the lines span the entire width of the bars
-        y=[season_avg, season_avg],
-        mode="lines",
-        name=f"Season Avg: {season_avg:.1f}",
-        line=dict(color="white", width=2, dash="dot"),
-        showlegend=True
-    ))
-
-    # Update layout with adjusted standoff and legend position
-    fig.update_layout(
-        title_text=f"Points Scored on Matchday {matchday}",
-        xaxis_title="Players",
-        yaxis_title="Points",
-        yaxis=dict(
-            autorange=True,
-            title_standoff=10,  # Standoff for y-axis
-        ),
-        xaxis=dict(
-            tickangle=15,
-            title_standoff=5,  # Further reduced standoff for x-axis
-        ),
-        barmode="group",
-        height=400,
-        width=600,
-        template="plotly_white",
-        legend=dict(
-            orientation="h",
-            yanchor="top",
-            y=-0.25,  # Push the legend down slightly
-            xanchor="center",
-            x=0.5
-        )
-    )
-
-    # Display the chart in Streamlit
-    st.plotly_chart(fig, use_container_width=True)
-
 def display_season_section(matchday, rankings_df, matchdays_df):
     # Add a dropdown to select a player
     players = sorted(rankings_df['Name'].unique())
     players.insert(0, 'All')  # Add 'All' option at the beginning
     selected_player = st.selectbox("Select Player", players)  # Use a dropdown for player selection
+
+    # Ensure selected_player is always a list
+    if selected_player == 'All':
+        selected_players = rankings_df['Name'].unique().tolist()
+    else:
+        selected_players = [selected_player]
 
     # Filter by the selected matchday
     filtered_df = rankings_df[rankings_df["Spieltag"] == matchday]
@@ -247,22 +167,115 @@ def display_season_section(matchday, rankings_df, matchdays_df):
 
     table_html += "</tbody></table>"
 
+    # Display the Group Table only once
     st.markdown(table_html, unsafe_allow_html=True)
 
-    # Display the Group Table with horizontal bars and filtering
+    # Histogram (Second)
+    display_matchday_histogram(matchday, rankings_df, selected_players=selected_players)
+
+    # Density Plot (Third)
+    display_season_density_plot(matchday, rankings_df, selected_players)
+
+    # Bump Chart (Fifth)
+    display_group_bump_chart(matchday, rankings_df, selected_players)
+
+    # Bar Chart (Sixth)
     display_group_table_with_highlight(matchday, rankings_df, selected_player)
+    
+    # Donut Chart (Fourth)
+    display_donut_chart(matchdays_df, selected_players, matchday)
 
-    # Display the Histogram with filtering
-    display_matchday_histogram(matchday, rankings_df, selected_players=[selected_player])
+def display_matchday_histogram(matchday, rankings_df, selected_players):
+    # Filter data for the selected matchday
+    filtered_df = rankings_df[(rankings_df['Spieltag'] == matchday)]
 
-    # Display the Bump Chart with filtering
-    display_group_bump_chart(matchday, rankings_df, selected_players=[selected_player])
+    # Sort players by points for the matchday
+    filtered_df = filtered_df.sort_values('Punkte', ascending=False)
 
-    # Display the Density Plot with the correct selected players
-    if selected_player == 'All':
-        display_season_density_plot(matchday, rankings_df, rankings_df['Name'].unique().tolist())
+    # Extract the points scored by each player
+    points = filtered_df['Punkte']
+    players = filtered_df['Name']
+
+    # Determine bar colors
+    if len(selected_players) == 1 and selected_players[0] != 'All':
+        # If a single player is selected, gray out the other players
+        bar_colors = [color_palette[player] if player in selected_players else color_palette["Gray"] for player in players]
     else:
-        display_season_density_plot(matchday, rankings_df, [selected_player])
+        # If "All" is selected, use the normal colors
+        bar_colors = [color_palette[player] for player in players]
 
-    # Display the Donut Chart
-    display_donut_chart(matchdays_df, sorted_df['Name'].tolist(), matchday)
+    # Calculate average points for the matchday
+    matchday_avg = points.mean()
+
+    # Calculate the total points scored up to the selected matchday
+    total_points = rankings_df[(rankings_df['Spieltag'] <= matchday)]['Punkte'].sum()
+
+    # Calculate the number of matchdays up to the selected matchday
+    num_matchdays = matchday 
+
+    # Calculate the number of players
+    num_players = len(players)
+
+    # Calculate the Season Average
+    season_avg = total_points / (num_matchdays * num_players)
+
+    # Create the histogram using Plotly
+    fig = go.Figure()
+
+    # Add bars for each player
+    fig.add_trace(go.Bar(
+        x=players,
+        y=points,
+        marker=dict(color=bar_colors),
+        hovertemplate='<b>Points:</b> %{y}<br><b>MD Rank:</b> %{customdata[0]}<extra></extra>',
+        customdata=[(i+1,) for i in range(len(players))],  # Add rank information
+        showlegend=False  # Hide this trace from the legend
+    ))
+
+    # Add dotted lines for matchday and season averages
+    fig.add_trace(go.Scatter(
+        x=[players.iloc[0], players.iloc[-1]],  # Ensure the lines span the entire width of the bars
+        y=[matchday_avg, matchday_avg],
+        mode="lines",
+        name=f"Matchday Avg: {matchday_avg:.1f}",
+        line=dict(color="blue", width=2, dash="dot"),
+        showlegend=True
+    ))
+
+    fig.add_trace(go.Scatter(
+        x=[players.iloc[0], players.iloc[-1]],  # Ensure the lines span the entire width of the bars
+        y=[season_avg, season_avg],
+        mode="lines",
+        name=f"Season Avg: {season_avg:.1f}",
+        line=dict(color="white", width=2, dash="dot"),
+        showlegend=True
+    ))
+
+    # Update layout with adjusted standoff and legend position
+    fig.update_layout(
+        title_text=f"Distribution of Points Scored in Season",
+        xaxis_title="Players",
+        yaxis_title="Points",
+        yaxis=dict(
+            autorange=True,
+            title_standoff=10,  # Standoff for y-axis
+        ),
+        xaxis=dict(
+            tickangle=15,
+            title_standoff=5,  # Further reduced standoff for x-axis
+        ),
+        barmode="group",
+        height=400,
+        width=600,
+        template="plotly_white",
+        legend=dict(
+            orientation="h",
+            yanchor="top",
+            y=-0.25,  # Push the legend down slightly
+            xanchor="center",
+            x=0.5
+        )
+    )
+
+    # Display the chart in Streamlit
+    st.plotly_chart(fig, use_container_width=True)

@@ -37,6 +37,7 @@ def display_donut_chart(matchdays_df, selected_players, matchday):
 
     # Iterate over all matchdays up to the selected matchday
     filtered_matches = matchdays_df[matchdays_df["Matchday"] <= matchday]
+
     for _, match in filtered_matches.iterrows():
         home_team = match['Home Team']
         away_team = match['Away Team']

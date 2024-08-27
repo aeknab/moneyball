@@ -5,7 +5,7 @@ from auth.database import fetch_all, execute_query
 from groups.groups_season import display_season_section
 from groups.groups_matchday import display_matchday_section
 from groups.groups_analysis import display_analysis_section
-from groups.groups_summary import display_summaries_section
+from predictions.predictions import display_predictions_page  # Import the new Predictions page
 
 def display_groups_page():
     st.title("My Groups")
@@ -29,21 +29,21 @@ def display_groups_page():
         selected_group = groups[0]
 
         # Section Selection with Buttons
-        section = st.session_state.get('selected_section', 'Overview')  # Default to Overview
+        section = st.session_state.get('selected_section', 'Predictions')  # Default to Predictions
 
         col1, col2, col3, col4 = st.columns(4)
         with col1:
-            if st.button("Overview"):
-                section = "Overview"
+            if st.button("Predictions"):
+                section = "Predictions"
         with col2:
             if st.button("Matchday"):
                 section = "Matchday"
         with col3:
+            if st.button("Season"):
+                section = "Season"
+        with col4:
             if st.button("Analysis"):
                 section = "Analysis"
-        with col4:
-            if st.button("Summary"):
-                section = "Summary"
 
         st.session_state['selected_section'] = section
 
@@ -55,11 +55,11 @@ def display_groups_page():
         matchdays_df = pd.read_csv("data/merged_matchdays.csv")
 
         # Display the selected section
-        if section == "Overview":
-            display_season_section(matchday, rankings_df, matchdays_df)
+        if section == "Predictions":
+            display_predictions_page()  # Display the Predictions tab
         elif section == "Matchday":
             display_matchday_section(matchday)
+        elif section == "Season":
+            display_season_section(matchday, rankings_df, matchdays_df)
         elif section == "Analysis":
             display_analysis_section(matchday, rankings_df, matchdays_df)
-        elif section == "Summary":
-            display_summaries_section(matchday, selected_group_name, rankings_df, matchdays_df)

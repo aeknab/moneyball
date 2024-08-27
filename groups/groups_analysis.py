@@ -2,9 +2,6 @@ import streamlit as st
 import pandas as pd
 from analysis.pie_chart_group import display_group_pie_chart
 from analysis.heat_map_group import display_group_heat_map
-from analysis.histogram_group import display_matchday_histogram
-from analysis.density_plot import display_season_density_plot
-from analysis.donut_chart import display_donut_chart
 from analysis.confusion_matrix import display_confusion_matrix
 from analysis.line_plot import display_line_plot
 
@@ -21,23 +18,31 @@ def display_analysis_section(matchday, rankings_df, matchdays_df):
     # Determine which players to display based on the selection
     selected_players = players[1:] if selected_player == 'All' else [selected_player]
 
-    # Section 1: Histogram
-    display_matchday_histogram(matchday, rankings_df, selected_players)
+    # Section Selection with Buttons
+    section = st.session_state.get('selected_analysis_section', 'Pie Chart')  # Default to Pie Chart
 
-    # Section 2: Density Plot
-    display_season_density_plot(matchday, rankings_df, selected_players)
+    col1, col2, col3, col4 = st.columns(4)
+    with col1:
+        if st.button("Pie Chart"):
+            section = "Pie Chart"
+    with col2:
+        if st.button("Confusion Matrix"):
+            section = "Confusion Matrix"
+    with col3:
+        if st.button("Heat Map"):
+            section = "Heat Map"
+    with col4:
+        if st.button("Line Plot"):
+            section = "Line Plot"
 
-    # Section 3: Donut Chart
-    display_donut_chart(matchdays_df, selected_players, matchday)
+    st.session_state['selected_analysis_section'] = section
 
-    # Section 4: Confusion Matrix
-    display_confusion_matrix(matchdays_df, selected_players, matchday)
-
-    # Section 5: Group Predictions vs. Bundesliga Actual Results Pie Charts (side-by-side)
-    display_group_pie_chart(matchdays_df, selected_players)
-
-    # Section 6: Group Predictions Heatmap and Bundesliga Actual Results Heatmap (side-by-side)
-    display_group_heat_map(matchdays_df, selected_players)
-
-    # Section 7: Line Plot
-    display_line_plot(matchdays_df, selected_players)
+    # Display the selected section
+    if section == "Pie Chart":
+        display_group_pie_chart(matchdays_df, selected_players)
+    elif section == "Confusion Matrix":
+        display_confusion_matrix(matchdays_df, selected_players, matchday)
+    elif section == "Heat Map":
+        display_group_heat_map(matchdays_df, selected_players)
+    elif section == "Line Plot":
+        display_line_plot(matchdays_df, selected_players)
