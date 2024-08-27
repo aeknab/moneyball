@@ -4,10 +4,10 @@ from analysis.pie_chart_group import display_group_pie_chart, calculate_pie_char
 from analysis.heat_map_group import display_group_heat_map, calculate_heat_map_data
 from analysis.confusion_matrix import display_confusion_matrix, calculate_confusion_matrix_data
 from analysis.line_plot import display_line_plot, calculate_line_plot_data
-from chatgpt.prompt_pie_chart import pie_chart_prompt_template
-from chatgpt.prompt_confusion_matrix import confusion_matrix_prompt_template
-from chatgpt.prompt_heatmap import heat_map_prompt_template
-from chatgpt.prompt_line_plot import line_plot_prompt_template
+from ChatGPT.prompt_pie_chart import pie_chart_prompt_template
+from ChatGPT.prompt_confusion_matrix import confusion_matrix_prompt_template
+from ChatGPT.prompt_heatmap import heat_map_prompt_template
+from ChatGPT.prompt_line_plot import line_plot_prompt_template
 from openai import OpenAI
 
 client = OpenAI(api_key="sk-o0hrLU1sy_khDaVw-sFP1pnIOP-SLylV1lC-gaOgLWT3BlbkFJ7b2I0vPST6fT6vgTB90vaf-DIDxpOg00Z8ax3cOhIA")
