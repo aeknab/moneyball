@@ -119,9 +119,9 @@ def display_match_preview(df):
     stadium_image = load_image(stadium_image_path)
     bundesliga_logo = load_image(bundesliga_logo_path)
 
-    # Resize the images for better display
-    stadium_image_resized = resize_image(stadium_image, 5000)  # Smaller area for better alignment
-    bundesliga_logo_resized = resize_image(bundesliga_logo, 3000)  # Smaller area for better alignment
+    # Resize the images for larger display
+    stadium_image_resized = resize_image(stadium_image, 10000)  # Increased area for larger image
+    bundesliga_logo_resized = resize_image(bundesliga_logo, 6000)  # Increased area for larger image
 
     # Display the match outcome or input fields and add the images to the sides
     row2_col1, row2_col2, row2_col3 = st.columns([1, 2, 1])

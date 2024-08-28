@@ -118,7 +118,7 @@ def display_cross_table_view(df, selected_season, matchday):
                     border_color = border_colors[1]
 
                 ax.add_patch(plt.Rectangle((j-0.5, i-0.5), 1, 1, color=color, ec=border_color, lw=2))
-                ax.text(j, i, value, ha='center', va='center', color="black")
+                ax.text(j, i, value, ha='center', va='center', color="black", fontsize=10)
 
     # Adjust plot limits to make space for logos
     ax.set_xlim(-1.5, len(kreuztabelle.columns) + 0.5)
@@ -130,13 +130,11 @@ def display_cross_table_view(df, selected_season, matchday):
             team_logo = Image.open(team_logo_path).convert("RGBA")  # Ensure the image is in RGBA format
 
             # Resize the image
-            team_logo_resized = resize_image_to_bounding_box(team_logo, target_width=30, target_height=30)
+            team_logo_resized = resize_image_to_bounding_box(team_logo, target_width=50, target_height=50)
 
-            # Convert back to RGB to avoid transparency issues in matplotlib
-            team_logo_resized = team_logo_resized.convert("RGB")
-
+            # Keep the image in RGBA to preserve transparency
             # Add the logo to the plot
-            logo = OffsetImage(np.array(team_logo_resized), zoom=1)
+            logo = OffsetImage(np.array(team_logo_resized), zoom=0.5)  # Adjust zoom to ensure sharpness
             ab = AnnotationBbox(logo, (x, y), frameon=False, box_alignment=box_alignment)
             ax.add_artist(ab)
 

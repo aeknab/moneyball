@@ -148,7 +148,7 @@ def display_analysis_section(matchday, rankings_df, matchdays_df):
 
     section = st.session_state.get('selected_analysis_section', 'Pie Chart')
 
-    col1, col2, col3, col4 = st.columns(4)
+    col1, col2, col3, col4 = st.columns(4)  # Removing the extra column for Group Table
     with col1:
         if st.button("Pie Chart"):
             section = "Pie Chart"

@@ -1,6 +1,11 @@
 import streamlit as st
 import pandas as pd
-import plotly.graph_objs as go
+import plotly.graph_objects as go
+from PIL import Image
+from io import BytesIO
+import base64
+
+# Import necessary functions from other modules
 from analysis.group_table import display_group_table  # This is the Bar Chart
 from analysis.bump_chart_group import display_group_bump_chart
 from analysis.donut_chart import display_donut_chart
@@ -19,6 +24,13 @@ color_palette = {
     "Gray": "rgba(179, 179, 179, 0.85)"      # light gray for other players when a single player is selected
 }
 
+# Utility function to convert an image to base64 for Plotly
+def image_to_base64(image):
+    buffer = BytesIO()
+    image.save(buffer, format="PNG")
+    img_str = base64.b64encode(buffer.getvalue()).decode("utf-8")
+    return img_str
+
 def display_group_table_with_highlight(matchday, rankings_df, selected_player):
     # Filter and sort the DataFrame by matchday and total points in descending order
     filtered_df = rankings_df[rankings_df['Spieltag'] == matchday]
@@ -34,15 +46,42 @@ def display_group_table_with_highlight(matchday, rankings_df, selected_player):
         bar_colors = [color_palette["Gray"] if player != selected_player else color_palette[selected_player] for player in filtered_df['Name']]
 
     # Create the horizontal bar chart using Plotly
-    fig = go.Figure(data=[go.Bar(
-        x=filtered_df['Gesamtpunkte'],
-        y=filtered_df['Name'],
-        orientation='h',  # Ensure horizontal bars
-        marker=dict(color=bar_colors)
-    )])
+    fig = go.Figure()
+
+    max_points = filtered_df['Gesamtpunkte'].max()
+
+    for player, points in zip(filtered_df['Name'], filtered_df['Gesamtpunkte']):
+        fig.add_trace(go.Bar(
+            x=[points],
+            y=[player],
+            orientation='h',
+            marker=dict(color=color_palette.get(player, 'rgba(102, 194, 165, 0.85)')),
+            showlegend=False
+        ))
+
+        # Add player logos next to the bars
+        player_logo_path = f"data/logos/groups/{player}.png"  # Ensure the path to the player logos is correct
+        player_logo = Image.open(player_logo_path)
+        player_logo_resized = player_logo.resize((40, 40))  # Resize the logo
+        logo_base64 = image_to_base64(player_logo_resized)
+
+        # Position the logo to the right of the bar
+        fig.add_layout_image(
+            dict(
+                source=f'data:image/png;base64,{logo_base64}',
+                xref="x", yref="y",
+                x=points + max_points * 0.05,  # Adjust the position to be slightly right of the bar
+                y=player,
+                sizex=40 / max_points,  # Adjust size to match bar height
+                sizey=0.5,
+                xanchor="left",
+                yanchor="middle",
+                layer="above"
+            )
+        )
 
     fig.update_layout(
-        title_text=f"Bar Chart",  # Adding a title to the Bar Chart
+        title_text="Bar Chart",  # Adding a title to the Bar Chart
         xaxis_title="Total Points",
         yaxis_title="Players",
         height=400,

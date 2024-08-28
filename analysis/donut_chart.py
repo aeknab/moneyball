@@ -105,13 +105,23 @@ def display_donut_chart(matchdays_df, selected_players, matchday):
     bundesliga_logo = Image.open(bundesliga_logo_path)
     logo_base64 = image_to_base64(bundesliga_logo)
 
-    # Add the Bundesliga logo in the center of the donut chart
+    # Determine the correct logo to use based on the selected player
+    if len(selected_players) == 1 and selected_players[0] != 'All':
+        player_logo_path = f"data/logos/groups/{selected_players[0]}.png"
+    else:
+        player_logo_path = "data/logos/groups/just_the_tipp.png"  # Default group logo
+
+    # Load the appropriate logo
+    player_logo = Image.open(player_logo_path)
+    logo_base64 = image_to_base64(player_logo)
+
+    # Add the player's logo (or the default group logo) in the center of the donut chart
     fig.add_layout_image(
         dict(
             source=f"data:image/png;base64,{logo_base64}",
             xref="paper", yref="paper",
             x=0.5, y=0.5,
-            sizex=0.2, sizey=0.2,
+            sizex=0.35, sizey=0.35,
             xanchor="center", yanchor="middle",
             layer="above"  # Ensure it's above the background circle
         )

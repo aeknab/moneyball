@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 
-from auth.database import fetch_all, execute_query
+from auth.database import fetch_all
 from groups.groups_season import display_season_section
 from groups.groups_matchday import display_matchday_section
 from groups.groups_analysis import display_analysis_section
@@ -63,3 +63,7 @@ def display_groups_page():
             display_season_section(matchday, rankings_df, matchdays_df)
         elif section == "Analysis":
             display_analysis_section(matchday, rankings_df, matchdays_df)
+
+# Example usage
+if __name__ == "__main__":
+    display_groups_page()

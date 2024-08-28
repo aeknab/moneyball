@@ -45,7 +45,17 @@ def display_group_pie_chart(matchdays_df, selected_players):
     colors = ['rgba(168, 230, 161, 0.85)', 'rgba(196, 196, 196, 0.85)', 'rgba(255, 250, 205, 0.85)']
     border_colors = ['rgba(56, 142, 60, 1)', 'rgba(153, 153, 153, 1)', 'rgba(255, 215, 0, 1)']
 
-    # Load the Bundesliga logo
+    # Determine which image to use based on the selected player(s)
+    if len(selected_players) == 1 and selected_players[0] != 'All':
+        player_logo_path = f"data/logos/groups/{selected_players[0]}.png"
+        player_logo_size = 0.55  # Larger size for individual players
+    else:
+        player_logo_path = "data/logos/groups/just_the_tipp.png"
+        player_logo_size = 0.35  # Standard size for the group logo
+
+    player_logo_base64 = image_to_base64(player_logo_path)
+
+    # Load the Bundesliga logo for the right chart
     bundesliga_logo_path = "data/logos/team_logos/Bundesliga.svg.png"
     bundesliga_logo_base64 = image_to_base64(bundesliga_logo_path)
 
@@ -69,13 +79,14 @@ def display_group_pie_chart(matchdays_df, selected_players):
             hole=0.4  # Create a donut chart
         )])
 
-        # Add the Bundesliga logo in the center of the donut chart
+        # Add the player's logo (or the default group logo) in the center of the donut chart
         fig_predictions.add_layout_image(
             dict(
-                source=f"data:image/png;base64,{bundesliga_logo_base64}",
+                source=f"data:image/png;base64,{player_logo_base64}",
                 xref="paper", yref="paper",
                 x=0.5, y=0.5,
-                sizex=0.2, sizey=0.2,
+                sizex=player_logo_size,  # Adjust the size of the player image
+                sizey=player_logo_size,  # Adjust the size of the player image
                 xanchor="center", yanchor="middle",
                 layer="above"
             )
@@ -124,7 +135,8 @@ def display_group_pie_chart(matchdays_df, selected_players):
                 source=f"data:image/png;base64,{bundesliga_logo_base64}",
                 xref="paper", yref="paper",
                 x=0.5, y=0.5,
-                sizex=0.2, sizey=0.2,
+                sizex=0.5,  # Standard size for the Bundesliga logo
+                sizey=0.5,  # Standard size for the Bundesliga logo
                 xanchor="center", yanchor="middle",
                 layer="above"
             )
