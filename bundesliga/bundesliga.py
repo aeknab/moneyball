@@ -25,16 +25,13 @@ def display_bundesliga_page():
     st.title("Bundesliga Dashboard")
 
     # Bundesliga Section
-    selected_season, selected_matchday, selected_match, df_matches = display_match_preview(df)
+    selected_season, selected_matchday, selected_match, df_matches, home_team_tag, away_team_tag = display_match_preview(df)
 
     # Ensure selections are made before proceeding
     if selected_season != '--' and selected_matchday != '--' and selected_match != '--':
         selected_match_row = df_matches[
             df_matches.apply(lambda row: f"{row['Home Tag']} vs. {row['Away Tag']}", axis=1) == selected_match
         ].iloc[0]
-
-        home_team_tag = selected_match_row['Home Tag']
-        away_team_tag = selected_match_row['Away Tag']
 
         # Display the form guide sections
         display_form_guide_section(df, selected_season, selected_matchday, selected_match, df_matches)
@@ -130,7 +127,7 @@ def display_bundesliga_page():
 
         # Display the selected visualization
         if st.session_state.selected_viz == "Bump Chart":
-            display_bump_chart(df, selected_season, selected_matchday, color_codes_df)
+            display_bump_chart(df, selected_season, selected_matchday, color_codes_df, [home_team_tag, away_team_tag])
         elif st.session_state.selected_viz == "Pie Chart":
             display_pie_chart(df, selected_season, selected_matchday)
         elif st.session_state.selected_viz == "Heat Map":

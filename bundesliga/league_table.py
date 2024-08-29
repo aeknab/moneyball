@@ -112,22 +112,36 @@ def create_league_table_animation(df_points, color_codes_df):
     complete_index = pd.MultiIndex.from_product([matchdays, all_teams], names=['Matchday', 'Team Tag'])
     df_points = df_points.set_index(['Matchday', 'Team Tag']).reindex(complete_index, fill_value=0).reset_index()
 
-    # Create the bar chart animation with Plotly Express
-    fig = px.bar(df_points,
-                 x='Points',
-                 y='Rank',
-                 color='Team Tag',
-                 orientation='h',
-                 animation_frame='Matchday',
-                 animation_group='Team Tag',  # Ensures the same team is tracked across frames
-                 range_x=[0, 100],
-                 range_y=[0.5, 18.5],
-                 category_orders={"Matchday": matchdays},  # Ensure matchdays go from 1 to 34
-                 color_discrete_map={team: color for team, color in zip(color_codes_df['Tag'], color_codes_df['Primary'])})
+    # Sort teams by rank for each matchday
+    df_points['Rank'] = df_points.groupby('Matchday')['Points'].rank(method='first', ascending=False)
 
-    # Customize the layout and add white outlines to the bars
-    fig.update_traces(marker_line_color='white', marker_line_width=0.5)
+    # Initialize the figure
+    fig = go.Figure()
 
+    # Create initial bars and logos for the first matchday
+    matchday = 1
+    df_day = df_points[df_points['Matchday'] == matchday]
+    
+    for i, row in df_day.iterrows():
+        primary_color = row['Primary']
+        team_tag = row['Team Tag']
+        points = row['Points']
+        rank = row['Rank']
+
+        # Add bars
+        fig.add_trace(go.Bar(
+            x=[points],
+            y=[rank],
+            orientation='h',
+            marker=dict(
+                color=primary_color,
+                line=dict(color='white', width=0.5)  # White outlines with reduced width
+            ),
+            name=team_tag,
+            showlegend=False
+        ))
+
+    # Update layout
     fig.update_layout(
         yaxis=dict(autorange="reversed", title='Rank', tickvals=list(range(1, 19))),
         xaxis=dict(title='Points', range=[0, 100]),
@@ -135,24 +149,67 @@ def create_league_table_animation(df_points, color_codes_df):
         paper_bgcolor='rgba(0,0,0,0)',
         showlegend=False,
         height=800,
-        width=1000,
-        sliders=[{
-            "steps": [{"args": [[str(i)], {"frame": {"duration": 500, "redraw": True},
-                                            "mode": "immediate"}],
-                       "label": str(i),
-                       "method": "animate"} for i in matchdays],
-            "currentvalue": {"prefix": "Matchday: "}
-        }]
+        width=1000
     )
 
-    # Overlaying logos using Plotly graph_objects
+    # Add the logos as layout images for the first frame
+    layout_images = []
+    for _, row in df_day.iterrows():
+        team_tag = row['Team Tag']
+        rank = row['Rank']
+        points = row['Points']
+
+        logo_path = f"data/logos/team_logos/{team_tag}.svg.png"
+        team_logo = Image.open(logo_path)
+        team_logo_resized = resize_image_to_bounding_box(team_logo, target_width=40, target_height=40)
+        logo_base64 = image_to_base64(team_logo_resized)
+
+        layout_images.append(
+            dict(
+                source=f'data:image/png;base64,{logo_base64}',
+                xref="x",
+                yref="y",
+                x=points + 1,
+                y=rank,
+                sizex=5,
+                sizey=0.7,
+                xanchor="left",
+                yanchor="middle",
+                layer="above"
+            )
+        )
+
+    # Update the layout with the images
+    fig.update_layout(images=layout_images)
+
+    # Generate frames for each matchday
     frames = []
     for matchday in matchdays:
         df_day = df_points[df_points['Matchday'] == matchday]
+        frame_data = []
         layout_images_frame = []
 
-        for _, row in df_day.iterrows():
-            logo_path = f"data/logos/team_logos/{row['Team Tag']}.svg.png"
+        for i, row in df_day.iterrows():
+            team_tag = row['Team Tag']
+            points = row['Points']
+            rank = row['Rank']
+            primary_color = row['Primary']
+
+            # Append bar update for the frame
+            frame_data.append(go.Bar(
+                x=[points],
+                y=[rank],
+                orientation='h',
+                marker=dict(
+                    color=primary_color,
+                    line=dict(color='white', width=0.5)
+                ),
+                name=team_tag,
+                showlegend=False
+            ))
+
+            # Add logo image update for the frame
+            logo_path = f"data/logos/team_logos/{team_tag}.svg.png"
             team_logo = Image.open(logo_path)
             team_logo_resized = resize_image_to_bounding_box(team_logo, target_width=40, target_height=40)
             logo_base64 = image_to_base64(team_logo_resized)
@@ -162,9 +219,9 @@ def create_league_table_animation(df_points, color_codes_df):
                     source=f'data:image/png;base64,{logo_base64}',
                     xref="x",
                     yref="y",
-                    x=row['Points'] + 2,  # Position slightly to the right of the bar
-                    y=row['Rank'],
-                    sizex=5,  # Adjust size to match bar height
+                    x=points + 1,
+                    y=rank,
+                    sizex=5,
                     sizey=0.7,
                     xanchor="left",
                     yanchor="middle",
@@ -172,26 +229,74 @@ def create_league_table_animation(df_points, color_codes_df):
                 )
             )
 
-        # Combine the express data with graph_objects for each frame
-        frames.append(go.Frame(data=fig.data, layout=dict(images=layout_images_frame), name=str(matchday)))
+        frames.append(go.Frame(data=frame_data, layout=dict(images=layout_images_frame), name=str(matchday)))
 
-    # Update the figure with frames
-    fig_go = go.Figure(fig)
-    fig_go.frames = frames
+    # Add frames to the figure
+    fig.frames = frames
 
-    # Add animation controls
-    fig_go.update_layout(updatemenus=[dict(type="buttons",
-                                           buttons=[dict(label="Play",
-                                                         method="animate",
-                                                         args=[None, {"frame": {"duration": 500, "redraw": True},
-                                                                      "fromcurrent": True,
-                                                                      "mode": "immediate"}]),
-                                                    dict(label="Pause",
-                                                         method="animate",
-                                                         args=[[None], {"frame": {"duration": 0, "redraw": False},
-                                                                        "mode": "immediate"}])])])
+    # Move the buttons to the bottom and freeze at the final matchday
+    fig.update_layout(
+        updatemenus=[
+            dict(
+                type="buttons",
+                direction="left",
+                x=0.5,  # Position in the middle
+                y=-0.1,  # Move buttons to the bottom
+                showactive=True,
+                buttons=[
+                    dict(
+                        label="Play",
+                        method="animate",
+                        args=[None, {"frame": {"duration": 500, "redraw": True}, 
+                                     "fromcurrent": True, 
+                                     "mode": "immediate"}]
+                    ),
+                    dict(
+                        label="Pause",
+                        method="animate",
+                        args=[[None], {"frame": {"duration": 0, "redraw": False}, 
+                                       "mode": "immediate"}]
+                    )
+                ]
+            )
+        ],
+        sliders=[{
+            "steps": [{"args": [[str(i)], {"frame": {"duration": 500, "redraw": True}, 
+                                           "mode": "immediate"}],
+                       "label": str(i),
+                       "method": "animate"} for i in matchdays],
+            "currentvalue": {"prefix": "Matchday: "},
+            "xanchor": "left",
+            "x": 0.05,
+            "len": 0.95,
+            "pad": {"b": 10},
+        }],
+        newshape_line=dict(color="rgba(0,0,0,0)", width=0.5)  # No visible lines around frames
+    )
 
-    st.plotly_chart(fig_go, use_container_width=True)
+    # Add callback to stop animation at the final matchday
+    fig.update_layout(
+        updatemenus=[dict(type="buttons",
+                          buttons=[dict(label="Play",
+                                        method="animate",
+                                        args=[None, {"frame": {"duration": 500, "redraw": True},
+                                                     "fromcurrent": True,
+                                                     "mode": "immediate",
+                                                     "transition": {"duration": 0}}]),
+                                   dict(label="Pause",
+                                        method="animate",
+                                        args=[[None], {"frame": {"duration": 0, "redraw": False},
+                                                       "mode": "immediate"}])],
+                          x=0.5,
+                          y=-0.2,
+                          xanchor="center",
+                          yanchor="top")],
+        sliders=[{"currentvalue": {"prefix": "Matchday: ", "visible": True},
+                  "steps": [{"label": str(i), "method": "animate", "args": [[str(i)], {"frame": {"duration": 500, "redraw": True}, "mode": "immediate"}]} for i in matchdays],
+                  "x": 0.1, "len": 0.9}]
+    )
+
+    st.plotly_chart(fig, use_container_width=True)
 
 # Function to display the league tables with animation and cross table
 def display_league_tables(df, selected_season, matchday, view_selection, color_codes_df):

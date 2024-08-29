@@ -38,7 +38,7 @@ def display_match_preview(df):
 
     # Ensure that the selection is valid before proceeding
     if selected_season == '--' or selected_matchday == '--' or selected_match == '--':
-        return selected_season, selected_matchday, selected_match, None
+        return selected_season, selected_matchday, selected_match, None, None, None
 
     # Fetch the selected match row
     selected_match_row = df_matches[
@@ -277,7 +277,7 @@ def display_match_preview(df):
     # Display the Teams Overview table with a styled frame and logos
     display_styled_team_table(home_data, away_data, home_team, away_team)
 
-    return selected_season, selected_matchday, selected_match, df_matches
+    return selected_season, selected_matchday, selected_match, df_matches, home_team_tag, away_team_tag
 
 # Utility function to convert an image to bytes (needed for displaying the image)
 def image_to_bytes(image):
