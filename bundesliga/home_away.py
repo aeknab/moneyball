@@ -1,4 +1,5 @@
 import pandas as pd
+import streamlit as st
 import plotly.graph_objects as go
 from PIL import Image
 from io import BytesIO
@@ -7,7 +8,12 @@ from bundesliga.utils import get_team_colors, resize_image_to_bounding_box, imag
 
 # Function to filter matches based on the selected season and matchday
 def filter_home_away_matches(df, selected_season, matchday):
-    return df[(df['Season'] == selected_season) & (df['Matchday'] < matchday)]
+    if selected_season == '2023/24':
+        # Exclude data from the selected matchday for 2023/24 season (preview mode)
+        return df[(df['Season'] == selected_season) & (df['Matchday'] < matchday)]
+    else:
+        # Include data from the selected matchday for 2005/06 to 2022/23 seasons
+        return df[(df['Season'] == selected_season) & (df['Matchday'] <= matchday)]
 
 # Function to calculate points for each team when they were playing at home or away
 def calculate_home_away_points(df_filtered, home_away):
@@ -49,12 +55,15 @@ def plot_home_away_table(df_points, title, color_codes_df, home_away):
     for i, (team_tag, points) in enumerate(zip(df_points['Team Tag'], df_points['Points'])):
         primary_color, secondary_color = get_team_colors(team_tag, color_codes_df)
 
-        # Add the bar for the team
+        # Add the bar for the team with a white outline
         fig.add_trace(go.Bar(
             y=[i + 1],
             x=[points],
             orientation='h',
-            marker=dict(color=primary_color),
+            marker=dict(
+                color=primary_color,
+                line=dict(color='white', width=0.5)  # Add white outlines with 0.5px width
+            ),
             name=team_tag,
             showlegend=False
         ))
@@ -117,3 +126,34 @@ def image_to_base64(image):
     image.save(buffer, format="PNG")
     img_str = base64.b64encode(buffer.getvalue()).decode()
     return img_str
+
+# Function to display the home/away tables
+def display_home_away_tables(df, selected_season, matchday, color_codes_df):
+    # Ensure the correct filtering of matchdays and the proper display of matchday in the title
+    df_filtered = filter_home_away_matches(df, selected_season, matchday)
+    
+    # Adjust the matchday for display if the selected season is 2023/24
+    if selected_season == '2023/24':
+        matchday_display = matchday - 1
+    else:
+        matchday_display = matchday
+
+    # Adjust the matchday for display if the selected season is 2023/24
+    if selected_season == '2023/24':
+        matchday_display = matchday - 1
+    else:
+        matchday_display = matchday
+
+    # Display Home Table
+    st.subheader(f"Home Table After Matchday {matchday_display} ({selected_season})")
+    df_home_points = calculate_home_away_points(df_filtered, home_away='home')
+    home_fig = plot_home_away_table(df_home_points, f'Home Table After Matchday {matchday_display} ({selected_season})', color_codes_df, home_away='home')
+    st.plotly_chart(home_fig, use_container_width=True)
+
+    # Display Away Table
+    st.subheader(f"Away Table After Matchday {matchday_display} ({selected_season})")
+    df_away_points = calculate_home_away_points(df_filtered, home_away='away')
+    away_fig = plot_home_away_table(df_away_points, f'Away Table After Matchday {matchday_display} ({selected_season})', color_codes_df, home_away='away')
+    st.plotly_chart(away_fig, use_container_width=True)
+        
+    

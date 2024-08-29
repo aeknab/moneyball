@@ -286,13 +286,19 @@ def create_league_table_animation(df_points, color_codes_df, selected_teams):
 
 # Function to display the league tables with animation and cross table
 def display_league_tables(df, selected_season, matchday, view_selection, color_codes_df, selected_teams):
-
     # Ensure view selection is consistent across buttons
     df_filtered = filter_matches(df, selected_season, matchday)
 
     if view_selection == "Season Table":
         df_points = calculate_team_points(df_filtered)
-        plot_league_table(df_points, f'Bundesliga League Table After Matchday {matchday} ({selected_season})', color_codes_df)
+        
+        # Adjust the matchday for display if the selected season is 2023/24
+        if selected_season == '2023/24':
+            matchday_display = matchday - 1
+        else:
+            matchday_display = matchday
+        
+        plot_league_table(df_points, f'Bundesliga League Table After Matchday {matchday_display} ({selected_season})', color_codes_df)
 
     elif view_selection == "Home/Away":
         # Display Home and Away tables one after the other

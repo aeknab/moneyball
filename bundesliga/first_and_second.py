@@ -1,3 +1,4 @@
+import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
 from PIL import Image
@@ -5,14 +6,19 @@ from io import BytesIO
 import base64
 from bundesliga.utils import get_team_colors, resize_image, image_to_base64
 
-# Function to filter matches based on the selected season and leg (1st or 2nd) and matchday
+# Function to filter matches based on the selected season, leg (1st or 2nd), and matchday
 def filter_leg_matches(df, selected_season, leg, matchday):
+    if selected_season == '2023/24':
+        matchday_cutoff = matchday - 1  # Exclude the current matchday for preview
+    else:
+        matchday_cutoff = matchday
+    
     if leg == '1st':
-        return df[(df['Season'] == selected_season) & (df['Matchday'] < matchday) & (df['Matchday'] <= 17)]
+        return df[(df['Season'] == selected_season) & (df['Matchday'] <= 17) & (df['Matchday'] <= matchday_cutoff)]
     elif leg == '2nd':
-        if matchday < 18:
+        if matchday_cutoff < 18:
             return pd.DataFrame()  # Return empty DataFrame if matchday is before the 2nd leg starts
-        return df[(df['Season'] == selected_season) & (df['Matchday'] < matchday) & (df['Matchday'] >= 18)]
+        return df[(df['Season'] == selected_season) & (df['Matchday'] >= 18) & (df['Matchday'] <= matchday_cutoff)]
 
 # Function to calculate points for each team in either the 1st or 2nd leg
 def calculate_leg_points(df_filtered):
@@ -49,12 +55,15 @@ def plot_leg_table(df_points, title, color_codes_df):
     for i, (team_tag, points) in enumerate(zip(df_points['Team Tag'], df_points['Points'])):
         primary_color, secondary_color = get_team_colors(team_tag, color_codes_df)
 
-        # Add the bar for the team
+        # Add the bar for the team with a thin white outline
         fig.add_trace(go.Bar(
             y=[i + 1],
             x=[points],
             orientation='h',
-            marker=dict(color=primary_color),
+            marker=dict(
+                color=primary_color,
+                line=dict(color='white', width=0.5)  # Thin white outlines
+            ),
             name=team_tag,
             showlegend=False
         ))
@@ -93,6 +102,34 @@ def plot_leg_table(df_points, title, color_codes_df):
     )
 
     return fig
+
+# Function to display the leg tables
+def display_leg_tables(df, selected_season, matchday, color_codes_df):
+    # Adjust the matchday for display if the selected season is 2023/24
+    if selected_season == '2023/24':
+        matchday_display = matchday - 1
+    else:
+        matchday_display = matchday
+
+    # Display 1st Leg Table
+    st.subheader(f"1st Leg Table After Matchday {matchday_display} ({selected_season})")
+    df_leg_1 = filter_leg_matches(df, selected_season, leg='1st', matchday=matchday)
+    if df_leg_1.empty:
+        st.write("No available data yet.")
+    else:
+        df_leg_1_points = calculate_leg_points(df_leg_1)
+        leg_1_fig = plot_leg_table(df_leg_1_points, f'1st Leg Table After Matchday {matchday_display} ({selected_season})', color_codes_df)
+        st.plotly_chart(leg_1_fig, use_container_width=True)
+
+    # Display 2nd Leg Table
+    st.subheader(f"2nd Leg Table After Matchday {matchday_display} ({selected_season})")
+    df_leg_2 = filter_leg_matches(df, selected_season, leg='2nd', matchday=matchday)
+    if df_leg_2.empty:
+        st.write("No available data yet.")
+    else:
+        df_leg_2_points = calculate_leg_points(df_leg_2)
+        leg_2_fig = plot_leg_table(df_leg_2_points, f'2nd Leg Table After Matchday {matchday_display} ({selected_season})', color_codes_df)
+        st.plotly_chart(leg_2_fig, use_container_width=True)
 
 # Utility functions for resizing images and converting to base64
 def resize_image(image, max_width, max_height=None):

@@ -199,8 +199,8 @@ def animate_bump_chart(df, color_codes_df, selected_season, selected_matchday, s
 
         # Add unselected teams' lines first (background)
         for team_tag in df_rankings['Team Tag'].unique():
+            team_data = df_rankings[df_rankings['Team Tag'] == team_tag]
             if team_tag not in selected_teams:
-                team_data = df_rankings[df_rankings['Team Tag'] == team_tag]
                 primary_color = 'rgba(169,169,169,0.75)'
 
                 frame_data.append(go.Scatter(
@@ -212,23 +212,7 @@ def animate_bump_chart(df, color_codes_df, selected_season, selected_matchday, s
                     name=team_tag,
                 ))
 
-        # Add selected teams' lines on top (foreground)
-        for team_tag in selected_teams:
-            team_data = df_rankings[df_rankings['Team Tag'] == team_tag]
-            primary_color, _ = get_team_colors(team_tag, color_codes_df)
-
-            if primary_color.lower() == '#000000' or primary_color.lower() == 'black':
-                primary_color = '#FFFFFF'
-
-            frame_data.append(go.Scatter(
-                x=team_data['Matchday'][team_data['Matchday'] <= md],
-                y=team_data['Rank'][team_data['Matchday'] <= md],
-                mode='lines+markers',
-                marker=dict(size=8, color=primary_color, symbol='circle'),
-                line=dict(width=3, color=primary_color),
-                name=team_tag,
-            ))
-
+            # Add team logo regardless of whether it is selected or not
             if not team_data['Rank'][team_data['Matchday'] == md].empty:
                 end_x = md
                 end_y = team_data['Rank'][team_data['Matchday'] == md].values[0]
@@ -253,6 +237,23 @@ def animate_bump_chart(df, color_codes_df, selected_season, selected_matchday, s
                         layer="above"
                     )
                 )
+
+        # Add selected teams' lines on top (foreground)
+        for team_tag in selected_teams:
+            team_data = df_rankings[df_rankings['Team Tag'] == team_tag]
+            primary_color, _ = get_team_colors(team_tag, color_codes_df)
+
+            if primary_color.lower() == '#000000' or primary_color.lower() == 'black':
+                primary_color = '#FFFFFF'
+
+            frame_data.append(go.Scatter(
+                x=team_data['Matchday'][team_data['Matchday'] <= md],
+                y=team_data['Rank'][team_data['Matchday'] <= md],
+                mode='lines+markers',
+                marker=dict(size=8, color=primary_color, symbol='circle'),
+                line=dict(width=3, color=primary_color),
+                name=team_tag,
+            ))
 
         frames.append(go.Frame(data=frame_data, layout=dict(images=layout_images_frame), name=str(md)))
 
