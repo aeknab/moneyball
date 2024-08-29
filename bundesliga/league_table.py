@@ -1,10 +1,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
-import plotly.express as px  # Import plotly.express for animations
 from PIL import Image
-from io import BytesIO
-import base64
 from bundesliga.crosstable import display_cross_table_view
 from bundesliga.utils import get_team_colors, resize_image_to_bounding_box, image_to_base64
 from bundesliga.home_away import filter_home_away_matches, calculate_home_away_points, plot_home_away_table
@@ -84,6 +81,7 @@ def plot_league_table(df_points, title, color_codes_df):
     )
 
     st.plotly_chart(fig, use_container_width=True)
+
 # Function to get the points of each team at the end of each matchday for animation
 def get_team_points_per_matchday(df_filtered):
     home_points = df_filtered[['Matchday', 'Home Tag', 'Home Team Points']].rename(
@@ -98,8 +96,8 @@ def get_team_points_per_matchday(df_filtered):
     
     return df_points
 
-# Function to create the animated league table with logos
-def create_league_table_animation(df_points, color_codes_df):
+# Function to create the animated league table with logos, highlighting only the selected teams
+def create_league_table_animation(df_points, color_codes_df, selected_teams):
     # Merge with color data
     df_points = df_points.merge(color_codes_df[['Tag', 'Primary', 'Secondary']], how='left', left_on='Team Tag', right_on='Tag')
 
@@ -123,10 +121,15 @@ def create_league_table_animation(df_points, color_codes_df):
     df_day = df_points[df_points['Matchday'] == matchday]
     
     for i, row in df_day.iterrows():
-        primary_color = row['Primary']
         team_tag = row['Team Tag']
         points = row['Points']
         rank = row['Rank']
+
+        # Determine color based on whether the team is selected or not
+        if team_tag in selected_teams:
+            primary_color = row['Primary']
+        else:
+            primary_color = 'rgba(179, 179, 179, 0.75)'  # Greyed out with reduced opacity
 
         # Add bars
         fig.add_trace(go.Bar(
@@ -193,9 +196,14 @@ def create_league_table_animation(df_points, color_codes_df):
             team_tag = row['Team Tag']
             points = row['Points']
             rank = row['Rank']
-            primary_color = row['Primary']
 
-            # Append bar update for the frame
+            # Determine color based on whether the team is selected or not
+            if team_tag in selected_teams:
+                primary_color = row['Primary']
+            else:
+                primary_color = 'rgba(179, 179, 179, 0.75)'  # Greyed out with reduced opacity
+
+            # Update bars instead of replacing them
             frame_data.append(go.Bar(
                 x=[points],
                 y=[rank],
@@ -234,14 +242,14 @@ def create_league_table_animation(df_points, color_codes_df):
     # Add frames to the figure
     fig.frames = frames
 
-    # Move the buttons to the bottom and freeze at the final matchday
+    # Move the buttons to the left and the slider to the right
     fig.update_layout(
         updatemenus=[
             dict(
                 type="buttons",
                 direction="left",
-                x=0.5,  # Position in the middle
-                y=-0.1,  # Move buttons to the bottom
+                x=0.05,  # Position on the left
+                y=-0.1,  # Position below the chart
                 showactive=True,
                 buttons=[
                     dict(
@@ -266,40 +274,18 @@ def create_league_table_animation(df_points, color_codes_df):
                        "label": str(i),
                        "method": "animate"} for i in matchdays],
             "currentvalue": {"prefix": "Matchday: "},
-            "xanchor": "left",
-            "x": 0.05,
-            "len": 0.95,
+            "xanchor": "right",
+            "x": 0.55,  # Position to the right of the buttons
+            "len": 0.4,
             "pad": {"b": 10},
         }],
         newshape_line=dict(color="rgba(0,0,0,0)", width=0.5)  # No visible lines around frames
     )
 
-    # Add callback to stop animation at the final matchday
-    fig.update_layout(
-        updatemenus=[dict(type="buttons",
-                          buttons=[dict(label="Play",
-                                        method="animate",
-                                        args=[None, {"frame": {"duration": 500, "redraw": True},
-                                                     "fromcurrent": True,
-                                                     "mode": "immediate",
-                                                     "transition": {"duration": 0}}]),
-                                   dict(label="Pause",
-                                        method="animate",
-                                        args=[[None], {"frame": {"duration": 0, "redraw": False},
-                                                       "mode": "immediate"}])],
-                          x=0.5,
-                          y=-0.2,
-                          xanchor="center",
-                          yanchor="top")],
-        sliders=[{"currentvalue": {"prefix": "Matchday: ", "visible": True},
-                  "steps": [{"label": str(i), "method": "animate", "args": [[str(i)], {"frame": {"duration": 500, "redraw": True}, "mode": "immediate"}]} for i in matchdays],
-                  "x": 0.1, "len": 0.9}]
-    )
-
     st.plotly_chart(fig, use_container_width=True)
 
 # Function to display the league tables with animation and cross table
-def display_league_tables(df, selected_season, matchday, view_selection, color_codes_df):
+def display_league_tables(df, selected_season, matchday, view_selection, color_codes_df, selected_teams):
 
     # Ensure view selection is consistent across buttons
     df_filtered = filter_matches(df, selected_season, matchday)
@@ -346,4 +332,4 @@ def display_league_tables(df, selected_season, matchday, view_selection, color_c
     # Sub-header for animation
     if st.button("Play Animation"):
         df_points = get_team_points_per_matchday(df_filtered)
-        create_league_table_animation(df_points, color_codes_df)
+        create_league_table_animation(df_points, color_codes_df, selected_teams)

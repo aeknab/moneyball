@@ -54,9 +54,6 @@ def plot_bump_chart(df, color_codes_df, selected_season, matchday, selected_team
             if primary_color.lower() == '#000000' or primary_color.lower() == 'black':
                 primary_color = '#FFFFFF'
 
-            if team_tag not in selected_teams:
-                primary_color = 'rgba(169,169,169,0.75)'  # Grey and 75% opacity for unselected teams
-
             team_data = df_rankings[df_rankings['Team Tag'] == team_tag]
             hover_texts = [
                 f"vs. {row['Opponent']} ({row['Location']})<br>{row['Score']}"
@@ -153,15 +150,33 @@ def animate_bump_chart(df, color_codes_df, selected_season, selected_matchday, s
 
     fig = go.Figure()
 
+    # First, plot the unselected teams in the background
     for team_tag in df_rankings['Team Tag'].unique():
+        if team_tag not in selected_teams:
+            team_data = df_rankings[df_rankings['Team Tag'] == team_tag]
+            primary_color = 'rgba(169,169,169,0.75)'  # Grey and 75% opacity for unselected teams
+
+            fig.add_trace(go.Scatter(
+                x=team_data['Matchday'],
+                y=team_data['Rank'],
+                mode='lines+markers',
+                marker=dict(size=8, color=primary_color),
+                line=dict(width=3, color=primary_color),
+                name=team_tag,
+                text=[
+                    f"vs. {row['Opponent']} ({row['Location']})<br>{row['Score']}"
+                    for _, row in team_data.iterrows()
+                ],
+                hoverinfo='text',
+            ))
+
+    # Now, plot the selected teams on top
+    for team_tag in selected_teams:
         team_data = df_rankings[df_rankings['Team Tag'] == team_tag]
         primary_color, _ = get_team_colors(team_tag, color_codes_df)
 
         if primary_color.lower() == '#000000' or primary_color.lower() == 'black':
             primary_color = '#FFFFFF'
-
-        if team_tag not in selected_teams:
-            primary_color = 'rgba(169,169,169,0.75)'  # Grey and 75% opacity for unselected teams
 
         fig.add_trace(go.Scatter(
             x=team_data['Matchday'],
@@ -182,15 +197,28 @@ def animate_bump_chart(df, color_codes_df, selected_season, selected_matchday, s
         frame_data = []
         layout_images_frame = []
 
+        # Add unselected teams' lines first (background)
         for team_tag in df_rankings['Team Tag'].unique():
+            if team_tag not in selected_teams:
+                team_data = df_rankings[df_rankings['Team Tag'] == team_tag]
+                primary_color = 'rgba(169,169,169,0.75)'
+
+                frame_data.append(go.Scatter(
+                    x=team_data['Matchday'][team_data['Matchday'] <= md],
+                    y=team_data['Rank'][team_data['Matchday'] <= md],
+                    mode='lines+markers',
+                    marker=dict(size=8, color=primary_color, symbol='circle'),
+                    line=dict(width=3, color=primary_color),
+                    name=team_tag,
+                ))
+
+        # Add selected teams' lines on top (foreground)
+        for team_tag in selected_teams:
             team_data = df_rankings[df_rankings['Team Tag'] == team_tag]
             primary_color, _ = get_team_colors(team_tag, color_codes_df)
 
             if primary_color.lower() == '#000000' or primary_color.lower() == 'black':
                 primary_color = '#FFFFFF'
-
-            if team_tag not in selected_teams:
-                primary_color = 'rgba(169,169,169,0.75)'
 
             frame_data.append(go.Scatter(
                 x=team_data['Matchday'][team_data['Matchday'] <= md],
