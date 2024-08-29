@@ -2,9 +2,9 @@ import streamlit as st
 import pandas as pd
 
 from auth.database import fetch_all
-from groups.groups_season import display_season_section
-from groups.groups_matchday import display_matchday_section
-from groups.groups_analysis import display_analysis_section
+from groups.season.groups_season import display_season_section
+from groups.matchday.groups_matchday import display_matchday_section
+from analysis.groups_analysis import display_analysis_section
 from predictions.predictions import display_predictions_page  # Import the new Predictions page
 
 def display_groups_page():

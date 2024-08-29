@@ -144,14 +144,15 @@ def display_donut_charts_side_by_side(home_team, away_team, home_team_tag, away_
     is_current_season = df_season['Season'].iloc[0] == '2023/24'
 
     with col1:
+        st.markdown("<div style='margin-top: 20px;'></div>", unsafe_allow_html=True)  # Adjust the margin-top value as needed
         st.subheader(f"{home_team_tag} Season")
         fig_home, avg_goals_scored, avg_goals_conceded, offensive_rank, defensive_rank, home_away_rank, clean_sheet_percentage = generate_form_guide_plotly(home_team, home_team_tag, matchday, df_season, is_current_season)
         if fig_home:
             create_stat_box(fig_home, avg_goals_scored, avg_goals_conceded, offensive_rank, defensive_rank, home_away_rank, clean_sheet_percentage, is_home_team=True)
 
     with col3:
+        st.markdown("<div style='margin-top: 20px;'></div>", unsafe_allow_html=True)  # Adjust the margin-top value as needed
         st.subheader(f"{away_team_tag} Season")
         fig_away, avg_goals_scored, avg_goals_conceded, offensive_rank, defensive_rank, home_away_rank, clean_sheet_percentage = generate_form_guide_plotly(away_team, away_team_tag, matchday, df_season, is_current_season)
         if fig_away:
             create_stat_box(fig_away, avg_goals_scored, avg_goals_conceded, offensive_rank, defensive_rank, home_away_rank, clean_sheet_percentage, is_home_team=False)
-       

@@ -5,7 +5,7 @@ import plotly.express as px
 from PIL import Image
 from io import BytesIO
 import base64
-from bundesliga.cross_table import display_cross_table_view  # Import the cross table function
+from bundesliga.crosstable import display_cross_table_view  # Import the cross table function
 from bundesliga.utils import get_team_colors, resize_image, image_to_base64
 
 # Function to resize images

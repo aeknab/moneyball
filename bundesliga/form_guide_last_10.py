@@ -73,6 +73,9 @@ def plot_last_10_meetings(df, home_team_tag, away_team_tag, color_codes_df, curr
 
     # Determine if the selected season is the current one (2023/24)
     is_current_season = current_season == '2023/24'
+    
+    # Insert this in your script right before the Last 10 Meetings section
+    st.markdown("<div style='margin-top: 40px;'></div>", unsafe_allow_html=True)  # Adjust the margin-top value as needed
 
     if is_current_season:
         st.subheader(f"Last {total_matches} Meeting{'s' if total_matches > 1 else ''} between {home_team_tag} and {away_team_tag}", anchor=False)

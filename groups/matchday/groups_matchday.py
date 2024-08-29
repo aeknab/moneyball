@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from .utils import format_points, calculate_points
+from ..utils import format_points, calculate_points
 from ChatGPT.summaries import generate_summary 
 
 def display_matchday_section(matchday):

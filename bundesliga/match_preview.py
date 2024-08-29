@@ -4,7 +4,7 @@ from PIL import Image
 from bundesliga.utils import resize_image, load_image
 
 def display_match_preview(df):
-    st.header("Bundesliga Match Preview")
+    st.header("Matchday Analysis")
 
     # Layout for filters: Place them side by side
     col1, col2, col3 = st.columns(3)
@@ -146,7 +146,10 @@ def display_match_preview(df):
             with col2_left:
                 home_goals = col2_left.number_input("", min_value=0, max_value=11, value=0, step=1, key="home_goals", format="%d")
             with col2_mid:
-                st.markdown("<div style='font-size: 30px;'>:</div>", unsafe_allow_html=True)
+                st.markdown(
+                    "<div style='font-size: 30px; line-height: 3; padding-bottom: 30px; display: flex; align-items: flex-end; height: 100%; justify-content: center;'>:</div>",
+                    unsafe_allow_html=True
+                )
             with col2_right:
                 away_goals = col2_right.number_input("", min_value=0, max_value=11, value=0, step=1, key="away_goals", format="%d")
         else:
@@ -344,7 +347,7 @@ def display_styled_team_table(home_data, away_data, home_team, away_team):
             <thead>
                 <tr>
                     <th>Rank</th>
-                    <th></th>
+                    <th>↕️</th>
                     <th>Team</th>
                     <th>Games</th>
                     <th>W</th>

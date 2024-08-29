@@ -11,7 +11,7 @@ from bundesliga.pie_chart import display_pie_chart
 from bundesliga.heat_map import display_heat_map
 from bundesliga.histogram import display_histogram
 from bundesliga.first_and_second import filter_leg_matches, calculate_leg_points, plot_leg_table
-from bundesliga.cross_table import display_cross_table_view
+from bundesliga.crosstable import display_cross_table_view
 from bundesliga.home_away import filter_home_away_matches, calculate_home_away_points, plot_home_away_table
 
 def display_bundesliga_page():
@@ -22,7 +22,7 @@ def display_bundesliga_page():
     color_codes_df = pd.read_csv("data/color_codes.csv")
 
     # Streamlit app layout
-    st.title("Moneyball Dashboard")
+    st.title("Bundesliga Dashboard")
 
     # Bundesliga Section
     selected_season, selected_matchday, selected_match, df_matches = display_match_preview(df)
@@ -46,16 +46,16 @@ def display_bundesliga_page():
         plot_last_10_meetings(df, home_team_tag, away_team_tag, color_codes_df, selected_matchday, selected_season)
 
         # League Table Section with Buttons
-        st.subheader("League Table")
-
+        st.header("League Table")
+        
         # Create four buttons for different views with unique keys
         col1, col2, col3, col4 = st.columns(4)
         if "selected_view" not in st.session_state:
-            st.session_state.selected_view = "Full Table"
+            st.session_state.selected_view = "Season Table"
 
         with col1:
-            if st.button("Full Table", key="full_table_button"):
-                st.session_state.selected_view = "Full Table"
+            if st.button("Season Table", key="season_table_button"):
+                st.session_state.selected_view = "Season Table"
         with col2:
             if st.button("Home/Away Table", key="home_away_table_button"):
                 st.session_state.selected_view = "Home/Away Table"
@@ -67,8 +67,8 @@ def display_bundesliga_page():
                 st.session_state.selected_view = "Cross Table"
 
         # Display the selected table
-        if st.session_state.selected_view == "Full Table":
-            display_league_tables(df, selected_season, selected_matchday, "Full Table", color_codes_df)
+        if st.session_state.selected_view == "Season Table":
+            display_league_tables(df, selected_season, selected_matchday, "Season Table", color_codes_df)
         elif st.session_state.selected_view == "Home/Away Table":
             # Display Home and Away tables one after the other
             st.subheader("Home Table")

@@ -5,7 +5,7 @@ import plotly.express as px  # Import plotly.express for animations
 from PIL import Image
 from io import BytesIO
 import base64
-from bundesliga.cross_table import display_cross_table_view
+from bundesliga.crosstable import display_cross_table_view
 from bundesliga.utils import get_team_colors, resize_image_to_bounding_box, image_to_base64
 from bundesliga.home_away import filter_home_away_matches, calculate_home_away_points, plot_home_away_table
 from bundesliga.first_and_second import filter_leg_matches, calculate_leg_points, plot_leg_table
@@ -38,12 +38,15 @@ def plot_league_table(df_points, title, color_codes_df):
     for i, (team_tag, points) in enumerate(zip(df_points['Team Tag'], df_points['Points'])):
         primary_color, secondary_color = get_team_colors(team_tag, color_codes_df)
 
-        # Add the bar for the team
+        # Add the bar for the team with a white outline
         fig.add_trace(go.Bar(
             y=[i + 1],
             x=[points],
             orientation='h',
-            marker=dict(color=primary_color),
+            marker=dict(
+                color=primary_color,
+                line=dict(color='white', width=0.5)  # Add white outlines with 2px width
+            ),
             name=team_tag,
             showlegend=False  # Hide the legend for each bar
         ))
@@ -81,7 +84,6 @@ def plot_league_table(df_points, title, color_codes_df):
     )
 
     st.plotly_chart(fig, use_container_width=True)
-
 # Function to get the points of each team at the end of each matchday for animation
 def get_team_points_per_matchday(df_filtered):
     home_points = df_filtered[['Matchday', 'Home Tag', 'Home Team Points']].rename(
@@ -123,7 +125,9 @@ def create_league_table_animation(df_points, color_codes_df):
                  category_orders={"Matchday": matchdays},  # Ensure matchdays go from 1 to 34
                  color_discrete_map={team: color for team, color in zip(color_codes_df['Tag'], color_codes_df['Primary'])})
 
-    # Customize the layout
+    # Customize the layout and add white outlines to the bars
+    fig.update_traces(marker_line_color='white', marker_line_width=0.5)
+
     fig.update_layout(
         yaxis=dict(autorange="reversed", title='Rank', tickvals=list(range(1, 19))),
         xaxis=dict(title='Points', range=[0, 100]),
@@ -191,12 +195,11 @@ def create_league_table_animation(df_points, color_codes_df):
 
 # Function to display the league tables with animation and cross table
 def display_league_tables(df, selected_season, matchday, view_selection, color_codes_df):
-    st.header("League Table")  # Single header for the League Table
 
     # Ensure view selection is consistent across buttons
     df_filtered = filter_matches(df, selected_season, matchday)
 
-    if view_selection == "Full Table":
+    if view_selection == "Season Table":
         df_points = calculate_team_points(df_filtered)
         plot_league_table(df_points, f'Bundesliga League Table After Matchday {matchday} ({selected_season})', color_codes_df)
 
@@ -236,7 +239,6 @@ def display_league_tables(df, selected_season, matchday, view_selection, color_c
         display_cross_table_view(df, selected_season, matchday)
 
     # Sub-header for animation
-    st.subheader("Play Animation")
     if st.button("Play Animation"):
         df_points = get_team_points_per_matchday(df_filtered)
         create_league_table_animation(df_points, color_codes_df)

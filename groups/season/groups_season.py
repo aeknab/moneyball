@@ -6,11 +6,12 @@ from io import BytesIO
 import base64
 
 # Import necessary functions from other modules
-from analysis.group_table import display_group_table  # This is the Bar Chart
-from analysis.bump_chart_group import display_group_bump_chart
-from analysis.donut_chart import display_donut_chart
-from analysis.histogram_group import display_matchday_histogram
-from analysis.density_plot import display_season_density_plot
+from groups.season.group_table import display_group_table  # This is the Bar Chart
+from groups.season.bump_chart_group import display_group_bump_chart
+from groups.season.donut_chart import display_donut_chart
+from groups.season.histogram_group import display_matchday_histogram
+from groups.season.density_plot import display_season_density_plot
+#from groups.season.crosstable_group import display_player_crosstable_view  # Import the crosstable function
 
 # Define the color palette
 color_palette = {
@@ -189,7 +190,7 @@ def display_season_section(matchday, rankings_df, matchdays_df):
     <thead>
         <tr>
             <th>Rank</th>
-            <th>+/-</th>
+            <th>↕️</th>
             <th>Name</th>
             <th>Matchday Points</th>
             <th>MD Winner</th>
@@ -223,6 +224,11 @@ def display_season_section(matchday, rankings_df, matchdays_df):
     
     # Donut Chart (Fourth)
     display_donut_chart(matchdays_df, selected_players, matchday)
+
+    # Display Crosstable only if a specific player is selected
+    #if selected_player != 'All':
+    #    st.subheader(f"Crosstable for {selected_player}")
+    #    display_player_crosstable_view(rankings_df, selected_player, matchday)
 
 def display_matchday_histogram(matchday, rankings_df, selected_players):
     # Filter data for the selected matchday
