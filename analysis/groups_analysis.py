@@ -137,29 +137,24 @@ def generate_analysis(prompt):
         st.error(f"An error occurred while generating the analysis: {e}")
         return None
 
-def display_analysis_section(matchday, rankings_df, matchdays_df):
-    col1 = st.columns(1)[0]
-    with col1:
-        players = sorted(rankings_df['Name'].unique())
-        players.insert(0, 'All')
-        selected_player = st.selectbox("Select Player", players)
-    
+def display_analysis_section(matchday, rankings_df, matchdays_df, selected_player):
+    players = sorted(rankings_df['Name'].unique())
     selected_players = players[1:] if selected_player == 'All' else [selected_player]
 
     section = st.session_state.get('selected_analysis_section', 'Pie Chart')
 
-    col1, col2, col3, col4 = st.columns(4)  # Removing the extra column for Group Table
+    col1, col2, col3, col4 = st.columns(4)
     with col1:
-        if st.button("Pie Chart"):
+        if st.button("Pie Chart", key="button_pie_chart"):
             section = "Pie Chart"
     with col2:
-        if st.button("Confusion Matrix"):
+        if st.button("Confusion Matrix", key="button_confusion_matrix"):
             section = "Confusion Matrix"
     with col3:
-        if st.button("Heat Map"):
+        if st.button("Heat Map", key="button_heat_map"):
             section = "Heat Map"
     with col4:
-        if st.button("Line Plot"):
+        if st.button("Line Plot", key="button_line_plot"):
             section = "Line Plot"
 
     st.session_state['selected_analysis_section'] = section

@@ -15,10 +15,10 @@ color_palette = {
     "Samson": "rgba(229, 196, 148, 0.85)",   # light brown
     "Gray": "rgba(179, 179, 179, 0.85)",     # light gray for default bars
     "density_curve": "blue",                 # blue for density curve
-    "mean": "rgba(255, 255, 255, 1)",        # white for mean line
-    "default_std_dev": "rgba(255, 217, 47, 1)", # light yellow for std dev by default
-    "default_mode": "rgba(166, 216, 84, 1)", # lime green for mode by default
-    "default_median": "rgba(231, 138, 195, 1)" # light pink for median by default
+    "mean": "white",        # white for mean line
+    "default_std_dev": "red", # light yellow for std dev by default
+    "default_mode": "black", # lime green for mode by default
+    "default_median": "purple" # light pink for median by default
 }
 
 def display_season_density_plot(matchday, rankings_df, selected_players):

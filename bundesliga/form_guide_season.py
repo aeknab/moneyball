@@ -62,12 +62,15 @@ def generate_form_guide_plotly(team, team_tag, matchday, df_season, is_current_s
         clean_sheet_percentage = latest_match_row['Home Team Clean Sheet %'] if latest_match_row['Home Team'] == team else latest_match_row['Away Team Clean Sheet %']
 
     # Donut chart data
-    labels = ['W', 'T', 'L']
+    labels = ['W', 'T', 'L']  # Labels for the chart itself
     values = [wins, ties, losses]
     colors = ['#a8e6a1', '#c4c4c4', '#ff9999']
 
     # Define the new border colors
     border_colors = ['#388e3c', '#999999', '#c62828']  # Green for wins, grey for ties, red for losses
+
+    # Custom labels for the hover info
+    hover_labels = ['Wins', 'Ties', 'Losses']
 
     # Create the donut chart using Plotly with borders
     fig = go.Figure(data=[go.Pie(
@@ -80,8 +83,11 @@ def generate_form_guide_plotly(team, team_tag, matchday, df_season, is_current_s
         ),
         textinfo='text',
         text=[f"<b>{label}</b><br>{value}" for label, value in zip(labels, values)],
-        hoverinfo='label+percent'
+        hoverinfo='label+percent',
+        customdata=hover_labels,  # Attach the custom hover labels
+        hovertemplate='%{customdata}: %{percent:.1%}<extra></extra>'  # Customize hover format
     )])
+
 
     # Load the team logo and convert it to a base64 string
     logo_path = f"data/logos/team_logos/{team_tag}.svg.png"

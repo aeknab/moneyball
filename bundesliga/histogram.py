@@ -4,6 +4,15 @@ import plotly.graph_objs as go
 import numpy as np
 from scipy.stats import norm
 
+color_palette = {
+    "Gray": "rgba(179, 179, 179, 0.85)",     # light gray for default bars
+    "density_curve": "blue",                 # blue for density curve
+    "mean": "white",                         # white for mean line
+    "default_std_dev": "red",                # red for std dev
+    "default_mode": "black",                 # black for mode
+    "default_median": "purple"               # purple for median
+}
+
 # Function to filter matches based on the selected season and matchday
 def filter_matches_for_season(df, selected_season, matchday):
     if selected_season == '2023/24':
@@ -27,7 +36,7 @@ def display_histogram(df, selected_season, selected_matchday):
     # Create the static histogram
     fig = go.Figure()
 
-    # Add histogram with bins of 1 goal
+    # Add histogram with bins of 1 goal and white lines around bars
     fig.add_trace(go.Histogram(
         x=total_goals_per_matchday['Total Goals'],
         xbins=dict(
@@ -38,9 +47,10 @@ def display_histogram(df, selected_season, selected_matchday):
         histnorm='probability density',
         name='Histogram',
         marker=dict(
-            color='rgba(255, 99, 132, 0.6)',  # Pastel red with transparency
-            line=dict(color='rgba(255, 99, 132, 1.0)', width=1),
+            color=color_palette['Gray'],  # Light gray for histogram bars
+            line=dict(color='white', width=1),  # White lines around the bars
         ),
+        showlegend=False  # Add this line to remove "Histogram" from the legend
     ))
 
     # Fit a normal distribution to the data
@@ -55,7 +65,7 @@ def display_histogram(df, selected_season, selected_matchday):
         x=x_values,
         y=y_values,
         mode='lines',
-        line=dict(color='rgba(75, 192, 192, 0.6)', width=2),  # Pastel green with transparency
+        line=dict(color=color_palette['density_curve'], width=2),  # Blue for density curve
         name='Density Curve'
     ))
 
@@ -68,7 +78,7 @@ def display_histogram(df, selected_season, selected_matchday):
         x=[mean_value, mean_value],
         y=[0, max(y_values)],
         mode="lines",
-        line=dict(color="rgba(255, 206, 86, 0.6)", dash="dash"),  # Pastel yellow with transparency
+        line=dict(color=color_palette['mean'], dash="dash"),  # White for mean line
         name=f"Mean: {mean_value:.2f}"
     ))
 
@@ -76,7 +86,7 @@ def display_histogram(df, selected_season, selected_matchday):
         x=[median_value, median_value],
         y=[0, max(y_values)],
         mode="lines",
-        line=dict(color="rgba(54, 162, 235, 0.6)", dash="dash"),  # Pastel blue with transparency
+        line=dict(color=color_palette['default_median'], dash="dash"),  # Purple for median line
         name=f"Median: {median_value:.2f}"
     ))
 
@@ -84,7 +94,7 @@ def display_histogram(df, selected_season, selected_matchday):
         x=[mode_value, mode_value],
         y=[0, max(y_values)],
         mode="lines",
-        line=dict(color="rgba(153, 102, 255, 0.6)", dash="dash"),  # Pastel purple with transparency
+        line=dict(color=color_palette['default_mode'], dash="dash"),  # Black for mode line
         name=f"Mode: {mode_value:.2f}"
     ))
 
@@ -93,8 +103,8 @@ def display_histogram(df, selected_season, selected_matchday):
         x=[mu - std, mu + std],
         y=[0, 0],
         mode="lines+markers",
-        line=dict(color="rgba(255, 159, 64, 0.6)", dash="dot"),  # Pastel orange with transparency
-        marker=dict(color="rgba(255, 159, 64, 1.0)", size=10, symbol="x"),  # Darker orange for markers
+        line=dict(color=color_palette['default_std_dev'], dash="dot"),  # Red for std dev lines
+        marker=dict(color=color_palette['default_std_dev'], size=10, symbol="x"),
         name="1 Std Dev"
     ))
 
@@ -102,8 +112,8 @@ def display_histogram(df, selected_season, selected_matchday):
         x=[mu - 2*std, mu + 2*std],
         y=[0, 0],
         mode="lines+markers",
-        line=dict(color="rgba(255, 159, 64, 0.6)", dash="dot"),  # Pastel orange with transparency
-        marker=dict(color="rgba(255, 159, 64, 1.0)", size=10, symbol="x"),  # Darker orange for markers
+        line=dict(color=color_palette['default_std_dev'], dash="dot"),  # Red for std dev lines
+        marker=dict(color=color_palette['default_std_dev'], size=10, symbol="x"),
         name="2 Std Dev"
     ))
 

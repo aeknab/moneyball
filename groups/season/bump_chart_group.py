@@ -46,13 +46,13 @@ def display_group_bump_chart(matchday, rankings_df, selected_players):
     for player in df_bump.index:
         if selected_players == 'All' or player not in selected_players:
             line_color = color_palette["Gray"]  # Grey out other players
-            line_width = 1  # Thinner line for non-selected players
+            line_width = 1.5  # Thinner line for non-selected players
 
             fig.add_trace(go.Scatter(
                 x=df_bump.columns,
                 y=df_bump.loc[player],
                 mode='lines+markers',
-                marker=dict(size=8, color=line_color),
+                marker=dict(size=5, color=line_color),
                 line=dict(width=line_width, color=line_color),
                 name=player
             ))

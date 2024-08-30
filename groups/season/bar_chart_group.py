@@ -38,7 +38,10 @@ def display_group_table(matchday, rankings_df, selected_player):
     player_points = player_points.sort_values(ascending=False)
 
     # Determine bar colors based on the selected player
-    bar_colors = [color_palette["Gray"] if player != selected_player else color_palette[selected_player] for player in player_points.index]
+    if selected_player == 'All':
+        bar_colors = [color_palette[player] for player in player_points.index]
+    else:
+        bar_colors = [color_palette["Gray"] if player != selected_player else color_palette[selected_player] for player in player_points.index]
 
     # Create a Plotly figure
     fig = go.Figure()
