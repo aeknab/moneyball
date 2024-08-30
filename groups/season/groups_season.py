@@ -6,7 +6,7 @@ from io import BytesIO
 import base64
 
 # Import necessary functions from other modules
-from groups.season.bar_chart_group import display_group_table  # This is the Bar Chart
+from groups.season.bar_chart_group import display_group_table
 from groups.season.bump_chart_group import display_group_bump_chart
 from groups.season.donut_chart import display_donut_chart
 from groups.season.histogram_group import display_matchday_histogram
@@ -14,14 +14,14 @@ from groups.season.density_plot import display_season_density_plot
 
 # Define the color palette
 color_palette = {
-    "Andreas": "rgba(102, 194, 165, 0.85)",  # light green
-    "Gerd": "rgba(252, 141, 98, 0.85)",      # light orange
-    "Geri": "rgba(141, 160, 203, 0.85)",     # light blue
-    "Hermann": "rgba(231, 138, 195, 0.85)",  # light pink
-    "Johnny": "rgba(166, 216, 84, 0.85)",    # light lime green
-    "Moddy": "rgba(255, 217, 47, 0.85)",     # light yellow
-    "Samson": "rgba(229, 196, 148, 0.85)",   # light brown
-    "Gray": "rgba(179, 179, 179, 0.85)"      # light gray for other players when a single player is selected
+    "Andreas": "rgba(102, 194, 165, 0.85)",
+    "Gerd": "rgba(252, 141, 98, 0.85)",
+    "Geri": "rgba(141, 160, 203, 0.85)",
+    "Hermann": "rgba(231, 138, 195, 0.85)",
+    "Johnny": "rgba(166, 216, 84, 0.85)",
+    "Moddy": "rgba(255, 217, 47, 0.85)",
+    "Samson": "rgba(229, 196, 148, 0.85)",
+    "Gray": "rgba(179, 179, 179, 0.85)"  # Default color for other players
 }
 
 # Utility function to convert an image to base64 for Plotly
@@ -32,14 +32,23 @@ def image_to_base64(image):
     return img_str
 
 def display_group_table_with_highlight(matchday, rankings_df, selected_player):
+    # Filter and sort the DataFrame by matchday and total points in descending order
     filtered_df = rankings_df[rankings_df['Spieltag'] == matchday]
     filtered_df = filtered_df.sort_values('Gesamtpunkte', ascending=False)
+
+    # Reverse the DataFrame to align it with the color assignment
     filtered_df = filtered_df.iloc[::-1]
 
     # Determine bar colors based on the selected player
-    bar_colors = [color_palette[player] if selected_player == 'All' or player == selected_player else color_palette["Gray"] for player in filtered_df['Name']]
+    if selected_player == 'All':
+        bar_colors = [color_palette.get(player, color_palette["Gray"]) for player in filtered_df['Name']]
+    else:
+        bar_colors = [color_palette["Gray"] if player != selected_player else color_palette.get(selected_player, color_palette["Gray"]) for player in filtered_df['Name']]
 
+    # Create the horizontal bar chart using Plotly
     fig = go.Figure()
+
+    max_points = filtered_df['Gesamtpunkte'].max()
 
     for player, points, color in zip(filtered_df['Name'], filtered_df['Gesamtpunkte'], bar_colors):
         fig.add_trace(go.Bar(
@@ -50,6 +59,7 @@ def display_group_table_with_highlight(matchday, rankings_df, selected_player):
             showlegend=False
         ))
 
+        # Add player logos next to the bars
         player_logo_path = f"data/logos/groups/{player}.png"
         player_logo = Image.open(player_logo_path)
         player_logo_resized = player_logo.resize((50, 50))
@@ -59,9 +69,9 @@ def display_group_table_with_highlight(matchday, rankings_df, selected_player):
             dict(
                 source=f'data:image/png;base64,{logo_base64}',
                 xref="x", yref="y",
-                x=points + 5,  # Adjust the position
+                x=points + max_points * 0.05,
                 y=player,
-                sizex=50 / points,  # Adjust size to match bar height
+                sizex=50 / max_points,
                 sizey=0.5,
                 xanchor="left",
                 yanchor="middle",
@@ -137,20 +147,20 @@ def display_season_section(matchday, rankings_df, matchdays_df, selected_player)
     overview_data.columns = ["Rank", "+/-", "Name", "Matchday Points", "MD Winner", "MD Wins", "Total Points"]
 
     # Add player faces to the left of their names, with adjusted size and alignment
-    for i in range(len(overview_data)):
-        player_name = overview_data.loc[i, 'Name'].strip("<b>").strip("</b>")
-        player_logo_path = f"data/logos/groups/{player_name}.png"
-        try:
-            player_logo_base64 = image_to_base64(Image.open(player_logo_path))
-            overview_data.loc[i, 'Name'] = f"<img src='data:image/png;base64,{player_logo_base64}' width='50' style='vertical-align:middle; margin-right:-15px;'> <b>{player_name}</b>"
-        except FileNotFoundError:
-            st.error(f"Logo not found for player {player_name}")
-            overview_data.loc[i, 'Name'] = f"<b>{player_name}</b>"
+    # for i in range(len(overview_data)):
+    #     player_name = overview_data.loc[i, 'Name'].strip("<b>").strip("</b>")
+    #     player_logo_path = f"data/logos/groups/{player_name}.png"
+    #     try:
+    #         player_logo_base64 = image_to_base64(Image.open(player_logo_path))
+    #         overview_data.loc[i, 'Name'] = f"<img src='data:image/png;base64,{player_logo_base64}' width='50' style='vertical-align:middle; margin-right:-15px;'> <b>{player_name}</b>"
+    #     except FileNotFoundError:
+    #         st.error(f"Logo not found for player {player_name}")
+    #         overview_data.loc[i, 'Name'] = f"<b>{player_name}</b>"
 
     # Table creation with row highlighting
     table_html = """
     <style>
-    .styled-table {
+    .styled-table {{
         border-collapse: collapse;
         margin: 25px 0;
         font-size: 0.9em;
@@ -161,24 +171,27 @@ def display_season_section(matchday, rankings_df, matchdays_df, selected_player)
         overflow: hidden;
         background-color: rgba(255, 255, 255, 0.5);
         border: 2px solid #696969;
-    }
-    .styled-table thead tr {
+    }}
+    .styled-table thead tr {{
         background-color: rgba(14, 17, 23, 0.70);
         color: #ffffff;
         text-align: left;
-    }
+    }}
     .styled-table th,
-    .styled-table td {
+    .styled-table td {{
         padding: 12px 15px;
         text-align: center;
-    }
-    .styled-table tbody tr {
+    }}
+    .styled-table tbody tr {{
         background-color: rgba(14, 17, 23, 0.35);
         border-bottom: 1px solid rgba(97, 101, 114, 0.9);
-    }
-    .styled-table tbody tr:last-of-type {
+    }}
+    .styled-table tbody tr.selected-player {{
+        background-color: {highlight_color};
+    }}
+    .styled-table tbody tr:last-of-type {{
         border-bottom: 2px solid rgba(97, 101, 114, 0.9);
-    }
+    }}
     </style>
     <table class="styled-table">
     <thead>
@@ -196,13 +209,16 @@ def display_season_section(matchday, rankings_df, matchdays_df, selected_player)
     """
 
     for _, row in overview_data.iterrows():
-        row_color = f"background-color: {color_palette[row['Name'].split('>')[-1].strip('</b>')]};" if row['Name'].split('>')[-1].strip('</b>') == selected_player else ""
-        table_html += f"<tr style='{row_color}'><td>{row['Rank']}</td><td>{row['+/-']}</td><td>{row['Name']}</td><td>{row['Matchday Points']}</td><td>{row['MD Winner']}</td><td>{row['MD Wins']}</td><td>{row['Total Points']}</td></tr>"
+        row_class = "selected-player" if row['Name'].split('>')[-1].strip('</b>') == selected_player else ""
+        table_html += f"<tr class='{row_class}'><td>{row['Rank']}</td><td>{row['+/-']}</td><td>{row['Name']}</td><td>{row['Matchday Points']}</td><td>{row['MD Winner']}</td><td>{row['MD Wins']}</td><td>{row['Total Points']}</td></tr>"
 
     table_html += "</tbody></table>"
 
-    # Display the Group Table only once
-    st.markdown(table_html, unsafe_allow_html=True)
+    # Extract the highlight color for the selected player
+    highlight_color = color_palette.get(selected_player, "rgba(14, 17, 23, 0.35)")
+
+    # Display the Group Table with the highlight color applied
+    st.markdown(table_html.format(highlight_color=highlight_color), unsafe_allow_html=True)
 
     # Histogram (Second)
     display_matchday_histogram(matchday, rankings_df, selected_players)
@@ -215,7 +231,7 @@ def display_season_section(matchday, rankings_df, matchdays_df, selected_player)
 
     # Bar Chart (Sixth)
     display_group_table_with_highlight(matchday, rankings_df, selected_player)
-    
+
     # Donut Chart (Fourth)
     display_donut_chart(matchdays_df, selected_players, matchday)
 
@@ -262,13 +278,13 @@ def display_matchday_histogram(matchday, rankings_df, selected_players):
         y=points,
         marker=dict(color=bar_colors),
         hovertemplate='<b>Points:</b> %{y}<br><b>MD Rank:</b> %{customdata[0]}<extra></extra>',
-        customdata=[(i+1,) for i in range(len(players))],  # Add rank information
-        showlegend=False  # Hide this trace from the legend
+        customdata=[(i+1,) for i in range(len(players))],
+        showlegend=False
     ))
 
     # Add dotted lines for matchday and season averages
     fig.add_trace(go.Scatter(
-        x=[players.iloc[0], players.iloc[-1]],  # Ensure the lines span the entire width of the bars
+        x=[players.iloc[0], players.iloc[-1]],
         y=[matchday_avg, matchday_avg],
         mode="lines",
         name=f"Matchday Avg: {matchday_avg:.1f}",
@@ -277,7 +293,7 @@ def display_matchday_histogram(matchday, rankings_df, selected_players):
     ))
 
     fig.add_trace(go.Scatter(
-        x=[players.iloc[0], players.iloc[-1]],  # Ensure the lines span the entire width of the bars
+        x=[players.iloc[0], players.iloc[-1]],
         y=[season_avg, season_avg],
         mode="lines",
         name=f"Season Avg: {season_avg:.1f}",
@@ -285,18 +301,17 @@ def display_matchday_histogram(matchday, rankings_df, selected_players):
         showlegend=True
     ))
 
-    # Update layout with adjusted standoff and legend position
     fig.update_layout(
         title_text=f"Distribution of Points Scored in Season",
         xaxis_title="Players",
         yaxis_title="Points",
         yaxis=dict(
             autorange=True,
-            title_standoff=10,  # Standoff for y-axis
+            title_standoff=10,
         ),
         xaxis=dict(
             tickangle=15,
-            title_standoff=5,  # Further reduced standoff for x-axis
+            title_standoff=5,
         ),
         barmode="group",
         height=400,
@@ -305,11 +320,10 @@ def display_matchday_histogram(matchday, rankings_df, selected_players):
         legend=dict(
             orientation="h",
             yanchor="top",
-            y=-0.25,  # Push the legend down slightly
+            y=-0.25,
             xanchor="center",
             x=0.5
         )
     )
 
-    # Display the chart in Streamlit
     st.plotly_chart(fig, use_container_width=True)

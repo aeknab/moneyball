@@ -63,7 +63,7 @@ def display_groups_page():
         if section == "Predictions":
             display_predictions_page()  # Display the Predictions tab
         elif section == "Matchday":
-            display_matchday_section(matchday, selected_player)  # Pass selected player
+            display_matchday_section(matchday)  # No need to pass selected player if not used
         elif section == "Season":
             display_season_section(matchday, rankings_df, matchdays_df, selected_player)  # Pass selected player
         elif section == "Analysis":
