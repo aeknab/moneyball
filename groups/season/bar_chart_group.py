@@ -14,7 +14,8 @@ color_palette = {
     "Hermann": "rgba(231, 138, 195, 0.85)",  # light pink
     "Johnny": "rgba(166, 216, 84, 0.85)",    # light lime green
     "Moddy": "rgba(255, 217, 47, 0.85)",     # light yellow
-    "Samson": "rgba(229, 196, 148, 0.85)"    # light brown
+    "Samson": "rgba(229, 196, 148, 0.85)",   # light brown
+    "Gray": "rgba(179, 179, 179, 0.85)"      # light gray for other players when a single player is selected
 }
 
 # Utility function to convert an image to base64 for Plotly
@@ -24,29 +25,32 @@ def image_to_base64(image):
     img_str = base64.b64encode(buffer.getvalue()).decode("utf-8")
     return img_str
 
-def display_group_table(matchday, rankings_df, selected_players):
+def display_group_table(matchday, rankings_df, selected_player):
     st.subheader("Group Table")
 
     # Filter rankings data up to and including the selected matchday
-    filtered_rankings_df = rankings_df[(rankings_df['Spieltag'] <= matchday) & (rankings_df['Name'].isin(selected_players))]
+    filtered_rankings_df = rankings_df[(rankings_df['Spieltag'] <= matchday)]
 
     # Calculate the total points for each player up to and including the selected matchday
-    player_points = filtered_rankings_df.groupby('Name')['Punkte'].sum().reindex(selected_players)
+    player_points = filtered_rankings_df.groupby('Name')['Punkte'].sum()
 
     # Sort the players by their total points
     player_points = player_points.sort_values(ascending=False)
+
+    # Determine bar colors based on the selected player
+    bar_colors = [color_palette["Gray"] if player != selected_player else color_palette[selected_player] for player in player_points.index]
 
     # Create a Plotly figure
     fig = go.Figure()
 
     # Add a bar for each player with their specific color
-    for player in player_points.index:
+    for player, color in zip(player_points.index, bar_colors):
         fig.add_trace(go.Bar(
             x=[player_points[player]],
             y=[player],
             orientation='h',
             name=player,
-            marker=dict(color=color_palette.get(player, 'rgba(102, 194, 165, 0.85)'))  # Use player-specific color
+            marker=dict(color=color)  # Use player-specific color or gray
         ))
 
         # Add player images at the end of the bars
@@ -65,21 +69,6 @@ def display_group_table(matchday, rankings_df, selected_players):
                 sizex=40 / fig.layout.xaxis.range[1],  # Adjust size to match bar height
                 sizey=0.5,
                 xanchor="left",
-                yanchor="middle",
-                layer="above"
-            )
-        )
-
-        # Add player face logos next to their names
-        fig.add_layout_image(
-            dict(
-                source=f'data:image/png;base64,{logo_base64}',
-                xref="paper", yref="y",
-                x=0.02,  # Position slightly to the left of the player's name
-                y=player,
-                sizex=0.04,  # Adjust size to match the name height
-                sizey=0.5,
-                xanchor="center",
                 yanchor="middle",
                 layer="above"
             )
@@ -188,13 +177,13 @@ def create_group_table_animation(rankings_df, selected_players):
 def main():
     # Assume you have a DataFrame `rankings_df` with columns 'Spieltag', 'Name', and 'Punkte'
     rankings_df = pd.read_csv('data/rankings.csv')  # Replace with the correct path
-    selected_players = ["Andreas", "Gerd", "Geri", "Hermann", "Johnny", "Moddy", "Samson"]
+    selected_player = st.selectbox("Select Player", ["All", "Andreas", "Gerd", "Geri", "Hermann", "Johnny", "Moddy", "Samson"])
 
     # Display the group table
-    display_group_table(matchday=10, rankings_df=rankings_df, selected_players=selected_players)
+    display_group_table(matchday=10, rankings_df=rankings_df, selected_player=selected_player)
 
     # Create and display the animated group table
-    create_group_table_animation(rankings_df, selected_players)
+    create_group_table_animation(rankings_df, selected_players=["Andreas", "Gerd", "Geri", "Hermann", "Johnny", "Moddy", "Samson"])
 
 if __name__ == "__main__":
     main()

@@ -6,12 +6,11 @@ from io import BytesIO
 import base64
 
 # Import necessary functions from other modules
-from groups.season.group_table import display_group_table  # This is the Bar Chart
+from groups.season.bar_chart_group import display_group_table  # This is the Bar Chart
 from groups.season.bump_chart_group import display_group_bump_chart
 from groups.season.donut_chart import display_donut_chart
 from groups.season.histogram_group import display_matchday_histogram
 from groups.season.density_plot import display_season_density_plot
-#from groups.season.crosstable_group import display_player_crosstable_view  # Import the crosstable function
 
 # Define the color palette
 color_palette = {
@@ -33,47 +32,36 @@ def image_to_base64(image):
     return img_str
 
 def display_group_table_with_highlight(matchday, rankings_df, selected_player):
-    # Filter and sort the DataFrame by matchday and total points in descending order
     filtered_df = rankings_df[rankings_df['Spieltag'] == matchday]
     filtered_df = filtered_df.sort_values('Gesamtpunkte', ascending=False)
-
-    # Reverse the DataFrame to align it with the color assignment
     filtered_df = filtered_df.iloc[::-1]
 
     # Determine bar colors based on the selected player
-    if selected_player == 'All':
-        bar_colors = [color_palette[player] for player in filtered_df['Name']]
-    else:
-        bar_colors = [color_palette["Gray"] if player != selected_player else color_palette[selected_player] for player in filtered_df['Name']]
+    bar_colors = [color_palette[player] if selected_player == 'All' or player == selected_player else color_palette["Gray"] for player in filtered_df['Name']]
 
-    # Create the horizontal bar chart using Plotly
     fig = go.Figure()
 
-    max_points = filtered_df['Gesamtpunkte'].max()
-
-    for player, points in zip(filtered_df['Name'], filtered_df['Gesamtpunkte']):
+    for player, points, color in zip(filtered_df['Name'], filtered_df['Gesamtpunkte'], bar_colors):
         fig.add_trace(go.Bar(
             x=[points],
             y=[player],
             orientation='h',
-            marker=dict(color=color_palette.get(player, 'rgba(102, 194, 165, 0.85)')),
+            marker=dict(color=color),
             showlegend=False
         ))
 
-        # Add player logos next to the bars
-        player_logo_path = f"data/logos/groups/{player}.png"  # Ensure the path to the player logos is correct
+        player_logo_path = f"data/logos/groups/{player}.png"
         player_logo = Image.open(player_logo_path)
-        player_logo_resized = player_logo.resize((40, 40))  # Resize the logo
+        player_logo_resized = player_logo.resize((50, 50))
         logo_base64 = image_to_base64(player_logo_resized)
 
-        # Position the logo to the right of the bar
         fig.add_layout_image(
             dict(
                 source=f'data:image/png;base64,{logo_base64}',
                 xref="x", yref="y",
-                x=points + max_points * 0.05,  # Adjust the position to be slightly right of the bar
+                x=points + 5,  # Adjust the position
                 y=player,
-                sizex=40 / max_points,  # Adjust size to match bar height
+                sizex=50 / points,  # Adjust size to match bar height
                 sizey=0.5,
                 xanchor="left",
                 yanchor="middle",
@@ -82,7 +70,7 @@ def display_group_table_with_highlight(matchday, rankings_df, selected_player):
         )
 
     fig.update_layout(
-        title_text="Bar Chart",  # Adding a title to the Bar Chart
+        title_text="Bar Chart",
         xaxis_title="Total Points",
         yaxis_title="Players",
         height=400,
@@ -92,13 +80,8 @@ def display_group_table_with_highlight(matchday, rankings_df, selected_player):
 
     st.plotly_chart(fig, use_container_width=True)
 
-def display_season_section(matchday, rankings_df, matchdays_df):
-    # Add a dropdown to select a player
-    players = sorted(rankings_df['Name'].unique())
-    players.insert(0, 'All')  # Add 'All' option at the beginning
-    selected_player = st.selectbox("Select Player", players)  # Use a dropdown for player selection
-
-    # Ensure selected_player is always a list
+def display_season_section(matchday, rankings_df, matchdays_df, selected_player):
+    # Ensure selected_player is always a list for proper handling
     if selected_player == 'All':
         selected_players = rankings_df['Name'].unique().tolist()
     else:
@@ -153,6 +136,17 @@ def display_season_section(matchday, rankings_df, matchdays_df):
     overview_data = sorted_df[["Rang", "Rank Change", "Name", "Punkte", "MD Winner", "MD Wins", "Total Points"]]
     overview_data.columns = ["Rank", "+/-", "Name", "Matchday Points", "MD Winner", "MD Wins", "Total Points"]
 
+    # Add player faces to the left of their names, with adjusted size and alignment
+    for i in range(len(overview_data)):
+        player_name = overview_data.loc[i, 'Name'].strip("<b>").strip("</b>")
+        player_logo_path = f"data/logos/groups/{player_name}.png"
+        try:
+            player_logo_base64 = image_to_base64(Image.open(player_logo_path))
+            overview_data.loc[i, 'Name'] = f"<img src='data:image/png;base64,{player_logo_base64}' width='50' style='vertical-align:middle; margin-right:-15px;'> <b>{player_name}</b>"
+        except FileNotFoundError:
+            st.error(f"Logo not found for player {player_name}")
+            overview_data.loc[i, 'Name'] = f"<b>{player_name}</b>"
+
     # Table creation with row highlighting
     table_html = """
     <style>
@@ -202,7 +196,7 @@ def display_season_section(matchday, rankings_df, matchdays_df):
     """
 
     for _, row in overview_data.iterrows():
-        row_color = f"background-color: {color_palette[row['Name']]};" if row['Name'] == selected_player else ""
+        row_color = f"background-color: {color_palette[row['Name'].split('>')[-1].strip('</b>')]};" if row['Name'].split('>')[-1].strip('</b>') == selected_player else ""
         table_html += f"<tr style='{row_color}'><td>{row['Rank']}</td><td>{row['+/-']}</td><td>{row['Name']}</td><td>{row['Matchday Points']}</td><td>{row['MD Winner']}</td><td>{row['MD Wins']}</td><td>{row['Total Points']}</td></tr>"
 
     table_html += "</tbody></table>"
@@ -211,7 +205,7 @@ def display_season_section(matchday, rankings_df, matchdays_df):
     st.markdown(table_html, unsafe_allow_html=True)
 
     # Histogram (Second)
-    display_matchday_histogram(matchday, rankings_df, selected_players=selected_players)
+    display_matchday_histogram(matchday, rankings_df, selected_players)
 
     # Density Plot (Third)
     display_season_density_plot(matchday, rankings_df, selected_players)
@@ -224,11 +218,6 @@ def display_season_section(matchday, rankings_df, matchdays_df):
     
     # Donut Chart (Fourth)
     display_donut_chart(matchdays_df, selected_players, matchday)
-
-    # Display Crosstable only if a specific player is selected
-    #if selected_player != 'All':
-    #    st.subheader(f"Crosstable for {selected_player}")
-    #    display_player_crosstable_view(rankings_df, selected_player, matchday)
 
 def display_matchday_histogram(matchday, rankings_df, selected_players):
     # Filter data for the selected matchday

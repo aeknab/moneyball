@@ -54,15 +54,20 @@ def display_groups_page():
         rankings_df = pd.read_csv("data/merged_rankings.csv")
         matchdays_df = pd.read_csv("data/merged_matchdays.csv")
 
+        # Add a dropdown for player selection
+        players = sorted(rankings_df['Name'].unique())
+        players.insert(0, 'All')  # Add 'All' option at the beginning
+        selected_player = st.selectbox("Select Player", players)  # Global player selection
+
         # Display the selected section
         if section == "Predictions":
             display_predictions_page()  # Display the Predictions tab
         elif section == "Matchday":
-            display_matchday_section(matchday)
+            display_matchday_section(matchday, selected_player)  # Pass selected player
         elif section == "Season":
-            display_season_section(matchday, rankings_df, matchdays_df)
+            display_season_section(matchday, rankings_df, matchdays_df, selected_player)  # Pass selected player
         elif section == "Analysis":
-            display_analysis_section(matchday, rankings_df, matchdays_df)
+            display_analysis_section(matchday, rankings_df, matchdays_df, selected_player)  # Pass selected player
 
 # Example usage
 if __name__ == "__main__":

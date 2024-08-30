@@ -96,6 +96,18 @@ def display_matchday_section(matchday):
         for player in table_data["Name"][2:]
     ]
 
+    # Add player faces to the left of their names, with adjusted size and alignment
+    for i in range(2, len(table_data["Name"])):
+        player_name = table_data["Name"][i].strip("<b>").strip("</b>")
+        player_logo_path = f"data/logos/groups/{player_name}.png"
+        try:
+            player_logo = Image.open(player_logo_path)
+            player_logo_base64 = load_image_as_base64(player_logo_path)
+            table_data["Name"][i] = f"<img src='data:image/png;base64,{player_logo_base64}' width='50' style='vertical-align:middle;'> <b>{player_name}</b>"
+        except FileNotFoundError:
+            st.error(f"Logo not found for player {player_name}")
+            table_data["Name"][i] = f"<b>{player_name}</b>"
+
     # Extract points as integers for sorting, stripping out any HTML tags
     points_values = []
     for point in table_data["Points"][2:]:
@@ -117,7 +129,7 @@ def display_matchday_section(matchday):
     # Update the Rank column to reflect the correct ranking (1 to 7)
     table_data["Rank"] = ["", "<b>Rank</b>"] + list(range(1, len(sorted_indices) - 1))
 
-    # Construct the HTML table with styles
+    # Construct the HTML table with styles, adjusting column widths
     table_html = """
     <style>
     .styled-table {
@@ -141,6 +153,16 @@ def display_matchday_section(matchday):
     .styled-table td {
         padding: 12px 15px;
         text-align: center;
+    }
+    .styled-table th:nth-child(2),
+    .styled-table td:nth-child(2) {
+        width: 200px; /* Adjusted width for Name column */
+    }
+    .styled-table th:nth-child(1),
+    .styled-table td:nth-child(1),
+    .styled-table th:last-child,
+    .styled-table td:last-child {
+        width: 50px; /* Narrower width for Rank and Points columns */
     }
     .styled-table tbody tr {
         background-color: rgba(14, 17, 23, 0.35);
