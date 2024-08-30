@@ -1,7 +1,17 @@
 import streamlit as st
 import pandas as pd
+import base64
+from PIL import Image
+from io import BytesIO
 from ..utils import format_points, calculate_points
-from ChatGPT.summaries import generate_summary 
+from ChatGPT.summaries import generate_summary
+
+def load_image_as_base64(path):
+    image = Image.open(path)
+    buffer = BytesIO()
+    image.save(buffer, format="PNG")
+    img_str = base64.b64encode(buffer.getvalue()).decode()
+    return img_str
 
 def display_matchday_section(matchday):
     st.subheader(f"Matchday {matchday} Overview")
@@ -10,50 +20,67 @@ def display_matchday_section(matchday):
     matchdays_df = pd.read_csv("data/merged_matchdays.csv")
     filtered_matches = matchdays_df[matchdays_df["Matchday"] == matchday]
 
+    if filtered_matches.empty:
+        st.error(f"No matches found for Matchday {matchday}.")
+        return
+
     # Load the merged_rankings.csv file to get points for each player
     rankings_df = pd.read_csv("data/merged_rankings.csv")
 
-    # Create the match names for the top row
-    match_names = [f"{row['Home Team']} - {row['Away Team']}" for _, row in filtered_matches.iterrows()]
+    # Create the match names for the top row with logos
+    match_names = []
+    for _, row in filtered_matches.iterrows():
+        home_team = row['Home Team']
+        away_team = row['Away Team']
+
+        home_logo_path = f"data/logos/team_logos/{home_team}.svg.png"
+        away_logo_path = f"data/logos/team_logos/{away_team}.svg.png"
+
+        try:
+            home_logo_base64 = load_image_as_base64(home_logo_path)
+            away_logo_base64 = load_image_as_base64(away_logo_path)
+        except FileNotFoundError:
+            st.error(f"Logo not found for {home_team} or {away_team}.")
+            continue
+
+        match_name = f"<img src='data:image/png;base64,{home_logo_base64}' width='20'> <span style='font-weight:normal;'>vs.</span> <img src='data:image/png;base64,{away_logo_base64}' width='20'>"
+        match_names.append(match_name)
 
     # Initialize the data structure for the table
     table_data = {
-        "Rank": ["", "Rank"] + list(range(1, 8)),
-        "Name": ["", "Result"] + ["Andreas", "Gerd", "Geri", "Hermann", "Johnny", "Moddy", "Samson"]
+        "Rank": ["", "<b>Rank</b>"] + list(range(1, 8)),
+        "Name": ["", "<b>Name</b>"] + ["Andreas", "Gerd", "Geri", "Hermann", "Johnny", "Moddy", "Samson"]
     }
 
     # Add match columns with predictions and actual results
-    for match_name in match_names:
+    for match_name, (_, row) in zip(match_names, filtered_matches.iterrows()):
         table_data[match_name] = [""]  # First row empty
 
-        # Extract home and away teams from match_name
-        home_team, away_team = match_name.split(" - ")
+        home_team_tag = row['Home Team']
+        away_team_tag = row['Away Team']
 
         # Get the actual results for the match
-        home_goals_actual = filtered_matches.loc[
-            (filtered_matches['Home Team'] == home_team) & (filtered_matches['Away Team'] == away_team), 
-            'Home Goals'
-        ].values[0]
+        home_goals_actual = row['Home Goals']
+        away_goals_actual = row['Away Goals']
 
-        away_goals_actual = filtered_matches.loc[
-            (filtered_matches['Home Team'] == home_team) & (filtered_matches['Away Team'] == away_team), 
-            'Away Goals'
-        ].values[0]
+        # Check if actual goals data is found
+        if pd.isna(home_goals_actual) or pd.isna(away_goals_actual):
+            st.error(f"No actual results found for {home_team_tag} vs. {away_team_tag}.")
+            continue
 
         # Append the actual results to the table_data
         table_data[match_name].append(f"{home_goals_actual}:{away_goals_actual}")
 
         # Loop through players and get their predictions
         for player in table_data["Name"][2:]:
-            home_goals_pred = filtered_matches.loc[
-                (filtered_matches['Home Team'] == home_team) & (filtered_matches['Away Team'] == away_team), 
-                f"{player} Home Goals Predicted"
-            ].values[0]
+            home_goals_pred = row[f"{player} Home Goals Predicted"]
+            away_goals_pred = row[f"{player} Away Goals Predicted"]
 
-            away_goals_pred = filtered_matches.loc[
-                (filtered_matches['Home Team'] == home_team) & (filtered_matches['Away Team'] == away_team), 
-                f"{player} Away Goals Predicted"
-            ].values[0]
+            # Check if predicted goals data is found
+            if pd.isna(home_goals_pred) or pd.isna(away_goals_pred):
+                st.error(f"No predictions found for {player} for the match {home_team_tag} vs. {away_team_tag}.")
+                table_data[match_name].append("N/A")  # Append 'N/A' if predictions are missing
+                continue
 
             points = calculate_points(
                 home_goals_pred, away_goals_pred, home_goals_actual, away_goals_actual
@@ -64,13 +91,16 @@ def display_matchday_section(matchday):
             table_data[match_name].append(prediction)
 
     # Add points column
-    table_data["Points"] = ["", "Points"] + [
-        f"{int(rankings_df.loc[(rankings_df['Spieltag'] == matchday) & (rankings_df['Name'] == player), 'Punkte'].values[0])}"
+    table_data["Points"] = ["", "<b>Points</b>"] + [
+        f"<b>{int(rankings_df.loc[(rankings_df['Spieltag'] == matchday) & (rankings_df['Name'] == player), 'Punkte'].values[0])}</b>"
         for player in table_data["Name"][2:]
     ]
 
-    # Extract points as integers for sorting
-    points_values = [int(point) for point in table_data["Points"][2:]]
+    # Extract points as integers for sorting, stripping out any HTML tags
+    points_values = []
+    for point in table_data["Points"][2:]:
+        clean_point = int(point.replace('<b>', '').replace('</b>', ''))
+        points_values.append(clean_point)
 
     # Get sorted indices based on points (in descending order)
     sorted_indices = sorted(range(len(points_values)), key=lambda i: points_values[i], reverse=True)
@@ -85,7 +115,7 @@ def display_matchday_section(matchday):
     table_data = {k: [table_data[k][i] for i in sorted_indices] for k in table_data.keys()}
 
     # Update the Rank column to reflect the correct ranking (1 to 7)
-    table_data["Rank"] = ["", "Rank"] + list(range(1, len(sorted_indices) - 1))
+    table_data["Rank"] = ["", "<b>Rank</b>"] + list(range(1, len(sorted_indices) - 1))
 
     # Construct the HTML table with styles
     table_html = """
@@ -127,16 +157,16 @@ def display_matchday_section(matchday):
             <th></th> <!-- Empty header for Name -->
     """
 
-    # Add headers for matches
+    # Add headers for matches with bold tags
     for match_name in match_names:
-        table_html += f"<th>{match_name}</th>"
+        table_html += f"<th><b>{match_name}</b></th>"
     table_html += "<th></th></tr></thead><tbody>"  # Empty header for Points
 
-    # Add the row for actual results
-    table_html += "<tr><td>Rank</td><td>Name</td>"  # Rank and Name headers in the second row
+    # Add the row for actual results with bold tags
+    table_html += "<tr><td><b>Rank</b></td><td><b>Name</b></td>"  # Rank and Name headers in the second row
     for match_name in match_names:
-        table_html += f"<td>{table_data[match_name][1]}</td>"  # Actual match results
-    table_html += "<td>Points</td></tr>"  # Points header in the second row
+        table_html += f"<td><b>{table_data[match_name][1]}</b></td>"  # Actual match results in bold
+    table_html += "<td><b>Points</b></td></tr>"  # Points header in the second row
 
     # Add the rest of the rows
     for i in range(2, len(table_data["Rank"])):

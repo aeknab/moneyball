@@ -112,10 +112,17 @@ def display_histogram(df, selected_season, selected_matchday):
         title=f"Distribution of Total Goals per Matchday (Season: {selected_season})",
         xaxis=dict(title="Total Goals per Matchday"),
         yaxis=dict(title="Density"),
-        height=600,
+        height=700,  # Increase height to accommodate the legend
         width=800,
         bargap=0.2,
-        showlegend=True
+        showlegend=True,
+        legend=dict(
+            orientation="h",  # Horizontal legend
+            yanchor="top",
+            y=-0.2,  # Position the legend below the chart
+            xanchor="center",
+            x=0.5
+        )
     )
 
     # Display the static figure

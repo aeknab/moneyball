@@ -70,6 +70,21 @@ def display_group_table(matchday, rankings_df, selected_players):
             )
         )
 
+        # Add player face logos next to their names
+        fig.add_layout_image(
+            dict(
+                source=f'data:image/png;base64,{logo_base64}',
+                xref="paper", yref="y",
+                x=0.02,  # Position slightly to the left of the player's name
+                y=player,
+                sizex=0.04,  # Adjust size to match the name height
+                sizey=0.5,
+                xanchor="center",
+                yanchor="middle",
+                layer="above"
+            )
+        )
+
     # Update layout for the figure
     fig.update_layout(
         title_text=f'Group League Table - Matchday {matchday}',
@@ -83,7 +98,7 @@ def display_group_table(matchday, rankings_df, selected_players):
 
     # Display the chart in Streamlit
     st.plotly_chart(fig, use_container_width=True)
-    
+
 # Function to create an animated group table
 def create_group_table_animation(rankings_df, selected_players):
     st.subheader("Animated Group Table")
