@@ -41,7 +41,12 @@ if st.session_state['logged_in']:
     page = st.sidebar.selectbox("Choose a page", ["Home", "My Groups"])
 
     if page == "Home":
-        st.title("Welcome to the App")
+        st.title("Let's Play Moneyball!")
+        
+        # Load and display the image
+        image = Image.open("data/logos/moneyball/moneyball.png")
+        st.image(image, use_column_width=True)
+
     elif page == "My Groups":
         display_groups_page()
 
