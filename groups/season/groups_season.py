@@ -236,7 +236,7 @@ def display_season_section(matchday, rankings_df, matchdays_df, selected_player)
 
     # Add a Play Animation button for Bar Chart animation with unique key
     if st.button("Play Bar Chart Animation", key="bar_chart_animation"):
-        fig_go = create_group_table_animation(rankings_df, selected_players=["Andreas", "Gerd", "Geri", "Hermann", "Johnny", "Moddy", "Samson"])
+        fig_go = create_group_table_animation(rankings_df, selected_player=selected_player)
         st.plotly_chart(fig_go, use_container_width=True)
 
     # Donut Chart (Sixth)

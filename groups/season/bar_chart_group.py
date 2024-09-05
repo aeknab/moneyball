@@ -9,7 +9,7 @@ import base64
 def display_group_table(matchday, rankings_df, selected_player):
     st.subheader("Group Table")
 
-    # Filter rankings data up to and including the selected matchday
+    # Filter rankings data for the selected matchday
     filtered_rankings_df = rankings_df[rankings_df['Spieltag'] == matchday]
 
     # Calculate the total points for each player for the current matchday
@@ -22,7 +22,10 @@ def display_group_table(matchday, rankings_df, selected_player):
     if selected_player == 'All':
         bar_colors = [color_palette.get(player, 'rgba(179, 179, 179, 0.75)') for player in player_points.index]
     else:
-        bar_colors = [color_palette.get("Gray") if player != selected_player else color_palette.get(selected_player, 'rgba(179, 179, 179, 0.75)') for player in player_points.index]
+        bar_colors = [
+            color_palette.get("Gray") if player != selected_player else color_palette.get(selected_player, 'rgba(179, 179, 179, 0.75)')
+            for player in player_points.index
+        ]
 
     # Create a Plotly figure
     fig = go.Figure()
@@ -41,7 +44,7 @@ def display_group_table(matchday, rankings_df, selected_player):
     fig.update_layout(
         title_text=f'Group League Table - Matchday {matchday}',
         xaxis_title='Points',
-        yaxis=dict(autorange='reversed'),  
+        yaxis=dict(autorange='reversed'),
         template='plotly_white',
         height=400,
         margin=dict(l=100, r=20, t=50, b=50)
@@ -50,47 +53,41 @@ def display_group_table(matchday, rankings_df, selected_player):
     # Display the chart in Streamlit
     st.plotly_chart(fig, use_container_width=True)
 
-# Define the new ColorBrewer Set2 color palette for players with 85% transparency
+# Define the color palette
 color_palette = {
-    "Andreas": "rgba(102, 194, 165, 0.85)",  # light green
-    "Gerd": "rgba(252, 141, 98, 0.85)",      # light orange
-    "Geri": "rgba(141, 160, 203, 0.85)",     # light blue
-    "Hermann": "rgba(231, 138, 195, 0.85)",  # light pink
-    "Johnny": "rgba(166, 216, 84, 0.85)",    # light lime green
-    "Moddy": "rgba(255, 217, 47, 0.85)",     # light yellow
-    "Samson": "rgba(229, 196, 148, 0.85)",   # light brown
-    "Gray": "rgba(179, 179, 179, 0.50)"      # light gray for other players when a single player is selected
+    "Andreas": "rgba(102, 194, 165, 0.85)",
+    "Gerd": "rgba(252, 141, 98, 0.85)",
+    "Geri": "rgba(141, 160, 203, 0.85)",
+    "Hermann": "rgba(231, 138, 195, 0.85)",
+    "Johnny": "rgba(166, 216, 84, 0.85)",
+    "Moddy": "rgba(255, 217, 47, 0.85)",
+    "Samson": "rgba(229, 196, 148, 0.85)",
+    "Gray": "rgba(179, 179, 179, 0.50)"  # Grey for other players
 }
 
-# Utility function to convert an image to base64 for Plotly
+# Function to convert an image to base64
 def image_to_base64(image):
     buffer = BytesIO()
     image.save(buffer, format="PNG")
     img_str = base64.b64encode(buffer.getvalue()).decode("utf-8")
     return img_str
 
-# Function to calculate player points for each matchday and their ranks
+# Function to calculate player points and ranks per matchday
 def get_player_points_per_matchday(rankings_df):
-    # No need to accumulate, just use 'Gesamtpunkte' for rankings
     player_points_per_day = rankings_df[['Spieltag', 'Name', 'Gesamtpunkte']]
-
-    # Rank players based on total points ('Gesamtpunkte')
     player_points_per_day['Rank'] = player_points_per_day.groupby('Spieltag')['Gesamtpunkte'].rank(method='first', ascending=False)
-
     return player_points_per_day
 
-# Function to create the animated group table with logos, handling ties in points
-def create_group_table_animation(player_points_long, selected_players):
-    # Ensure all matchdays up to 34 are included in the animation frames
+# Function to create the animated group table with logos
+def create_group_table_animation(player_points_long, selected_player):
     player_points_long['Spieltag'] = player_points_long['Spieltag'].astype(int)
-    matchdays = list(range(1, 35))  # Explicitly define matchdays from 1 to 34
+    matchdays = list(range(1, 35))
 
     # Create a complete DataFrame to ensure every player has data for every matchday
     all_players = player_points_long['Name'].unique()
     complete_index = pd.MultiIndex.from_product([matchdays, all_players], names=['Spieltag', 'Name'])
     player_points_long = player_points_long.set_index(['Spieltag', 'Name']).reindex(complete_index, fill_value=0).reset_index()
 
-    # Rank players by total points ('Gesamtpunkte') for each matchday
     player_points_long['Rank'] = player_points_long.groupby('Spieltag')['Gesamtpunkte'].rank(method='first', ascending=False)
 
     # Initialize the figure
@@ -105,8 +102,11 @@ def create_group_table_animation(player_points_long, selected_players):
         points = row['Gesamtpunkte']
         rank = row['Rank']
 
-        # Determine color based on whether the player is selected or not
-        primary_color = color_palette.get(player, 'rgba(179, 179, 179, 0.75)')
+        # Grey out other players if a specific player is selected
+        if selected_player != 'All' and player != selected_player:
+            primary_color = color_palette["Gray"]
+        else:
+            primary_color = color_palette.get(player, 'rgba(179, 179, 179, 0.75)')
 
         # Add bars
         fig.add_trace(go.Bar(
@@ -115,7 +115,7 @@ def create_group_table_animation(player_points_long, selected_players):
             orientation='h',
             marker=dict(
                 color=primary_color,
-                line=dict(color='white', width=0.5)  # White outlines with reduced width
+                line=dict(color='white', width=0.5)
             ),
             name=player,
             showlegend=False
@@ -141,7 +141,7 @@ def create_group_table_animation(player_points_long, selected_players):
 
         player_logo_path = f"data/logos/groups/{player}.png"
         player_logo = Image.open(player_logo_path)
-        player_logo_resized = player_logo.resize((40, 40))
+        player_logo_resized = player_logo.resize((200, 200))  # Larger size for the logo
         logo_base64 = image_to_base64(player_logo_resized)
 
         layout_images.append(
@@ -172,13 +172,19 @@ def create_group_table_animation(player_points_long, selected_players):
             points = row['Gesamtpunkte']
             rank = row['Rank']
 
-            # Update bars instead of replacing them
+            # Grey out other players if a specific player is selected
+            if selected_player != 'All' and player != selected_player:
+                primary_color = color_palette["Gray"]
+            else:
+                primary_color = color_palette.get(player, 'rgba(179, 179, 179, 0.75)')
+
+            # Update bars
             frame_data.append(go.Bar(
                 x=[points],
                 y=[rank],
                 orientation='h',
                 marker=dict(
-                    color=color_palette.get(player, 'rgba(179, 179, 179, 0.75)'),
+                    color=primary_color,
                     line=dict(color='white', width=0.5)
                 ),
                 name=player,
@@ -188,7 +194,7 @@ def create_group_table_animation(player_points_long, selected_players):
             # Add logo image update for the frame
             player_logo_path = f"data/logos/groups/{player}.png"
             player_logo = Image.open(player_logo_path)
-            player_logo_resized = player_logo.resize((40, 40))
+            player_logo_resized = player_logo.resize((200, 200))
             logo_base64 = image_to_base64(player_logo_resized)
 
             layout_images_frame.append(
@@ -217,8 +223,8 @@ def create_group_table_animation(player_points_long, selected_players):
             dict(
                 type="buttons",
                 direction="left",
-                x=0.05,  # Position on the left
-                y=-0.1,  # Position below the chart
+                x=0.05,
+                y=-0.1,
                 showactive=True,
                 buttons=[
                     dict(
@@ -244,4 +250,4 @@ def create_group_table_animation(player_points_long, selected_players):
         }]
     )
 
-    st.plotly_chart(fig, use_container_width=True)
+    return fig
