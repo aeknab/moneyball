@@ -31,51 +31,64 @@ def resize_image_uniform(image, target_size):
     resized_image = image.resize((new_width, new_height), Image.LANCZOS)
     return resized_image
 
-def display_group_bump_chart(matchday, rankings_df, selected_players):
-    st.subheader("Bump Chart")
-
-    # Filter rankings data up to and including the selected matchday
-    filtered_rankings_df = rankings_df[rankings_df['Spieltag'] <= matchday]
-
-    # Pivot the data to get ranks by matchday for each player
-    df_bump = filtered_rankings_df.pivot(index='Name', columns='Spieltag', values='Rang')
-
+def animate_bump_chart_group(rankings_df, matchday, selected_players):
     fig = go.Figure()
 
-    # First, plot the non-selected players
+    df_bump = rankings_df.pivot(index='Name', columns='Spieltag', values='Rang')
+
+    # First, plot the non-selected players' lines with background color
     for player in df_bump.index:
         if selected_players == 'All' or player not in selected_players:
-            line_color = color_palette["Gray"]  # Grey out other players
-            line_width = 1.5  # Thinner line for non-selected players
+            line_color = color_palette["Gray"]
+            player_data = rankings_df[(rankings_df['Name'] == player) & (rankings_df['Spieltag'] <= matchday)]
 
             fig.add_trace(go.Scatter(
-                x=df_bump.columns,
-                y=df_bump.loc[player],
+                x=player_data['Spieltag'],
+                y=player_data['Rang'],
                 mode='lines+markers',
                 marker=dict(size=5, color=line_color),
-                line=dict(width=line_width, color=line_color),
+                line=dict(width=1.5, color=line_color),
                 name=player
             ))
 
-            # Add player images at the end of their lines
+    # Now, plot the selected players' lines
+    for player in selected_players:
+        if player in df_bump.index:
+            line_color = color_palette.get(player, color_palette[player])
+
+            fig.add_trace(go.Scatter(
+                x=df_bump.columns[df_bump.columns <= matchday],
+                y=df_bump.loc[player][df_bump.columns <= matchday],
+                mode='lines+markers',
+                marker=dict(size=8, color=line_color),
+                line=dict(width=4, color=line_color),
+                name=player
+            ))
+
+    # Initial layout with player faces before the animation starts
+    layout_images_initial = []
+
+    for player in df_bump.index:
+        player_data = rankings_df[(rankings_df['Name'] == player) & (rankings_df['Spieltag'] <= matchday)]
+        # Add player images at the end of their lines for the initial display
+        if not player_data['Rang'][player_data['Spieltag'] == matchday].empty:
+            end_x = matchday
+            end_y = player_data['Rang'][player_data['Spieltag'] == matchday].values[0]
             player_logo_path = f"data/logos/groups/{player}.png"
+
             try:
                 player_logo = Image.open(player_logo_path)
-                target_size = 100  # Keep target size
-                player_logo_resized = resize_image_uniform(player_logo, target_size)
-                logo_base64 = image_to_base64(player_logo_resized)
+                resized_logo = resize_image_uniform(player_logo, 100)  # Double the size of player images
+                logo_base64 = image_to_base64(resized_logo)
 
-                end_x = df_bump.columns[-1]
-                end_y = df_bump.loc[player].iloc[-1]
-
-                fig.add_layout_image(
+                layout_images_initial.append(
                     dict(
                         source=f'data:image/png;base64,{logo_base64}',
                         xref="x", yref="y",
-                        x=end_x - 0.5,  # Slightly move the logos to the right, closer to the end of the line
+                        x=end_x - 0.5,
                         y=end_y,
-                        sizex=3,  # Maintain the logo size
-                        sizey=3, 
+                        sizex=3,  # Double the size of player images
+                        sizey=3,
                         xanchor="left",
                         yanchor="middle",
                         layer="above"
@@ -83,43 +96,47 @@ def display_group_bump_chart(matchday, rankings_df, selected_players):
                 )
             except FileNotFoundError:
                 st.error(f"Logo not found for player {player}")
-                continue
 
-    # Then, plot the selected player(s) on top
-    if selected_players != 'All':
-        for player in selected_players:
-            if player in df_bump.index:
-                line_color = color_palette.get(player, color_palette[player])  # Full color for selected player
-                line_width = 4  # Thicker line for selected player
+    # Add initial layout images to the figure before the animation
+    fig.update_layout(images=layout_images_initial)
 
-                fig.add_trace(go.Scatter(
-                    x=df_bump.columns,
-                    y=df_bump.loc[player],
+    # Animation frames
+    frames = []
+    for md in range(1, matchday + 1):
+        frame_data = []
+        layout_images_frame = []
+
+        for player in df_bump.index:
+            player_data = rankings_df[(rankings_df['Name'] == player) & (rankings_df['Spieltag'] <= md)]
+            if player not in selected_players:
+                frame_data.append(go.Scatter(
+                    x=player_data['Spieltag'],
+                    y=player_data['Rang'],
                     mode='lines+markers',
-                    marker=dict(size=8, color=line_color),
-                    line=dict(width=line_width, color=line_color),
+                    marker=dict(size=5, color=color_palette["Gray"]),
+                    line=dict(width=1.5, color=color_palette["Gray"]),
                     name=player
                 ))
 
-                # Add player images at the end of their lines
+            # Add player logo regardless of selection
+            if not player_data['Rang'][player_data['Spieltag'] == md].empty:
+                end_x = md
+                end_y = player_data['Rang'][player_data['Spieltag'] == md].values[0]
                 player_logo_path = f"data/logos/groups/{player}.png"
+
                 try:
                     player_logo = Image.open(player_logo_path)
-                    target_size = 100  # Keep target size
-                    player_logo_resized = resize_image_uniform(player_logo, target_size)
-                    logo_base64 = image_to_base64(player_logo_resized)
+                    resized_logo = resize_image_uniform(player_logo, 100)  # Double the size (50 -> 100)
+                    logo_base64 = image_to_base64(resized_logo)
 
-                    end_x = df_bump.columns[-1]
-                    end_y = df_bump.loc[player].iloc[-1]
-
-                    fig.add_layout_image(
+                    layout_images_frame.append(
                         dict(
                             source=f'data:image/png;base64,{logo_base64}',
                             xref="x", yref="y",
-                            x=end_x - 0.5,  # Slightly move the logos to the right, closer to the end of the line
+                            x=end_x - 0.5,
                             y=end_y,
-                            sizex=3,  # Maintain the logo size
-                            sizey=3, 
+                            sizex=3,  # Doubling the size of the player images
+                            sizey=3,
                             xanchor="left",
                             yanchor="middle",
                             layer="above"
@@ -129,30 +146,159 @@ def display_group_bump_chart(matchday, rankings_df, selected_players):
                     st.error(f"Logo not found for player {player}")
                     continue
 
-    # Update layout
+        for player in selected_players:
+            if player in df_bump.index:
+                player_data = rankings_df[(rankings_df['Name'] == player) & (rankings_df['Spieltag'] <= md)]
+
+                frame_data.append(go.Scatter(
+                    x=player_data['Spieltag'],
+                    y=player_data['Rang'],
+                    mode='lines+markers',
+                    marker=dict(size=8, color=color_palette.get(player, color_palette[player])),
+                    line=dict(width=4, color=color_palette.get(player, color_palette[player])),
+                    name=player
+                ))
+
+        frames.append(go.Frame(data=frame_data, layout=dict(images=layout_images_frame), name=str(md)))
+
+    fig.frames = frames
+
     fig.update_layout(
-        title_text=f'Player Bump Chart - Matchday {matchday}',
+        updatemenus=[
+            dict(type="buttons",
+                showactive=False,
+                direction="left",
+                x=0.1,
+                y=-0.2,
+                buttons=[dict(label="Play",
+                            method="animate",
+                            args=[None, {"frame": {"duration": 500, "redraw": True},
+                                            "fromcurrent": True, "transition": {"duration": 500}}]),
+                        dict(label="Pause",
+                            method="animate",
+                            args=[[None], {"frame": {"duration": 0, "redraw": False},
+                                            "mode": "immediate"}])])
+        ],
+        sliders=[dict(
+            steps=[dict(method="animate",
+                        args=[[str(md)], {"mode": "immediate",
+                                        "frame": {"duration": 500, "redraw": True},
+                                        "transition": {"duration": 500}}],
+                        label=f"{md}") for md in range(1, matchday + 1)],
+            active=0,
+            transition={"duration": 0},
+            x=0.3,
+            y=-0.2,
+            xanchor="left",
+            len=0.6,
+            currentvalue={"prefix": "Matchday ", "suffix": ""}
+        )]
+    )
+
+    fig.update_layout(
+        title=f'Group Bump Chart Animation',
+        xaxis=dict(
+            title='Matchday',
+            tickmode='array',
+            tickvals=list(range(1, 35)),  # Always display 1 to 34 on x-axis
+            ticktext=[str(i) for i in range(1, 35)],
+            dtick=1,
+            range=[0.5, 35.9],  # Extend x-axis slightly to 35 for logo space
+            showgrid=True,
+        ),
+        yaxis=dict(
+            title='Rank',
+            autorange='reversed',
+            tickvals=list(range(1, 8)),  # Adjust based on your number of players
+            range=[0.5, 7.5],
+            showgrid=True
+        ),
+        plot_bgcolor='rgba(14, 17, 23, 0.50)',
+        paper_bgcolor='rgba(0,0,0,0)',
+        height=500,  
+        width=800,  
+        showlegend=False,
+    )
+
+    # Add a dotted line at the midpoint of the season
+    fig.add_vline(x=17.5, line=dict(color='rgba(255, 255, 255, 0.5)', dash='dot', width=1.5))
+
+    st.plotly_chart(fig, use_container_width=True)
+
+def display_bump_chart_group(rankings_df, matchday, selected_players):
+    st.header("Bump Chart")
+    df_bump = rankings_df.pivot(index='Name', columns='Spieltag', values='Rang')
+
+    # Display static bump chart
+    fig = go.Figure()
+
+    for player in df_bump.index:
+        line_color = color_palette["Gray"] if selected_players != 'All' and player not in selected_players else color_palette.get(player, "Gray")
+
+        fig.add_trace(go.Scatter(
+            x=df_bump.columns[df_bump.columns <= matchday],  # Display only up to the filtered matchday
+            y=df_bump.loc[player][df_bump.columns <= matchday],
+            mode='lines+markers',
+            marker=dict(size=5 if player not in selected_players else 8, color=line_color),
+            line=dict(width=1.5 if player not in selected_players else 4, color=line_color),
+            name=player
+        ))
+
+        # Add player images at the end of their lines
+        end_x = df_bump.columns[df_bump.columns <= matchday][-1]
+        end_y = df_bump.loc[player][end_x]
+        player_logo_path = f"data/logos/groups/{player}.png"
+        try:
+            player_logo = Image.open(player_logo_path)
+            resized_logo = resize_image_uniform(player_logo, 100)  # Double the size (50 -> 100)
+            logo_base64 = image_to_base64(resized_logo)
+
+            fig.add_layout_image(
+                dict(
+                    source=f'data:image/png;base64,{logo_base64}',
+                    xref="x", yref="y",
+                    x=end_x - 0.5,  # Slightly shift the logo to the right
+                    y=end_y,
+                    sizex=3,  # Doubling the size of the player images
+                    sizey=3,
+                    xanchor="left",
+                    yanchor="middle",
+                    layer="above"
+                )
+            )
+        except FileNotFoundError:
+            st.error(f"Logo not found for player {player}")
+
+    fig.update_layout(
+        title=f'Player Bump Chart - Matchday {matchday}',
         xaxis_title='Matchday',
         yaxis_title='Rank',
         yaxis=dict(
-            autorange='reversed',  # This keeps the rank order correct
-            tickvals=list(range(1, 8)),  # Assuming 7 ranks for players
-            range=[0.5, 7.5],  # Fine-tuning the range to compress space between lines
+            autorange='reversed',
+            tickvals=list(range(1, 8)),
+            range=[0.5, 7.5],
             showgrid=True
         ),
         xaxis=dict(
             tickmode='array',
-            tickvals=list(range(1, 35)),
+            tickvals=list(range(1, 35)),  # Always display 1 to 34 on x-axis
             ticktext=[str(i) for i in range(1, 35)],
             dtick=1,
-            range=[0.5, 36],  # Slightly extend the x-axis to make space for logos without too much extra space
+            range=[0.5, 35.9],  # Extend x-axis slightly to 35 for logo space
             showgrid=True,
         ),
-        plot_bgcolor='rgba(14, 17, 23, 0.70)',
+        plot_bgcolor='rgba(14, 17, 23, 0.50)',
         paper_bgcolor='rgba(0,0,0,0)',
-        height=500,  # Reduced height to compress the space between lines
-        width=800,
+        height=500, 
+        width=800,   
         showlegend=False,
     )
 
+    # Add a dotted line at the midpoint of the season
+    fig.add_vline(x=17.5, line=dict(color='rgba(255, 255, 255, 0.5)', dash='dot', width=1.5))
+
     st.plotly_chart(fig, use_container_width=True)
+
+    # Add the animation button
+    if st.button("Play Animation"):
+        animate_bump_chart_group(rankings_df, matchday, selected_players)

@@ -7,7 +7,7 @@ import base64
 
 # Import necessary functions from other modules
 from groups.season.bar_chart_group import display_group_table
-from groups.season.bump_chart_group import display_group_bump_chart
+from groups.season.bump_chart_group import display_bump_chart_group
 from groups.season.donut_chart import display_donut_chart
 from groups.season.histogram_group import display_matchday_histogram
 from groups.season.density_plot import display_season_density_plot
@@ -227,7 +227,7 @@ def display_season_section(matchday, rankings_df, matchdays_df, selected_player)
     display_season_density_plot(matchday, rankings_df, selected_players)
 
     # Bump Chart (Fifth)
-    display_group_bump_chart(matchday, rankings_df, selected_players)
+    display_bump_chart_group(rankings_df, matchday, selected_players)
 
     # Bar Chart (Sixth)
     display_group_table_with_highlight(matchday, rankings_df, selected_player)

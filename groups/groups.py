@@ -1,3 +1,4 @@
+# Importing necessary functions
 import streamlit as st
 import pandas as pd
 
@@ -6,6 +7,7 @@ from groups.season.groups_season import display_season_section
 from groups.matchday.groups_matchday import display_matchday_section
 from analysis.groups_analysis import display_analysis_section
 from predictions.predictions import display_predictions_page  # Import the new Predictions page
+from groups.season.bump_chart_group import display_bump_chart_group
 
 def display_groups_page():
     st.title("My Groups")
@@ -69,6 +71,8 @@ def display_groups_page():
             players.insert(0, 'All')
             selected_player = st.selectbox("Select Player", players, key="select_player_analysis_unique")  # Ensure unique key here
             display_analysis_section(matchday, rankings_df, matchdays_df, selected_player)  # Pass selected player
+        elif section == "Bump Chart":  # Add a new section for Bump Chart if necessary
+            display_bump_chart_group(rankings_df, matchday, selected_player)
 
 # Example usage
 if __name__ == "__main__":
