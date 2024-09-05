@@ -6,8 +6,9 @@ from auth.database import fetch_all
 from groups.season.groups_season import display_season_section
 from groups.matchday.groups_matchday import display_matchday_section
 from analysis.groups_analysis import display_analysis_section
-from predictions.predictions import display_predictions_page  # Import the new Predictions page
-from groups.season.bump_chart_group import display_bump_chart_group
+from predictions.predictions import display_predictions_page
+from groups.season.bump_chart_group import display_bump_chart_group, animate_bump_chart_group
+from groups.season.bar_chart_group import display_group_table, create_group_table_animation
 
 def display_groups_page():
     st.title("My Groups")
@@ -33,18 +34,18 @@ def display_groups_page():
         # Section Selection with Buttons
         section = st.session_state.get('selected_section', 'Predictions')  # Default to Predictions
 
-        col1, col2, col3, col4 = st.columns(4)
+        col1, col2, col3, col4 = st.columns(4)  # Only four sections
         with col1:
-            if st.button("Predictions"):
+            if st.button("Predictions", key="predictions_button"):
                 section = "Predictions"
         with col2:
-            if st.button("Matchday"):
+            if st.button("Matchday", key="matchday_button"):
                 section = "Matchday"
         with col3:
-            if st.button("Season"):
+            if st.button("Season", key="season_button"):
                 section = "Season"
         with col4:
-            if st.button("Analysis"):
+            if st.button("Analysis", key="analysis_button"):
                 section = "Analysis"
 
         st.session_state['selected_section'] = section
@@ -65,14 +66,15 @@ def display_groups_page():
             players = sorted(rankings_df['Name'].unique())
             players.insert(0, 'All')
             selected_player = st.selectbox("Select Player", players, key="select_player_season")
-            display_season_section(matchday, rankings_df, matchdays_df, selected_player)  # Pass selected player
+
+            # Display the Season content
+            display_season_section(matchday, rankings_df, matchdays_df, selected_player)
+
         elif section == "Analysis":
             players = sorted(rankings_df['Name'].unique())
             players.insert(0, 'All')
-            selected_player = st.selectbox("Select Player", players, key="select_player_analysis_unique")  # Ensure unique key here
+            selected_player = st.selectbox("Select Player", players, key="select_player_analysis_unique")
             display_analysis_section(matchday, rankings_df, matchdays_df, selected_player)  # Pass selected player
-        elif section == "Bump Chart":  # Add a new section for Bump Chart if necessary
-            display_bump_chart_group(rankings_df, matchday, selected_player)
 
 # Example usage
 if __name__ == "__main__":

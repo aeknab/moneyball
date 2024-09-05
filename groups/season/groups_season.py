@@ -6,8 +6,8 @@ from io import BytesIO
 import base64
 
 # Import necessary functions from other modules
-from groups.season.bar_chart_group import display_group_table
-from groups.season.bump_chart_group import display_bump_chart_group
+from groups.season.bump_chart_group import display_bump_chart_group, animate_bump_chart_group
+from groups.season.bar_chart_group import create_group_table_animation
 from groups.season.donut_chart import display_donut_chart
 from groups.season.histogram_group import display_matchday_histogram
 from groups.season.density_plot import display_season_density_plot
@@ -226,104 +226,18 @@ def display_season_section(matchday, rankings_df, matchdays_df, selected_player)
     # Density Plot (Third)
     display_season_density_plot(matchday, rankings_df, selected_players)
 
-    # Bump Chart (Fifth)
+    # Bump Chart (Fourth)
+    st.subheader("Bump Chart")
     display_bump_chart_group(rankings_df, matchday, selected_players)
 
-    # Bar Chart (Sixth)
+    # Bar Chart (Fifth)
+    st.subheader("Bar Chart")
     display_group_table_with_highlight(matchday, rankings_df, selected_player)
 
-    # Donut Chart (Fourth)
+    # Add a Play Animation button for Bar Chart animation with unique key
+    if st.button("Play Bar Chart Animation", key="bar_chart_animation"):
+        fig_go = create_group_table_animation(rankings_df, selected_players=["Andreas", "Gerd", "Geri", "Hermann", "Johnny", "Moddy", "Samson"])
+        st.plotly_chart(fig_go, use_container_width=True)
+
+    # Donut Chart (Sixth)
     display_donut_chart(matchdays_df, selected_players, matchday)
-
-def display_matchday_histogram(matchday, rankings_df, selected_players):
-    # Filter data for the selected matchday
-    filtered_df = rankings_df[(rankings_df['Spieltag'] == matchday)]
-
-    # Sort players by points for the matchday
-    filtered_df = filtered_df.sort_values('Punkte', ascending=False)
-
-    # Extract the points scored by each player
-    points = filtered_df['Punkte']
-    players = filtered_df['Name']
-
-    # Determine bar colors
-    if len(selected_players) == 1 and selected_players[0] != 'All':
-        # If a single player is selected, gray out the other players
-        bar_colors = [color_palette[player] if player in selected_players else color_palette["Gray"] for player in players]
-    else:
-        # If "All" is selected, use the normal colors
-        bar_colors = [color_palette[player] for player in players]
-
-    # Calculate average points for the matchday
-    matchday_avg = points.mean()
-
-    # Calculate the total points scored up to the selected matchday
-    total_points = rankings_df[(rankings_df['Spieltag'] <= matchday)]['Punkte'].sum()
-
-    # Calculate the number of matchdays up to the selected matchday
-    num_matchdays = matchday 
-
-    # Calculate the number of players
-    num_players = len(players)
-
-    # Calculate the Season Average
-    season_avg = total_points / (num_matchdays * num_players)
-
-    # Create the histogram using Plotly
-    fig = go.Figure()
-
-    # Add bars for each player
-    fig.add_trace(go.Bar(
-        x=players,
-        y=points,
-        marker=dict(color=bar_colors),
-        hovertemplate='<b>Points:</b> %{y}<br><b>MD Rank:</b> %{customdata[0]}<extra></extra>',
-        customdata=[(i+1,) for i in range(len(players))],
-        showlegend=False
-    ))
-
-    # Add dotted lines for matchday and season averages
-    fig.add_trace(go.Scatter(
-        x=[players.iloc[0], players.iloc[-1]],
-        y=[matchday_avg, matchday_avg],
-        mode="lines",
-        name=f"Matchday Avg: {matchday_avg:.1f}",
-        line=dict(color="blue", width=2, dash="dot"),
-        showlegend=True
-    ))
-
-    fig.add_trace(go.Scatter(
-        x=[players.iloc[0], players.iloc[-1]],
-        y=[season_avg, season_avg],
-        mode="lines",
-        name=f"Season Avg: {season_avg:.1f}",
-        line=dict(color="white", width=2, dash="dot"),
-        showlegend=True
-    ))
-
-    fig.update_layout(
-        title_text=f"Distribution of Points Scored in Season",
-        xaxis_title="Players",
-        yaxis_title="Points",
-        yaxis=dict(
-            autorange=True,
-            title_standoff=10,
-        ),
-        xaxis=dict(
-            tickangle=15,
-            title_standoff=5,
-        ),
-        barmode="group",
-        height=400,
-        width=600,
-        template="plotly_white",
-        legend=dict(
-            orientation="h",
-            yanchor="top",
-            y=-0.25,
-            xanchor="center",
-            x=0.5
-        )
-    )
-
-    st.plotly_chart(fig, use_container_width=True)
