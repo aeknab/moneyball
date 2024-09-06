@@ -20,8 +20,8 @@ def display_matchday_histogram(matchday, rankings_df, selected_players):
     # Filter data for the selected matchday
     filtered_df = rankings_df[rankings_df['Spieltag'] == matchday]
 
-    # Sort players alphabetically
-    filtered_df = filtered_df.sort_values('Name')
+    # Sort players by their points in descending order
+    filtered_df = filtered_df.sort_values('Punkte', ascending=False)
 
     # Extract the points scored by each player
     points = filtered_df['Punkte']
@@ -33,7 +33,12 @@ def display_matchday_histogram(matchday, rankings_df, selected_players):
     # Calculate season average points up to the selected matchday (without filtering by matchday)
     season_points = rankings_df[rankings_df['Spieltag'] <= matchday]['Punkte']
     total_points = season_points.sum()
-    season_avg = total_points / matchday  # Average points per matchday across the season
+
+    # Get the number of unique players in the dataset
+    num_players = rankings_df['Name'].nunique()
+
+    # Calculate the season average points per player
+    season_avg = total_points / (num_players * matchday)
 
     # Determine bar colors
     if len(selected_players) == 1 and selected_players[0] != 'All':

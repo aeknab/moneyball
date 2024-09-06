@@ -5,6 +5,19 @@ from PIL import Image
 from io import BytesIO
 import base64
 
+# Function to resize an image while keeping the aspect ratio intact
+def resize_image_to_bounding_box(image, target_size):
+    # Get the original size of the image
+    original_size = image.size
+
+    # Calculate the scaling factor based on the target size
+    scaling_factor = min(target_size[0] / original_size[0], target_size[1] / original_size[1])
+
+    # Calculate the new size, preserving the aspect ratio
+    new_size = (int(original_size[0] * scaling_factor), int(original_size[1] * scaling_factor))
+
+    return image.resize(new_size, Image.LANCZOS)
+
 # Function to display the group table as a static chart
 def display_group_table(matchday, rankings_df, selected_player):
     st.subheader("Group Table")
@@ -123,14 +136,16 @@ def create_group_table_animation(player_points_long, selected_player):
 
     # Update layout
     fig.update_layout(
-        yaxis=dict(autorange="reversed", title='Rank', tickvals=list(range(1, len(all_players) + 1))),
-        xaxis=dict(title='Points', range=[0, player_points_long['Gesamtpunkte'].max() + 50]),
-        plot_bgcolor='rgba(0,0,0,0)',
-        paper_bgcolor='rgba(0,0,0,0)',
-        showlegend=False,
-        height=600,
-        width=800
-    )
+    yaxis=dict(autorange="reversed", title='Rank', tickvals=list(range(1, len(all_players) + 1))),
+    xaxis=dict(title='Points', range=[0, player_points_long['Gesamtpunkte'].max() + 50]),
+    plot_bgcolor='rgba(0,0,0,0)',
+    paper_bgcolor='rgba(0,0,0,0)',
+    showlegend=False,
+    height=400,  # Match static chart
+    width=600,   # Match static chart
+    bargap=0.1,  # Adjust bar spacing if needed
+    bargroupgap=0.15
+    )    
 
     # Add player logos for the first frame
     layout_images = []
@@ -141,17 +156,17 @@ def create_group_table_animation(player_points_long, selected_player):
 
         player_logo_path = f"data/logos/groups/{player}.png"
         player_logo = Image.open(player_logo_path)
-        player_logo_resized = player_logo.resize((200, 200))  # Larger size for the logo
+        player_logo_resized = resize_image_to_bounding_box(player_logo, (200, 200))
         logo_base64 = image_to_base64(player_logo_resized)
 
         layout_images.append(
             dict(
                 source=f'data:image/png;base64,{logo_base64}',
                 xref="x", yref="y",
-                x=points + 1,
+                x=points,
                 y=rank,
-                sizex=25,
-                sizey=3.5,
+                sizex=30,
+                sizey=4.2,
                 xanchor="left",
                 yanchor="middle",
                 layer="above"
@@ -194,7 +209,7 @@ def create_group_table_animation(player_points_long, selected_player):
             # Add logo image update for the frame
             player_logo_path = f"data/logos/groups/{player}.png"
             player_logo = Image.open(player_logo_path)
-            player_logo_resized = player_logo.resize((200, 200))
+            player_logo_resized = resize_image_to_bounding_box(player_logo, (200, 200))
             logo_base64 = image_to_base64(player_logo_resized)
 
             layout_images_frame.append(
@@ -202,10 +217,10 @@ def create_group_table_animation(player_points_long, selected_player):
                     source=f'data:image/png;base64,{logo_base64}',
                     xref="x",
                     yref="y",
-                    x=points + 1,
+                    x=points,
                     y=rank,
-                    sizex=25,
-                    sizey=3.5,
+                    sizex=30,
+                    sizey=4.2,
                     xanchor="left",
                     yanchor="middle",
                     layer="above"
@@ -230,7 +245,7 @@ def create_group_table_animation(player_points_long, selected_player):
                     dict(
                         label="Play",
                         method="animate",
-                        args=[None, {"frame": {"duration": 500, "redraw": True}, "fromcurrent": True, "mode": "immediate"}]
+                        args=[None, {"frame": {"duration": 1000, "redraw": True}, "fromcurrent": True, "mode": "immediate"}]
                     ),
                     dict(
                         label="Pause",
@@ -241,7 +256,7 @@ def create_group_table_animation(player_points_long, selected_player):
             )
         ],
         sliders=[{
-            "steps": [{"args": [[str(i)], {"frame": {"duration": 500, "redraw": True}, "mode": "immediate"}], "label": str(i), "method": "animate"} for i in matchdays],
+            "steps": [{"args": [[str(i)], {"frame": {"duration": 1000, "redraw": True}, "mode": "immediate"}], "label": str(i), "method": "animate"} for i in matchdays],
             "currentvalue": {"prefix": "Matchday: "},
             "xanchor": "right",
             "x": 0.55,
