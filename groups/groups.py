@@ -6,7 +6,7 @@ from auth.database import fetch_all
 from groups.season.groups_season import display_season_section
 from groups.matchday.groups_matchday import display_matchday_section
 from analysis.groups_analysis import display_analysis_section
-from predictions.predictions import display_predictions_page
+from groups.predictions.group_predictions import display_predictions_page
 from groups.season.bump_chart_group import display_bump_chart_group, animate_bump_chart_group
 from groups.season.bar_chart_group import display_group_table, create_group_table_animation
 
@@ -50,8 +50,9 @@ def display_groups_page():
 
         st.session_state['selected_section'] = section
 
-        # Matchday Dropdown - Most recent matchday on top
-        matchday = st.selectbox("Select Matchday", options=list(range(1, 35))[::-1])
+        # Add the matchday selector for the sections that need it
+        if section in ["Matchday", "Season", "Analysis"]:
+            matchday = st.selectbox("Select Matchday", options=list(range(1, 35))[::-1])
 
         # Load the merged_rankings.csv file and merged_matchdays.csv
         rankings_df = pd.read_csv("data/merged_rankings.csv")
@@ -59,9 +60,12 @@ def display_groups_page():
 
         # Display the selected section
         if section == "Predictions":
-            display_predictions_page()  # Display the Predictions tab
+            user_id = st.session_state['user_id']  # Assuming user_id is stored in session_state
+            display_predictions_page(user_id=user_id)  # Predictions has its own matchday selector
+
         elif section == "Matchday":
-            display_matchday_section(matchday)  # No need to pass selected player if not used
+            display_matchday_section(matchday)  # Matchday requires matchday
+
         elif section == "Season":
             players = sorted(rankings_df['Name'].unique())
             players.insert(0, 'All')

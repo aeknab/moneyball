@@ -5,7 +5,7 @@ import numpy as np
 from scipy.stats import norm
 
 color_palette = {
-    "Gray": "rgba(179, 179, 179, 0.85)",     # light gray for default bars
+    "Gray": "rgba(179, 179, 179, 0.75)",     # light gray for default bars
     "density_curve": "blue",                 # blue for density curve
     "mean": "white",                         # white for mean line
     "default_std_dev": "red",                # red for std dev
