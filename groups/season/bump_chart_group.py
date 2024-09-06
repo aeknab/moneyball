@@ -7,13 +7,13 @@ import base64
 
 # Define the color palette
 color_palette = {
-    "Andreas": "rgba(102, 194, 165, 0.85)",  # Full transparency for selected player
-    "Gerd": "rgba(252, 141, 98, 0.85)",      # Full transparency for selected player
-    "Geri": "rgba(141, 160, 203, 0.85)",     # Full transparency for selected player
-    "Hermann": "rgba(231, 138, 195, 0.85)",  # Full transparency for selected player
-    "Johnny": "rgba(166, 216, 84, 0.85)",    # Full transparency for selected player
-    "Moddy": "rgba(255, 217, 47, 0.85)",     # Full transparency for selected player
-    "Samson": "rgba(229, 196, 148, 0.85)",   # Full transparency for selected player
+    "Andreas": "rgba(102, 194, 165, 0.75)",  # Full transparency for selected player
+    "Gerd": "rgba(252, 141, 98, 0.75)",      # Full transparency for selected player
+    "Geri": "rgba(141, 160, 203, 0.75)",     # Full transparency for selected player
+    "Hermann": "rgba(231, 138, 195, 0.75)",  # Full transparency for selected player
+    "Johnny": "rgba(166, 216, 84, 0.75)",    # Full transparency for selected player
+    "Moddy": "rgba(255, 217, 47, 0.75)",     # Full transparency for selected player
+    "Samson": "rgba(229, 196, 148, 0.75)",   # Full transparency for selected player
     "Gray": "rgba(179, 179, 179, 0.50)"     # Reduced transparency for non-selected players
 }
 

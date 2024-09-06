@@ -68,13 +68,13 @@ def display_group_table(matchday, rankings_df, selected_player):
 
 # Define the color palette
 color_palette = {
-    "Andreas": "rgba(102, 194, 165, 0.85)",
-    "Gerd": "rgba(252, 141, 98, 0.85)",
-    "Geri": "rgba(141, 160, 203, 0.85)",
-    "Hermann": "rgba(231, 138, 195, 0.85)",
-    "Johnny": "rgba(166, 216, 84, 0.85)",
-    "Moddy": "rgba(255, 217, 47, 0.85)",
-    "Samson": "rgba(229, 196, 148, 0.85)",
+    "Andreas": "rgba(102, 194, 165, 0.75)",
+    "Gerd": "rgba(252, 141, 98, 0.75)",
+    "Geri": "rgba(141, 160, 203, 0.75)",
+    "Hermann": "rgba(231, 138, 195, 0.75)",
+    "Johnny": "rgba(166, 216, 84, 0.75)",
+    "Moddy": "rgba(255, 217, 47, 0.75)",
+    "Samson": "rgba(229, 196, 148, 0.75)",
     "Gray": "rgba(179, 179, 179, 0.50)"  # Grey for other players
 }
 

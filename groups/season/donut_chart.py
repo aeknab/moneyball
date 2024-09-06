@@ -5,10 +5,10 @@ from PIL import Image
 from groups.utils import calculate_points, image_to_base64
 
 # Define the new color palette with 75% transparency for the chart
-colors = ['rgba(196, 196, 196, 0.85)',  # Grey with 75% transparency
-          'rgba(255, 250, 205, 0.85)',  # Light yellow with 75% transparency
-          'rgba(135, 206, 235, 0.85)',  # Light blue with 75% transparency
-          'rgba(168, 230, 161, 0.85)']  # Light green with 75% transparency
+colors = ['rgba(196, 196, 196, 0.75)',  # Grey with 75% transparency
+          'rgba(255, 250, 205, 0.75)',  # Light yellow with 75% transparency
+          'rgba(135, 206, 235, 0.75)',  # Light blue with 75% transparency
+          'rgba(168, 230, 161, 0.75)']  # Light green with 75% transparency
 
 border_colors = ['rgba(153, 153, 153, 1)',  # Dark grey (solid)
                  'rgba(255, 215, 0, 1)',    # Gold (solid)

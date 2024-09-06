@@ -6,14 +6,14 @@ from scipy.stats import gaussian_kde
 
 # Define the ColorBrewer Set2 color palette
 color_palette = {
-    "Andreas": "rgba(102, 194, 165, 0.85)",  # light green
-    "Gerd": "rgba(252, 141, 98, 0.85)",      # light orange
-    "Geri": "rgba(141, 160, 203, 0.85)",     # light blue
-    "Hermann": "rgba(231, 138, 195, 0.85)",  # light pink
-    "Johnny": "rgba(166, 216, 84, 0.85)",    # light lime green
-    "Moddy": "rgba(255, 217, 47, 0.85)",     # light yellow
-    "Samson": "rgba(229, 196, 148, 0.85)",   # light brown
-    "Gray": "rgba(179, 179, 179, 0.85)",     # light gray for default bars
+    "Andreas": "rgba(102, 194, 165, 0.75)",  # light green
+    "Gerd": "rgba(252, 141, 98, 0.75)",      # light orange
+    "Geri": "rgba(141, 160, 203, 0.75)",     # light blue
+    "Hermann": "rgba(231, 138, 195, 0.75)",  # light pink
+    "Johnny": "rgba(166, 216, 84, 0.75)",    # light lime green
+    "Moddy": "rgba(255, 217, 47, 0.75)",     # light yellow
+    "Samson": "rgba(229, 196, 148, 0.75)",   # light brown
+    "Gray": "rgba(179, 179, 179, 0.75)",     # light gray for default bars
     "density_curve": "blue",                 # blue for density curve
     "mean": "white",        # white for mean line
     "default_std_dev": "red", # light yellow for std dev by default

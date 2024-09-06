@@ -11,6 +11,7 @@ from groups.season.bar_chart_group import create_group_table_animation
 from groups.season.donut_chart import display_donut_chart
 from groups.season.histogram_group import display_matchday_histogram
 from groups.season.density_plot import display_season_density_plot
+from groups.season.stacked_bar_chart import display_stacked_bar_chart
 
 # Define the color palette
 color_palette = {
@@ -222,6 +223,9 @@ def display_season_section(matchday, rankings_df, matchdays_df, selected_player)
 
     # Histogram (Second)
     display_matchday_histogram(matchday, rankings_df, selected_players)
+    
+    # Add this code to test where the stacked bar chart is supposed to appear
+    display_stacked_bar_chart(rankings_df, matchday, selected_player)
 
     # Density Plot (Third)
     display_season_density_plot(matchday, rankings_df, selected_players)

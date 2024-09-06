@@ -5,13 +5,13 @@ from PIL import Image
 def format_points(points):
     """Formats points with color based on the score."""
     if points == 0:
-        return f"<span style='color:grey'>({points})</span>"
+        return f"<span style='color:#C4C4C4'>({points})</span>"
     elif points == 2:
-        return f"<span style='color:yellow'>({points})</span>"
+        return f"<span style='color:#FFFACD'>({points})</span>"
     elif points == 3:
-        return f"<span style='color:orange'>({points})</span>"
+        return f"<span style='color:#87CEEB'>({points})</span>"
     elif points == 4:
-        return f"<span style='color:red'>({points})</span>"
+        return f"<span style='color:#A8E6A1'>({points})</span>"
     return f"({points})"
 
 def calculate_points(pred_home, pred_away, actual_home, actual_away):
