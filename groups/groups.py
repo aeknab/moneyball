@@ -6,7 +6,7 @@ from auth.database import fetch_all
 from groups.season.groups_season import display_season_section
 from groups.matchday.groups_matchday import display_matchday_section
 from analysis.groups_analysis import display_analysis_section
-from groups.predictions.group_predictions import display_predictions_page
+from groups.predictions.predictions import display_predictions_page
 from groups.season.bump_chart_group import display_bump_chart_group, animate_bump_chart_group
 from groups.season.bar_chart_group import display_group_table, create_group_table_animation
 
@@ -60,11 +60,11 @@ def display_groups_page():
 
         # Display the selected section
         if section == "Predictions":
-            user_id = st.session_state['user_id']  # Assuming user_id is stored in session_state
-            display_predictions_page(user_id=user_id)  # Predictions has its own matchday selector
+            user_id = st.session_state['user_id']  
+            display_predictions_page() 
 
         elif section == "Matchday":
-            display_matchday_section(matchday)  # Matchday requires matchday
+            display_matchday_section(matchday)  
 
         elif section == "Season":
             players = sorted(rankings_df['Name'].unique())
