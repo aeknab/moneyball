@@ -12,79 +12,97 @@ from groups.predictions.detail.bundesliga.histogram import display_histogram
 
 # Function to display the Detail View section of the predictions page
 def display_predictions_detail():
-    st.subheader("Matchday Predictions - Detail View")
+
+    # Check if the matchday was selected in the Overview
+    if 'selected_matchday' not in st.session_state:
+        st.error("Please select a matchday in the Overview tab first.")
+        return
 
     # Load the Bundesliga match preview data
     buli_df = pd.read_csv("data/buli_all_seasons.csv")
 
-    # Load the color codes for charts
-    try:
-        color_codes_df = pd.read_csv("data/color_codes.csv")
-    except FileNotFoundError:
-        st.error("Color codes file not found. Please ensure 'data/color_codes.csv' exists.")
-        return
-
     # Filter for the 2023/24 season
     buli_df_2023 = buli_df[buli_df['Season'] == '2023/24']
 
-    # Dropdown to select matchday, defaulting to "--"
-    matchdays = ['--'] + list(buli_df_2023['Matchday'].unique()[::-1])
-    selected_matchday = st.selectbox("Select Matchday", options=matchdays, key="matchday_select_predictions_detail")
-
-    # Ensure that a matchday is selected before proceeding
-    if selected_matchday == '--':
-        st.warning("Please select a matchday.")
-        return
+    # Get the matchday from the session state (selected in Overview)
+    selected_matchday = st.session_state.selected_matchday
 
     # Filter matches for the selected matchday
     filtered_matches = buli_df_2023[buli_df_2023["Matchday"] == selected_matchday]
 
-    # Check if there are any matches for the selected matchday
     if filtered_matches.empty:
         st.error(f"No matches found for Matchday {selected_matchday}.")
         return
 
-    # Create a slider for selecting the match between the home and away teams
-    match_slider = st.select_slider(
-        "Select Match",
-        options=[f"{row['Home Tag']} - {row['Away Tag']}" for _, row in filtered_matches.iterrows()],
-        key="match_slider_predictions_detail"
-    )
+    # --- Display the matchday title at the top ---
+    # st.subheader(f"Matchday {selected_matchday}")
 
-    # Find the match corresponding to the selected slider option
+    # Create buttons for each match and allow the user to select a match
+    match_options = [f"{row['Home Tag']} - {row['Away Tag']}" for _, row in filtered_matches.iterrows()]
+
+    # Check if a match was selected in the Overview
+    if 'selected_match' in st.session_state:
+        selected_match = st.session_state.selected_match
+    else:
+        # Default to the first match in the list if no match is selected yet
+        selected_match = match_options[0]
+
+    selected_match = st.radio("", options=match_options, key="match_selection", index=match_options.index(selected_match))
+
+    # Apply custom CSS to display the radio buttons in a horizontal line
+    st.markdown("""
+        <style>
+        div[role="radiogroup"] {
+            display: flex;
+            flex-direction: row;  /* Align items horizontally */
+        }
+        </style>
+        """, unsafe_allow_html=True)
+
+    # Store selected match in session state
+    st.session_state.selected_match = selected_match
+
+    # Find the match corresponding to the selected button option
     selected_match_row = filtered_matches[
-        filtered_matches.apply(lambda row: f"{row['Home Tag']} - {row['Away Tag']}", axis=1) == match_slider
+        filtered_matches.apply(lambda row: f"{row['Home Tag']} - {row['Away Tag']}", axis=1) == selected_match
     ]
 
-    # Check if any match was selected and exists in the DataFrame
     if selected_match_row.empty:
-        st.error(f"No match found for the selection {match_slider}.")
+        st.error(f"No match found for the selection {selected_match}.")
         return
 
-    # Proceed to access the first match row (assuming one match was selected)
     selected_match_row = selected_match_row.iloc[0]
 
-    # Pass the match row to other display functions
+    # --- Pass the DataFrame and selected match row to the match preview function ---
     display_match_preview(match_row=selected_match_row, df=buli_df_2023, predictions_mode=True)
 
-    # Form Guide Section
-    display_form_guide_section(buli_df_2023, '2023/24', selected_matchday, match_slider, filtered_matches)
+    # --- Load color codes for charts ---
+    color_codes_df = pd.read_csv("data/color_codes.csv")
 
-    # Donut Charts
-    display_donut_charts_side_by_side(selected_match_row['Home Team'], selected_match_row['Away Team'], 
-                                      selected_match_row['Home Tag'], selected_match_row['Away Tag'], 
-                                      selected_matchday, buli_df_2023)
+    # --- Display the form guide for both teams ---
+    display_form_guide_section(buli_df_2023, '2023/24', selected_matchday, selected_match, filtered_matches)
 
-    # Last 10 Meetings
-    plot_last_10_meetings(buli_df_2023, selected_match_row['Home Tag'], selected_match_row['Away Tag'], 
-                          color_codes_df, selected_matchday, '2023/24')
+    # --- Display donut charts for both teams ---
+    display_donut_charts_side_by_side(
+        selected_match_row['Home Team'], selected_match_row['Away Team'],
+        selected_match_row['Home Tag'], selected_match_row['Away Tag'], 
+        selected_matchday, buli_df_2023
+    )
 
-    # League Table Section
+    # --- Display the last 10 meetings between the two teams ---
+    plot_last_10_meetings(
+        buli_df_2023, selected_match_row['Home Tag'], selected_match_row['Away Tag'],
+        color_codes_df, selected_matchday, '2023/24'
+    )
+
+    # --- Display the League Table ---
     st.header("League Table")
-    display_league_tables(buli_df_2023, '2023/24', selected_matchday, "Season Table", color_codes_df, 
-                          [selected_match_row['Home Tag'], selected_match_row['Away Tag']])
+    display_league_tables(
+        buli_df_2023, '2023/24', selected_matchday, "Season Table", color_codes_df,
+        [selected_match_row['Home Tag'], selected_match_row['Away Tag']]
+    )
 
-    # Additional visualizations (Bump Chart, Pie Chart, etc.)
+    # --- Additional Visualizations: Bump Chart, Pie Chart, Heat Map, etc. ---
     st.header("Season Data")
     display_bump_chart(buli_df_2023, '2023/24', selected_matchday, color_codes_df, 
                        [selected_match_row['Home Tag'], selected_match_row['Away Tag']])

@@ -7,7 +7,14 @@ def display_form_guide_section(df, selected_season, selected_matchday, selected_
     if selected_season != '--' and selected_matchday != '--' and selected_match != '--':
         selected_match_row = df_matches[
             df_matches.apply(lambda row: f"{row['Home Tag']} vs. {row['Away Tag']}", axis=1) == selected_match
-        ].iloc[0]
+        ]
+
+        # Add a check to avoid out-of-bounds errors
+        if selected_match_row.empty:
+            st.error(f"No match found for the selected match: {selected_match}")
+            return
+        
+        selected_match_row = selected_match_row.iloc[0]
 
         home_team_tag = selected_match_row['Home Tag']
         away_team_tag = selected_match_row['Away Tag']

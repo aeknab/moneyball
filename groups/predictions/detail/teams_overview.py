@@ -3,10 +3,13 @@ import pandas as pd
 from PIL import Image
 from ..utils import resize_image, load_image
 
-
 # Function to display match preview with details for both teams
 def display_match_preview(match_row=None, df=None, predictions_mode=False):
-    st.header("Matchday Analysis")
+
+    # Ensure that df is not None
+    if df is None:
+        st.error("Data for matches (df) is missing.")
+        return
 
     if predictions_mode and match_row is not None:
         selected_season = '2023/24'
@@ -26,7 +29,9 @@ def display_match_preview(match_row=None, df=None, predictions_mode=False):
     # Display outcome or prediction inputs
     display_match_outcome_or_predictions(predictions_mode, match_row, selected_season)
 
-    # Additional sections can be displayed here, such as form guides, league tables, charts, etc.
+    # Display Teams Overview
+    display_teams_overview(df, home_team_tag, away_team_tag, selected_season)
+
     return selected_season, selected_matchday, match_row, df_matches, home_team_tag, away_team_tag
 
 # Function to handle non-predictions mode (interactive UI for season, matchday, and fixture selection)
@@ -83,13 +88,23 @@ def display_team_logos(home_team_tag, away_team_tag, home_team, away_team, match
     away_logo_resized = resize_image(away_logo, target_area)
 
     row1_col1, row1_col2, row1_col3 = st.columns([1, 3, 1])
+    # Add custom CSS for spacing, inside row1_col2
+    st.markdown("""
+        <style>
+        .team-info { margin-bottom: 20px; } /* Adjust the margin as needed */
+        </style>
+        """, unsafe_allow_html=True)
 
     with row1_col1:
         st.image(home_logo_resized, use_column_width=False)
 
     with row1_col2:
+        # Updated to display team names and "vs." on separate lines
         st.markdown(
-            f"<div style='text-align: center; font-size: 24px;'><b>{home_team}</b> vs. <b>{away_team}</b></div>", 
+            f"<div style='text-align: center; font-size: 24px; line-height: 1.2;'>"
+            f"<b>{home_team}</b><br>"
+            f"<span style='font-size: 20px;'>vs.</span><br>"
+            f"<b>{away_team}</b></div>", 
             unsafe_allow_html=True)
         display_match_info(match_row)
 
@@ -145,11 +160,23 @@ def display_match_outcome_or_predictions(predictions_mode, match_row, selected_s
 
             col2_left, col2_mid, col2_right = st.columns([1, 0.2, 1])
             with col2_left:
-                home_goals = col2_left.number_input("", min_value=0, max_value=11, value=0, step=1, key="home_goals", format="%d")
+                home_goals = st.number_input("", min_value=0, max_value=11, value=0, step=1, key="home_goals", format="%d")
             with col2_mid:
-                st.markdown("<div style='font-size: 30px;'>:</div>", unsafe_allow_html=True)
+                # Center the colon using CSS
+                st.markdown("""
+                    <style>
+                    .centered-colon {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        height: 100%;
+                        font-size: 30px;
+                    }
+                    </style>
+                    <div class="centered-colon">:</div>
+                """, unsafe_allow_html=True)
             with col2_right:
-                away_goals = col2_right.number_input("", min_value=0, max_value=11, value=0, step=1, key="away_goals", format="%d")
+                away_goals = st.number_input("", min_value=0, max_value=11, value=0, step=1, key="away_goals", format="%d")
         else:
             match_outcome = f"{match_row['Home Goals']} : {match_row['Away Goals']}"
             st.markdown(
@@ -158,3 +185,47 @@ def display_match_outcome_or_predictions(predictions_mode, match_row, selected_s
 
     with row2_col3:
         st.image(bundesliga_logo_resized, use_column_width=False)
+
+# Function to display Teams Overview
+def display_teams_overview(df, home_team_tag, away_team_tag, selected_season):
+    st.subheader("Teams Overview")
+
+    # Filter the DataFrame for the selected season
+    season_df = df[df['Season'] == selected_season]
+
+    # Get data for the home and away teams
+    try:
+        home_team_data = season_df[season_df['Home Tag'] == home_team_tag].iloc[0]
+        away_team_data = season_df[season_df['Home Tag'] == away_team_tag].iloc[0]
+    except IndexError:
+        st.error(f"No data found for {home_team_tag} or {away_team_tag} in the selected season.")
+        return
+
+    # Define the available columns and provide default values if they don't exist
+    overview_data = {
+        'Rank': [home_team_data.get('Rank', '--'), away_team_data.get('Rank', '--')],
+        'Games': [home_team_data.get('Games', '--'), away_team_data.get('Games', '--')],
+        'W': [home_team_data.get('W', '--'), away_team_data.get('W', '--')],
+        'T': [home_team_data.get('T', '--'), away_team_data.get('T', '--')],
+        'L': [home_team_data.get('L', '--'), away_team_data.get('L', '--')],
+        'Goals': [f"{home_team_data.get('Home Goals', '--')} : {home_team_data.get('Away Goals', '--')}",
+                  f"{away_team_data.get('Home Goals', '--')} : {away_team_data.get('Away Goals', '--')}"],
+        'GD': [home_team_data.get('GD', '--'), away_team_data.get('GD', '--')],
+        'Points': [home_team_data.get('Points', '--'), away_team_data.get('Points', '--')]
+    }
+
+    # Create a DataFrame for displaying the overview table
+    teams_overview = pd.DataFrame({
+        'Team': [home_team_data['Home Team'], away_team_data['Home Team']],
+        'Rank': overview_data['Rank'],
+        'Games': overview_data['Games'],
+        'W': overview_data['W'],
+        'T': overview_data['T'],
+        'L': overview_data['L'],
+        'Goals': overview_data['Goals'],
+        'GD': overview_data['GD'],
+        'Points': overview_data['Points']
+    })
+
+    # Display the overview table
+    st.table(teams_overview)
