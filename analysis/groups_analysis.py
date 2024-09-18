@@ -10,7 +10,7 @@ from ChatGPT.prompt_heatmap import heat_map_prompt_template
 from ChatGPT.prompt_line_plot import line_plot_prompt_template
 from openai import OpenAI
 
-client = OpenAI(api_key="sk-o0hrLU1sy_khDaVw-sFP1pnIOP-SLylV1lC-gaOgLWT3BlbkFJ7b2I0vPST6fT6vgTB90vaf-DIDxpOg00Z8ax3cOhIA")
+client = OpenAI(api_key="YOUR_API_KEY_HERE")  # Replace with your actual API key
 
 def calculate_prediction_accuracy(predicted_goals, actual_goals):
     """Calculate the accuracy of predictions."""
@@ -27,8 +27,7 @@ def generate_pie_chart_analysis(selected_players, matchdays_df):
         win_percentage = predictions['Home Win'] / sum(predictions.values()) * 100
         draw_percentage = predictions['Tie'] / sum(predictions.values()) * 100
         lose_percentage = predictions['Away Win'] / sum(predictions.values()) * 100
-        
-        # Assuming these are the correct percentages you want to use
+
         user_draw_percentage = draw_percentage
         actual_draw_percentage = actual_results['Tie'] / sum(actual_results.values()) * 100
 
@@ -61,12 +60,12 @@ def generate_confusion_matrix_analysis(selected_players, matchdays_df, matchday)
 
     # Calculate accuracy using the correct method
     accuracy = (data['confusion_matrix'].to_numpy().trace() / data['confusion_matrix'].values.sum()) * 100
-    
+
     # Calculate precision and recall
     precision = data['confusion_matrix'].iloc[0, 0] / data['confusion_matrix'].iloc[0].sum() * 100
     recall = data['confusion_matrix'].iloc[0, 0] / data['confusion_matrix'].sum(axis=1).iloc[0] * 100
 
-    # Use the first selected player as the player_name, or a generic 'All Players' if multiple are selected
+    # Use the first selected player as the player_name, or 'All Players' if multiple are selected
     player_name = selected_players[0] if len(selected_players) == 1 else "All Players"
 
     # Ensure all placeholders in the template have corresponding values
@@ -90,7 +89,7 @@ def generate_heat_map_analysis(selected_players, matchdays_df):
     # Convert the most frequent score tuple to a string (e.g., "3-1")
     most_frequent_score_str = f"{most_frequent_score[0]}-{most_frequent_score[1]}"
 
-    # Use the first selected player as the player_name, or a generic 'All Players' if multiple are selected
+    # Use the first selected player as the player_name, or 'All Players' if multiple are selected
     player_name = selected_players[0] if len(selected_players) == 1 else "All Players"
 
     # Format the prompt with the retrieved data
@@ -102,9 +101,9 @@ def generate_heat_map_analysis(selected_players, matchdays_df):
 
     return generate_analysis(prompt)
 
-def generate_line_plot_analysis(selected_players, matchdays_df):
+def generate_line_plot_analysis(selected_players, matchdays_df, matchday):
     # Calculate line plot data and get the trend
-    data = calculate_line_plot_data(matchdays_df, selected_players)
+    data = calculate_line_plot_data(matchdays_df, selected_players, matchday)
 
     # Access the trend data from the returned dictionary
     trend_over_time = data["trend_over_time"]
@@ -112,7 +111,7 @@ def generate_line_plot_analysis(selected_players, matchdays_df):
 
     # Use the trend data to generate the analysis
     player_name = selected_players[0] if len(selected_players) == 1 else "All Players"
-    
+
     prompt = line_plot_prompt_template.format(
         player_name=player_name,
         trend_over_time=trend_over_time,
@@ -139,7 +138,7 @@ def generate_analysis(prompt):
 
 def display_analysis_section(matchday, rankings_df, matchdays_df, selected_player):
     players = sorted(rankings_df['Name'].unique())
-    selected_players = players[1:] if selected_player == 'All' else [selected_player]
+    selected_players = players[:] if selected_player == 'All' else [selected_player]
 
     section = st.session_state.get('selected_analysis_section', 'Pie Chart')
 
@@ -178,8 +177,8 @@ def display_analysis_section(matchday, rankings_df, matchdays_df, selected_playe
             if analysis:
                 st.markdown(analysis)
     elif section == "Line Plot":
-        display_line_plot(matchdays_df, selected_players)
+        display_line_plot(matchdays_df, selected_players, matchday)  # Ensure matchday is passed here
         if st.button("Generate Analysis", key="generate_analysis_line_plot"):
-            analysis = generate_line_plot_analysis(selected_players, matchdays_df)
+            analysis = generate_line_plot_analysis(selected_players, matchdays_df, matchday)
             if analysis:
                 st.markdown(analysis)
