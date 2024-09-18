@@ -15,8 +15,26 @@ color_palette = {
 }
 
 def display_matchday_histogram(matchday, rankings_df, selected_players):
-    st.subheader("Histogram")
+    # Create two columns, with the right column for the description
+    col1, col2 = st.columns([1, 1])  # Adjust ratio as needed to manage column width
+    
+    with col1:
+        histogram_clicked = st.button("Histogram")
+    with col2:
+        if histogram_clicked:
+            # When the button is clicked, display the histogram description
+            st.markdown("""
+            **What is a Histogram?**
 
+            A histogram is a graphical representation of the distribution of numerical data. It is used to show the frequency of different ranges of values. In this case, each bar represents the number of points scored by a player on a particular matchday.
+
+            **How to interpret the histogram here:**
+
+            - Each bar corresponds to a player's score for the matchday.
+            - The height of the bar indicates the number of points scored.
+            - The matchday average (blue dotted line) and the season average (white dotted line) help you compare individual player performances to the overall average.
+            """)
+        
     # Filter data for the selected matchday
     filtered_df = rankings_df[rankings_df['Spieltag'] == matchday]
 

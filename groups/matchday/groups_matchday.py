@@ -188,7 +188,7 @@ def display_matchday_section(matchday):
     table_html += "<th></th></tr></thead><tbody>"  # Empty header for Points
 
     # Add the row for actual results with bold tags and thick line underneath
-    table_html += "<tr style='border-bottom: 4px solid #696969;'><td><b>Rank</b></td><td><b>Name</b></td>"  # Rank and Name headers in the second row
+    table_html += "<tr style='border-bottom: 3px solid #696969;'><td><b>Rank</b></td><td><b>Name</b></td>"  # Rank and Name headers in the second row
     for match_name in match_names:
         table_html += f"<td><b>{table_data[match_name][1]}</b></td>"  # Actual match results in bold
     table_html += "<td><b>Points</b></td></tr>"  # Points header in the second row
