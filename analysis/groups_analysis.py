@@ -140,6 +140,9 @@ def display_analysis_section(matchday, rankings_df, matchdays_df, selected_playe
     players = sorted(rankings_df['Name'].unique())
     selected_players = players[:] if selected_player == 'All' else [selected_player]
 
+    # Filter matchdays_df for the selected matchday or up to the selected matchday
+    filtered_matchdays_df = matchdays_df[matchdays_df['Matchday'] <= matchday]
+
     section = st.session_state.get('selected_analysis_section', 'Pie Chart')
 
     col1, col2, col3, col4 = st.columns(4)
@@ -158,27 +161,28 @@ def display_analysis_section(matchday, rankings_df, matchdays_df, selected_playe
 
     st.session_state['selected_analysis_section'] = section
 
+    # Pass the filtered matchdays_df to the chart functions
     if section == "Pie Chart":
-        display_group_pie_chart(matchdays_df, selected_players)
+        display_group_pie_chart(filtered_matchdays_df, selected_players)
         if st.button("Generate Analysis", key="generate_analysis_pie_chart"):
-            analysis = generate_pie_chart_analysis(selected_players, matchdays_df)
+            analysis = generate_pie_chart_analysis(selected_players, filtered_matchdays_df)
             if analysis:
                 st.markdown(analysis)
     elif section == "Confusion Matrix":
-        display_confusion_matrix(matchdays_df, selected_players, matchday)
+        display_confusion_matrix(filtered_matchdays_df, selected_players, matchday)
         if st.button("Generate Analysis", key="generate_analysis_confusion_matrix"):
-            analysis = generate_confusion_matrix_analysis(selected_players, matchdays_df, matchday)
+            analysis = generate_confusion_matrix_analysis(selected_players, filtered_matchdays_df, matchday)
             if analysis:
                 st.markdown(analysis)
     elif section == "Heat Map":
-        display_group_heat_map(matchdays_df, selected_players)
+        display_group_heat_map(filtered_matchdays_df, selected_players)
         if st.button("Generate Analysis", key="generate_analysis_heat_map"):
-            analysis = generate_heat_map_analysis(selected_players, matchdays_df)
+            analysis = generate_heat_map_analysis(selected_players, filtered_matchdays_df)
             if analysis:
                 st.markdown(analysis)
     elif section == "Line Plot":
-        display_line_plot(matchdays_df, selected_players, matchday)  # Ensure matchday is passed here
+        display_line_plot(filtered_matchdays_df, selected_players, matchday)
         if st.button("Generate Analysis", key="generate_analysis_line_plot"):
-            analysis = generate_line_plot_analysis(selected_players, matchdays_df, matchday)
+            analysis = generate_line_plot_analysis(selected_players, filtered_matchdays_df, matchday)
             if analysis:
                 st.markdown(analysis)
