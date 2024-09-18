@@ -14,7 +14,6 @@ def load_image_as_base64(path):
     return img_str
 
 def display_matchday_section(matchday):
-    st.subheader(f"Matchday {matchday} Overview")
 
     # Load and filter the merged_matchdays.csv file for the matchday section
     matchdays_df = pd.read_csv("data/merged_matchdays.csv")
@@ -129,7 +128,7 @@ def display_matchday_section(matchday):
     # Update the Rank column to reflect the correct ranking (1 to 7)
     table_data["Rank"] = ["", "<b>Rank</b>"] + list(range(1, len(sorted_indices) - 1))
 
-    # Construct the HTML table with styles, adjusting column widths
+    # Construct the HTML table with styles, adjusting column widths and adding the thick line
     table_html = """
     <style>
     .styled-table {
@@ -168,6 +167,10 @@ def display_matchday_section(matchday):
         background-color: rgba(14, 17, 23, 0.35);
         border-bottom: 1px solid rgba(97, 101, 114, 0.9);
     }
+    .styled-table tbody tr:first-of-type {
+        background-color: rgba(14, 17, 23, 0.525); /* Adjust transparency for Rank/Name/Points row */
+        border-bottom: 2px solid #696969; /* Thick line for the Rank/Name/Points row */
+    }
     .styled-table tbody tr:last-of-type {
         border-bottom: 2px solid rgba(97, 101, 114, 0.9);
     }
@@ -184,8 +187,8 @@ def display_matchday_section(matchday):
         table_html += f"<th><b>{match_name}</b></th>"
     table_html += "<th></th></tr></thead><tbody>"  # Empty header for Points
 
-    # Add the row for actual results with bold tags
-    table_html += "<tr><td><b>Rank</b></td><td><b>Name</b></td>"  # Rank and Name headers in the second row
+    # Add the row for actual results with bold tags and thick line underneath
+    table_html += "<tr style='border-bottom: 4px solid #696969;'><td><b>Rank</b></td><td><b>Name</b></td>"  # Rank and Name headers in the second row
     for match_name in match_names:
         table_html += f"<td><b>{table_data[match_name][1]}</b></td>"  # Actual match results in bold
     table_html += "<td><b>Points</b></td></tr>"  # Points header in the second row

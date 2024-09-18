@@ -9,9 +9,9 @@ def format_points(points):
     elif points == 2:
         return f"<span style='color:#FFFACD'>({points})</span>"
     elif points == 3:
-        return f"<span style='color:#87CEEB'>({points})</span>"
-    elif points == 4:
         return f"<span style='color:#A8E6A1'>({points})</span>"
+    elif points == 4:
+        return f"<span style='color:#87CEEB'>({points})</span>"
     return f"({points})"
 
 def calculate_points(pred_home, pred_away, actual_home, actual_away):

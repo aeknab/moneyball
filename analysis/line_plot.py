@@ -32,11 +32,13 @@ def calculate_line_plot_data(matchdays_df, selected_players, matchday):
     for player in player_names:
         # Set color and alpha for the player
         if len(selected_players) == 1 and player == selected_players[0]:
-            # Selected player
+            # Selected individual player
             player_alpha = 1.0
+            line_width = 4  # Thicker line for selected player
         else:
             # Other players
             player_alpha = 0.75
+            line_width = 2  # Default line width
         player_color = color_palette_template.get(player, color_palette_template['Gray']).format(alpha=player_alpha)
         player_colors[player] = player_color
         
@@ -52,24 +54,25 @@ def calculate_line_plot_data(matchdays_df, selected_players, matchday):
         
         predicted_goals[player] = player_predicted_goals  # Store this player's predicted goals
         
-        # Only add the selected player's line to player_lines
+        # Add the player's line based on selection
         if len(selected_players) == 1 and player == selected_players[0]:
+            # Only add the selected player's line
             player_lines.append(go.Scatter(
                 x=player_predicted_goals.index,
                 y=player_predicted_goals.values,
                 mode='lines+markers',
                 name=player,
-                line=dict(color=player_color),
+                line=dict(color=player_color, width=line_width),
                 marker=dict(size=6, color=player_color),
             ))
         elif len(selected_players) > 1 or selected_players == list(player_names):
-            # If multiple players are selected or 'All', add all players' lines
+            # Add all players' lines when multiple players or 'All' are selected
             player_lines.append(go.Scatter(
                 x=player_predicted_goals.index,
                 y=player_predicted_goals.values,
                 mode='lines+markers',
                 name=player,
-                line=dict(color=player_color),
+                line=dict(color=player_color, width=line_width),
                 marker=dict(size=6, color=player_color),
             ))
     
@@ -193,13 +196,19 @@ def display_line_plot(matchdays_df, selected_players, matchday):
             line=dict(color=player_color, dash='dot'),
         ))
     
+    # Determine the line width for Actual Goals based on selection
+    if len(selected_players) == 1:
+        actual_goals_line_width = 2  # Thinner line when individual player is selected
+    else:
+        actual_goals_line_width = 2.5  # Thicker line when 'All' players are selected
+    
     # Add actual goals line (next layer)
     fig.add_trace(go.Scatter(
         x=data["actual_goals"].index,
         y=data["actual_goals"].values,
         mode='lines+markers',
         name='Actual Goals',
-        line=dict(color='rgba(255,255,255,1.0)'),  # Solid line with 100% opacity
+        line=dict(color='rgba(255,255,255,1.0)', width=actual_goals_line_width),  # Set line width dynamically
         marker=dict(size=6, color='rgba(255,255,255,1.0)')
     ))
     

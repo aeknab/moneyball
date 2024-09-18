@@ -47,6 +47,10 @@ def display_predictions_detail():
         # Default to the first match in the list if no match is selected yet
         selected_match = match_options[0]
 
+    # Fix: Ensure selected match exists in match options for the selected matchday
+    if selected_match not in match_options:
+        selected_match = match_options[0]  # Reset to the first option
+
     selected_match = st.radio("", options=match_options, key="match_selection", index=match_options.index(selected_match))
 
     # Apply custom CSS to display the radio buttons in a horizontal line

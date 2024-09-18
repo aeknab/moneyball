@@ -7,13 +7,13 @@ from groups.utils import calculate_points, image_to_base64
 # Define the new color palette with 75% transparency for the chart
 colors = ['rgba(196, 196, 196, 0.75)',  # Grey with 75% transparency
           'rgba(255, 250, 205, 0.75)',  # Light yellow with 75% transparency
-          'rgba(135, 206, 235, 0.75)',  # Light blue with 75% transparency
-          'rgba(168, 230, 161, 0.75)']  # Light green with 75% transparency
+          'rgba(168, 230, 161, 0.75)',  # Light green with 75% transparency (was light blue, now swapped for green)
+          'rgba(135, 206, 235, 0.75)']  # Light blue with 75% transparency (was light green, now swapped for blue)
 
 border_colors = ['rgba(153, 153, 153, 1)',  # Dark grey (solid)
                  'rgba(255, 215, 0, 1)',    # Gold (solid)
-                 'rgba(70, 130, 180, 1)',   # Steel blue (solid)
-                 'rgba(56, 142, 60, 1)']    # Dark green (solid)
+                 'rgba(56, 142, 60, 1)',    # Dark green (solid, swapped with blue)
+                 'rgba(70, 130, 180, 1)']   # Steel blue (solid, swapped with green)
 
 def display_donut_chart(matchdays_df, selected_players, matchday):
     st.subheader("Donut Chart")
