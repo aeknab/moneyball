@@ -19,7 +19,8 @@ def get_team_data(df_season, team_tag, matchday, is_current_season):
             'games': 0,
             'wins': 0,
             'ties': 0,
-            'losses': 0
+            'losses': 0,
+            'movement': '--'  # Add default movement
         }
 
     # Filter up to the appropriate matchday
@@ -64,6 +65,9 @@ def get_team_data(df_season, team_tag, matchday, is_current_season):
     else:
         previous_rank = '--'
 
+    # Calculate movement (if there is a previous rank)
+    movement = get_movement(rank, previous_rank)
+
     return {
         'rank': rank,
         'points': points,
@@ -75,7 +79,8 @@ def get_team_data(df_season, team_tag, matchday, is_current_season):
         'wins': wins,
         'ties': ties,
         'losses': losses,
-        'team_tag': team_tag
+        'team_tag': team_tag,
+        'movement': movement  # Ensure movement is returned
     }
 
 def get_movement(rank, previous_rank):

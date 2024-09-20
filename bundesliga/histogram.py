@@ -103,7 +103,7 @@ def display_histogram(df, selected_season, selected_matchday):
         x=[mu - std, mu + std],
         y=[0, 0],
         mode="lines+markers",
-        line=dict(color=color_palette['default_std_dev'], dash="dot"),  # Red for std dev lines
+        line=dict(color=color_palette['default_std_dev']),  # Red for std dev lines, no dash
         marker=dict(color=color_palette['default_std_dev'], size=10, symbol="x"),
         name="1 Std Dev"
     ))

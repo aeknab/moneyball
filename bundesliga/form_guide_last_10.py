@@ -29,19 +29,18 @@ def get_team_colors(team_tag, color_codes_df):
         return primary_color, secondary_color
     return "#000000", "#FFFFFF"
 
-# Function to get the last 10 meetings
+# Function to get the last 10 meetings *before* the current match
 def get_last_10_meetings(df, home_team_tag, away_team_tag, color_codes_df, current_matchday, current_season):
     df['Match Date'] = pd.to_datetime(df['Match Date'])
 
+    # Filter the matches between the teams, but only from seasons earlier than the current one
     matches_between_teams = df[
-        ((df['Home Tag'] == home_team_tag) & (df['Away Tag'] == away_team_tag)) | 
-        ((df['Home Tag'] == away_team_tag) & (df['Away Tag'] == home_team_tag))
-    ]
-    
-    matches_between_teams = matches_between_teams[
-        ~((matches_between_teams['Season'] == current_season) & (matches_between_teams['Matchday'] >= current_matchday))
+        (((df['Home Tag'] == home_team_tag) & (df['Away Tag'] == away_team_tag)) | 
+         ((df['Home Tag'] == away_team_tag) & (df['Away Tag'] == home_team_tag))) & 
+        ((df['Season'] < current_season) | ((df['Season'] == current_season) & (df['Matchday'] < current_matchday)))
     ].sort_values(by='Match Date', ascending=False).head(10)
 
+    # Now, calculate wins, ties, and losses based on these past meetings
     home_wins = matches_between_teams[
         ((matches_between_teams['Home Tag'] == home_team_tag) & (matches_between_teams['Home Goals'] > matches_between_teams['Away Goals'])) |
         ((matches_between_teams['Away Tag'] == home_team_tag) & (matches_between_teams['Away Goals'] > matches_between_teams['Home Goals']))
@@ -77,12 +76,9 @@ def plot_last_10_meetings(df, home_team_tag, away_team_tag, color_codes_df, curr
     # Insert this in your script right before the Last 10 Meetings section
     st.markdown("<div style='margin-top: 40px;'></div>", unsafe_allow_html=True)  # Adjust the margin-top value as needed
 
-    if is_current_season:
-        st.subheader(f"Last {total_matches} Meeting{'s' if total_matches > 1 else ''} between {home_team_tag} and {away_team_tag}", anchor=False)
-    else:
-        st.subheader(f"Previous {total_matches} Meeting{'s' if total_matches > 1 else ''} between {home_team_tag} and {away_team_tag}", anchor=False)
-
     if total_matches > 0:
+        st.subheader(f"Last {total_matches} Meeting{'s' if total_matches > 1 else ''} between {home_team_tag} and {away_team_tag}", anchor=False)
+
         x_values = []
         colors = []
         hover_texts = []
@@ -205,4 +201,5 @@ def plot_last_10_meetings(df, home_team_tag, away_team_tag, color_codes_df, curr
         )
 
     else:
-        st.write(f"No previous matches between {home_team_tag} and {away_team_tag}.")
+        # If there are no previous matches between the teams
+        st.write(f"No previous meetings between {home_team_tag} and {away_team_tag}.")

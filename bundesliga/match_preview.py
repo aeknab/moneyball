@@ -16,21 +16,16 @@ def display_match_preview(df):
         # Don't show warnings before any selection is made
         return selected_season, selected_matchday, selected_match, None, None, None
 
-    # Check if df_matches is None or empty after valid selections
-    if df_matches is None or df_matches.empty:
+    # Filter the DataFrame for the selected season
+    df_season = df[df['Season'] == selected_season]
+
+    # Ensure we have valid matches for the selected season and matchday
+    if df_season.empty:
         st.warning("No matches available for the selected season or matchday.")
         return selected_season, selected_matchday, selected_match, None, None, None
 
     # Fetch the selected match row
-    selected_match_row = df_matches[
-        df_matches.apply(lambda row: f"{row['Home Tag']} vs. {row['Away Tag']}", axis=1) == selected_match
-    ]
-
-    if selected_match_row.empty:
-        st.warning("No match found for the selected fixture.")
-        return selected_season, selected_matchday, selected_match, None, None, None
-
-    selected_match_row = selected_match_row.iloc[0]  # Get the first (and expected only) match row
+    selected_match_row = df_season[df_season.apply(lambda row: f"{row['Home Tag']} vs. {row['Away Tag']}", axis=1) == selected_match].iloc[0]
 
     # Assign team tags and other match details
     home_team_tag = selected_match_row['Home Tag']
@@ -93,7 +88,7 @@ def display_match_preview(df):
     with row1_col3:
         st.image(away_logo_resized, use_column_width=False)
 
-    # Display match outcome or input fields based on the season
+    # Display match outcome or input fields
     row2_col1, row2_col2, row2_col3 = st.columns([1, 2, 1])
 
     with row2_col1:
@@ -110,21 +105,22 @@ def display_match_preview(df):
             col2_left, col2_mid, col2_right = st.columns([1, 0.2, 1])
 
             with col2_left:
-                home_goals = col2_left.number_input("", min_value=0, max_value=11, value=0, step=1, key="home_goals", format="%d")
+                home_goals = col2_left.number_input("", min_value=0, max_value=20, value=0, step=1, key="home_goals")
 
             with col2_mid:
                 st.markdown("<div style='font-size: 30px; line-height: 3;'>:</div>", unsafe_allow_html=True)
 
             with col2_right:
-                away_goals = col2_right.number_input("", min_value=0, max_value=11, value=0, step=1, key="away_goals", format="%d")
+                away_goals = col2_right.number_input("", min_value=0, max_value=20, value=0, step=1, key="away_goals")
 
         else:
             # Display the outcome for older seasons
             match_outcome = f"{selected_match_row['Home Goals']} : {selected_match_row['Away Goals']}"
             st.markdown(
-                f"<div style='text-align: center; font-size: 60px; font-family: Courier; color: #FFFF4F;'>{match_outcome}</div>",
+                f"<div style='text-align: center; font-size: 60px; font-family: Courier; color: #FFFF4F; margin-top: -10px;'>"
+                f"{match_outcome}</div>",
                 unsafe_allow_html=True
-            )
+)
 
     with row2_col3:
         # Bundesliga logo (optional)
@@ -137,15 +133,16 @@ def display_match_preview(df):
     st.subheader("Teams Overview")
     is_current_season = selected_season == '2023/24'
 
-    # Fetch team data
-    home_data = get_team_data(df, home_team_tag, matchday, is_current_season)
-    away_data = get_team_data(df, away_team_tag, matchday, is_current_season)
+    # Fetch team data using the filtered DataFrame `df_season` for the selected season
+    home_data = get_team_data(df_season, home_team_tag, matchday, is_current_season)
+    away_data = get_team_data(df_season, away_team_tag, matchday, is_current_season)
 
-    # Add movement to the team data
-    home_data['movement'] = get_movement(home_data['rank'], home_data.get('previous_rank', '--'))
-    away_data['movement'] = get_movement(away_data['rank'], away_data.get('previous_rank', '--'))
+    # Swap teams to display the higher-ranked team on top
+    if home_data['rank'] != '--' and away_data['rank'] != '--':
+        if int(home_data['rank']) > int(away_data['rank']):
+            home_data, away_data = away_data, home_data
 
-    # Display the styled team table from `team_display.py`
+    # Display the styled team table from `table_display.py`
     display_styled_team_table(home_data, away_data)
 
     return selected_season, selected_matchday, selected_match, df_matches, home_team_tag, away_team_tag

@@ -20,9 +20,16 @@ def display_styled_team_table(home_data, away_data):
         logo_img_tag = f'<img src="data:image/png;base64,{image_to_bytes(logo_image)}" style="max-width: 20px; max-height: 20px; vertical-align: middle;" />'
         return logo_img_tag
 
-    # Generating HTML image tags for the home and away team logos
-    home_logo_tag = get_team_logo_img_tag(home_data['team_tag'])
-    away_logo_tag = get_team_logo_img_tag(away_data['team_tag'])
+    # Sort the teams by rank, ensuring that the higher-ranked team is on top
+    teams_data = [home_data, away_data]
+    teams_data_sorted = sorted(teams_data, key=lambda x: int(x['rank']) if x['rank'] != '--' else float('inf'))
+
+    # Generating HTML image tags for the home and away team logos after sorting
+    team1 = teams_data_sorted[0]
+    team2 = teams_data_sorted[1]
+    
+    team1_logo_tag = get_team_logo_img_tag(team1['team_tag'])
+    team2_logo_tag = get_team_logo_img_tag(team2['team_tag'])
 
     st.markdown(
         """
@@ -65,6 +72,7 @@ def display_styled_team_table(home_data, away_data):
         unsafe_allow_html=True
     )
 
+    # Display sorted teams
     st.markdown(
         f"""
         <table class="styled-table">
@@ -84,28 +92,28 @@ def display_styled_team_table(home_data, away_data):
             </thead>
             <tbody>
                 <tr>
-                    <td>{home_data['rank']}</td>
-                    <td>{home_data['movement']}</td>
-                    <td>{home_logo_tag} {home_data['team_tag']}</td>
-                    <td>{home_data['games']}</td>
-                    <td>{home_data['wins']}</td>
-                    <td>{home_data['ties']}</td>
-                    <td>{home_data['losses']}</td>
-                    <td>{home_data['goals_scored']} : {home_data['goals_conceded']}</td>
-                    <td>{home_data['gd']}</td>
-                    <td><b>{home_data['points']}</b></td>
+                    <td>{team1['rank']}</td>
+                    <td>{team1['movement']}</td>
+                    <td>{team1_logo_tag} {team1['team_tag']}</td>
+                    <td>{team1['games']}</td>
+                    <td>{team1['wins']}</td>
+                    <td>{team1['ties']}</td>
+                    <td>{team1['losses']}</td>
+                    <td>{team1['goals_scored']} : {team1['goals_conceded']}</td>
+                    <td>{team1['gd']}</td>
+                    <td><b>{team1['points']}</b></td>
                 </tr>
                 <tr>
-                    <td>{away_data['rank']}</td>
-                    <td>{away_data['movement']}</td>
-                    <td>{away_logo_tag} {away_data['team_tag']}</td>
-                    <td>{away_data['games']}</td>
-                    <td>{away_data['wins']}</td>
-                    <td>{away_data['ties']}</td>
-                    <td>{away_data['losses']}</td>
-                    <td>{away_data['goals_scored']} : {away_data['goals_conceded']}</td>
-                    <td>{away_data['gd']}</td>
-                    <td><b>{away_data['points']}</b></td>
+                    <td>{team2['rank']}</td>
+                    <td>{team2['movement']}</td>
+                    <td>{team2_logo_tag} {team2['team_tag']}</td>
+                    <td>{team2['games']}</td>
+                    <td>{team2['wins']}</td>
+                    <td>{team2['ties']}</td>
+                    <td>{team2['losses']}</td>
+                    <td>{team2['goals_scored']} : {team2['goals_conceded']}</td>
+                    <td>{team2['gd']}</td>
+                    <td><b>{team2['points']}</b></td>
                 </tr>
             </tbody>
         </table>
