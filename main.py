@@ -39,15 +39,7 @@ if "logged_in" not in st.session_state:
 
 # Check if the user is logged in
 if st.session_state['logged_in']:
-    st.sidebar.title("Navigation")
-    st.sidebar.write(f"Logged in as {st.session_state.get('username', 'Unknown')}")
-
-    # Logout button (optional)
-    if st.sidebar.button("Logout"):
-        st.session_state.clear()  # Clear session state to "log out"
-        st.experimental_rerun()
-
-    # Sidebar navigation options
+    # Sidebar navigation options come first
     page = st.sidebar.selectbox("Choose a page", ["Home", "My Groups", "Bundesliga"])
 
     if page == "Home":
@@ -64,8 +56,19 @@ if st.session_state['logged_in']:
         except Exception as e:
             st.error(f"An error occurred: {e}")
 
+    # Divider for better UX (optional)
+    st.sidebar.markdown("---")
+
+    # Now display the login/logout section after the navigation
+    st.sidebar.write(f"Logged in as {st.session_state.get('username', 'Unknown')}")
+
+    # Logout button
+    if st.sidebar.button("Logout"):
+        st.session_state.clear()  # Clear session state to "log out"
+        st.experimental_rerun()
+
 else:
-    # Login logic here, if needed
+    # Login logic here
     col1, col2 = st.columns([1, 1])
 
     with col1:

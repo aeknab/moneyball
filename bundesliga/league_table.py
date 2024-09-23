@@ -97,13 +97,14 @@ def get_team_points_per_matchday(df_filtered):
     return df_points
 
 # Function to create the animated league table with logos, highlighting only the selected teams
-def create_league_table_animation(df_points, color_codes_df, selected_teams):
+# Function to create the animated league table with logos, highlighting only the selected teams
+def create_league_table_animation(df_points, color_codes_df, selected_teams, selected_matchday):
     # Merge with color data
     df_points = df_points.merge(color_codes_df[['Tag', 'Primary', 'Secondary']], how='left', left_on='Team Tag', right_on='Tag')
 
-    # Ensure all matchdays up to 34 are included in the animation frames
+    # Ensure all matchdays up to the selected matchday are included in the animation frames
     df_points['Matchday'] = df_points['Matchday'].astype(int)
-    matchdays = list(range(1, 35))  # Explicitly define matchdays from 1 to 34
+    matchdays = list(range(1, selected_matchday + 1))  # Only include frames up to the selected matchday
 
     # Create a complete DataFrame to ensure every team has data for every matchday
     all_teams = df_points['Team Tag'].unique()
@@ -185,9 +186,9 @@ def create_league_table_animation(df_points, color_codes_df, selected_teams):
     # Update the layout with the images
     fig.update_layout(images=layout_images)
 
-    # Generate frames for each matchday
+    # Generate frames for each matchday up to the selected matchday
     frames = []
-    for matchday in matchdays:
+    for matchday in matchdays:  # Only up to the selected matchday
         df_day = df_points[df_points['Matchday'] == matchday]
         frame_data = []
         layout_images_frame = []
@@ -272,7 +273,7 @@ def create_league_table_animation(df_points, color_codes_df, selected_teams):
             "steps": [{"args": [[str(i)], {"frame": {"duration": 500, "redraw": True}, 
                                            "mode": "immediate"}],
                        "label": str(i),
-                       "method": "animate"} for i in matchdays],
+                       "method": "animate"} for i in matchdays],  # Only up to the selected matchday
             "currentvalue": {"prefix": "Matchday: "},
             "xanchor": "right",
             "x": 0.55,  # Position to the right of the buttons
@@ -338,4 +339,4 @@ def display_league_tables(df, selected_season, matchday, view_selection, color_c
     # Sub-header for animation
     if st.button("Play Animation"):
         df_points = get_team_points_per_matchday(df_filtered)
-        create_league_table_animation(df_points, color_codes_df, selected_teams)
+        create_league_table_animation(df_points, color_codes_df, selected_teams, matchday)  # Pass the matchday
