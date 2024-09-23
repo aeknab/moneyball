@@ -19,8 +19,6 @@ def save_predictions(predictions):
 
 # Function to display the Overview section of the predictions page
 def display_predictions_overview():
-    # Removed the header as per your request
-
     # Load the Bundesliga match preview data
     buli_df = pd.read_csv("data/buli_all_seasons.csv")
 
@@ -123,7 +121,8 @@ def display_predictions_overview():
                     # Store the selected match and switch to Detail View tab
                     st.session_state.selected_match = f"{home_tag} - {away_tag}"
                     # Set the query parameter to switch to the Detail View
-                    st.experimental_set_query_params(tab="detail")
+                    st.query_params = {"tab": "detail"}
+                    st.rerun()  # Switch to the Match View tab
 
             with col3:
                 # Add home goals and away goals input fields in a row
