@@ -249,34 +249,40 @@ def create_league_table_animation(df_points, color_codes_df, selected_teams, sel
             dict(
                 type="buttons",
                 direction="left",
-                x=0.05,  # Position on the left
-                y=-0.1,  # Position below the chart
+                x=0.1,
+                y=-0.1,
                 showactive=True,
                 buttons=[
                     dict(
                         label="Play",
                         method="animate",
-                        args=[None, {"frame": {"duration": 500, "redraw": True}, 
-                                     "fromcurrent": True, 
-                                     "mode": "immediate"}]
+                        args=[None, {
+                            "frame": {"duration": 500, "redraw": True},
+                            "fromcurrent": True,  # Ensure the animation starts from the current position
+                            "mode": "immediate"   # Do not reset after the last frame
+                        }]
                     ),
                     dict(
                         label="Pause",
                         method="animate",
-                        args=[[None], {"frame": {"duration": 0, "redraw": False}, 
-                                       "mode": "immediate"}]
+                        args=[[None], {
+                            "frame": {"duration": 0, "redraw": False},
+                            "mode": "immediate"
+                        }]
                     )
                 ]
             )
         ],
         sliders=[{
-            "steps": [{"args": [[str(i)], {"frame": {"duration": 500, "redraw": True}, 
-                                           "mode": "immediate"}],
-                       "label": str(i),
-                       "method": "animate"} for i in matchdays],  # Only up to the selected matchday
+            "steps": [{"args": [[str(i)], {
+                "frame": {"duration": 500, "redraw": True},
+                "mode": "immediate"
+            }],
+            "label": str(i),
+            "method": "animate"} for i in matchdays],
             "currentvalue": {"prefix": "Matchday: "},
             "xanchor": "right",
-            "x": 0.55,  # Position to the right of the buttons
+            "x": 0.55,
             "len": 0.4,
             "pad": {"b": 10},
         }],

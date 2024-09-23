@@ -37,24 +37,66 @@ if "logged_in" not in st.session_state:
             (1, group_id, 1)
         )
 
+# Function to display the home image
+def display_home_image():
+    image = Image.open("data/logos/moneyball/moneyball.png")
+    st.image(image, use_column_width=True)
+
+# Function to handle the "Just the Tipp" page
+def display_just_the_tipp():
+    display_groups_page()  # This will call the existing My Groups display logic
+
+# Function to display flag emojis
+def display_flag_emoji(flag):
+    st.markdown(f"<h1 style='text-align:center;'>{flag}</h1>", unsafe_allow_html=True)
+
 # Check if the user is logged in
 if st.session_state['logged_in']:
-    # Sidebar navigation options come first
-    page = st.sidebar.selectbox("Choose a page", ["Home", "My Groups", "Bundesliga"])
+    # Chained selectbox for the primary menu with "--" as the default option
+    primary_menu = st.sidebar.selectbox("Menu", ["--", "Home", "My Groups", "Leagues Data"])
 
-    if page == "Home":
-        # Load and display the image
-        image = Image.open("data/logos/moneyball/moneyball.png")
-        st.image(image, use_column_width=True)
+    # Define secondary options based on the primary menu selection
+    if primary_menu == "Home":
+        secondary_menu = st.sidebar.selectbox("Select an option", ["--", "My Profile", "Account Settings"])
 
-    elif page == "My Groups":
-        display_groups_page()
+        if secondary_menu == "My Profile":
+            st.title("My Profile")
+            st.write("Profile details and settings go here.")
 
-    elif page == "Bundesliga":
-        try:
-            display_bundesliga_page()  # Call the function to display Bundesliga page
-        except Exception as e:
-            st.error(f"An error occurred: {e}")
+        elif secondary_menu == "Account Settings":
+            st.title("Account Settings")
+            st.write("Account settings and preferences go here.")
+
+    elif primary_menu == "My Groups":
+        secondary_menu = st.sidebar.selectbox("Select a group", ["--", "Just the Tipp", "Schlandschaft", "Create Group"])
+
+        if secondary_menu == "Just the Tipp":
+            display_just_the_tipp()
+
+        elif secondary_menu == "Schlandschaft":
+            display_flag_emoji("🇩🇪")  # German flag emoji
+
+        elif secondary_menu == "Create Group":
+            display_flag_emoji("🇺🇸")  # American flag emoji
+
+    elif primary_menu == "Leagues Data":  # Renamed from Bundesliga
+        secondary_menu = st.sidebar.selectbox("Select a league", ["--", "Bundesliga", "Premier League", "Champions League"])
+
+        if secondary_menu == "Bundesliga":
+            try:
+                display_bundesliga_page()  # Call the function to display Bundesliga page
+            except Exception as e:
+                st.error(f"An error occurred: {e}")
+
+        elif secondary_menu == "Premier League":
+            display_flag_emoji("🏴")  # England flag emoji
+
+        elif secondary_menu == "Champions League":
+            display_flag_emoji("🇪🇺")  # European Union flag emoji
+
+    # If no selection is made, display the home image
+    if primary_menu == "--" or secondary_menu == "--":
+        display_home_image()
 
     # Divider for better UX (optional)
     st.sidebar.markdown("---")
