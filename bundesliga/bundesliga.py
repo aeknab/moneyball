@@ -137,5 +137,5 @@ def display_bundesliga_page():
         elif selected_viz == "Histogram":
             display_histogram(df, selected_season, selected_matchday)
 
-    else:
-        st.warning("Please select a season, matchday, and fixture.")
+#    else:
+#        st.warning("Please select a season, matchday, and fixture.")

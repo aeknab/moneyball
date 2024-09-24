@@ -10,7 +10,7 @@ from ChatGPT.prompt_heatmap import heat_map_prompt_template
 from ChatGPT.prompt_line_plot import line_plot_prompt_template
 from openai import OpenAI
 
-client = OpenAI(api_key="YOUR_API_KEY_HERE")  # Replace with your actual API key
+client = OpenAI(api_key="sk-o0hrLU1sy_khDaVw-sFP1pnIOP-SLylV1lC-gaOgLWT3BlbkFJ7b2I0vPST6fT6vgTB90vaf-DIDxpOg00Z8ax3cOhIA")
 
 def calculate_prediction_accuracy(predicted_goals, actual_goals):
     """Calculate the accuracy of predictions."""
@@ -102,21 +102,62 @@ def generate_heat_map_analysis(selected_players, matchdays_df):
     return generate_analysis(prompt)
 
 def generate_line_plot_analysis(selected_players, matchdays_df, matchday):
-    # Calculate line plot data and get the trend
+    # Calculate the line plot data and get the trend
     data = calculate_line_plot_data(matchdays_df, selected_players, matchday)
 
     # Access the trend data from the returned dictionary
     trend_over_time = data["trend_over_time"]
     trend_description = data["trend_description"]
 
-    # Use the trend data to generate the analysis
+    # Get the average predicted goals for the player, if available
+    player_avg_predicted_goals = data.get("player_avg_predicted_goals", None)
+
+    # Use the first selected player as the player_name, or 'All Players' if multiple are selected
     player_name = selected_players[0] if len(selected_players) == 1 else "All Players"
 
-    prompt = line_plot_prompt_template.format(
-        player_name=player_name,
-        trend_over_time=trend_over_time,
-        trend_description=trend_description
-    )
+    # Tailor the analysis based on whether an individual player is selected
+    if player_avg_predicted_goals is not None:
+        player_avg_predicted_goals_line = f"you predicted an average of {player_avg_predicted_goals:.1f} goals per match, compared to the group's average of {data['avg_predicted_goals']:.1f}."
+    else:
+        player_avg_predicted_goals_line = f"the group's average predicted goals was {data['avg_predicted_goals']:.1f}."
+
+    # Count exact hits, within target range, overestimation and underestimation based on the new criteria
+    exact_hit_count = ((data["player_lines"][0]["y"] - data["actual_goals"]).abs() == 0).sum()
+    within_range_count = ((data["player_lines"][0]["y"] - data["actual_goals"]).abs() <= 2).sum()
+    overestimation_count = (data["player_lines"][0]["y"] > data["actual_goals"] + 2).sum()
+    underestimation_count = (data["player_lines"][0]["y"] < data["actual_goals"] - 2).sum()
+
+    total_predictions = len(data["actual_goals"])
+
+    # Calculate percentages
+    within_range_percentage = (within_range_count / total_predictions) * 100
+    overestimation_percentage = (overestimation_count / total_predictions) * 100
+    underestimation_percentage = (underestimation_count / total_predictions) * 100
+    exact_hit_percentage = (exact_hit_count / total_predictions) * 100
+
+    # Explanation of what a line plot is and its purpose, with revised description of prediction range
+    line_plot_intro = f"""
+    You're looking at the season in all its gritty detail. The line plot maps your predictions against the reality of goals scored.
+
+    - **Predicted Goals Line**: That's you calling the shots, for better or worse.
+    - **Actual Goals Line**: Cold, hard reality. That's what really happened on the pitch.
+    - **Prediction Range**: The shaded area shows where your group mates stood with their guesses. It captures the highest and lowest predictions from the others in the group, excluding you. So now you know if you're too bold—or playing it too safe.
+    """
+
+    # Construct the personalized analysis with clear explanation of elements
+    prompt = f"""
+    Hey {player_name}, let's break it down.
+
+    {line_plot_intro}
+
+    So here's the deal: your predictions have been {trend_description} as the season wears on. Not exactly a winning streak, but not a total flop either.
+
+    On average, {player_avg_predicted_goals_line} The actual goals scored in these matches? {data['avg_actual_goals']:.1f}. 
+
+    You hit the nail on the head in {exact_hit_percentage:.1f}% of the matches. Close, but no cigar? You were within 2 goals of the mark in {within_range_percentage:.1f}% of the games. But hey, let's not sugarcoat it—you overshot by 3 or more goals in {overestimation_percentage:.1f}% of them and undershot by that much in {underestimation_percentage:.1f}% of the others.
+
+    Now, here's the kicker: tighten up those predictions. It's all about reducing those big misses, and getting more of those exact hits. Balance, kid—that's the key. Learn from your misses, study the trends, and maybe, just maybe, you’ll come out on top next time.
+    """
 
     return generate_analysis(prompt)
 
