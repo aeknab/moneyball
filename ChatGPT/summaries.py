@@ -6,8 +6,6 @@ import streamlit as st
 
 client = OpenAI(api_key="sk-o0hrLU1sy_khDaVw-sFP1pnIOP-SLylV1lC-gaOgLWT3BlbkFJ7b2I0vPST6fT6vgTB90vaf-DIDxpOg00Z8ax3cOhIA")
 
-# OpenAI API setup
-
 def generate_summary_prompt(matchday_data, group_name, rankings):
     prompt = f"""
     Just the Facts: Recap of Matchday {matchday_data['Matchday'].iloc[0]} for the prediction group "{group_name}"

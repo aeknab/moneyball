@@ -3,6 +3,8 @@ import pandas as pd
 import plotly.graph_objs as go
 from PIL import Image
 import base64
+from analysis.utils import generate_analysis
+from ChatGPT.prompt_pie_chart import pie_chart_prompt_template
 
 def image_to_base64(img_path):
     """Convert image to base64 string."""
@@ -161,3 +163,38 @@ def display_group_pie_chart(matchdays_df, selected_players):
         )
 
         st.plotly_chart(fig_results)
+
+def generate_pie_chart_analysis(selected_players, matchdays_df):
+    # Calculate the data for pie charts
+    predictions, results = calculate_pie_chart_data(matchdays_df, selected_players)
+
+    try:
+        # Calculate percentages
+        win_percentage = (predictions['Home Win'] / sum(predictions.values())) * 100
+        draw_percentage = (predictions['Tie'] / sum(predictions.values())) * 100
+        lose_percentage = (predictions['Away Win'] / sum(predictions.values())) * 100
+
+        results_win_percentage = (results['Home Win'] / sum(results.values())) * 100
+        actual_draw_percentage = (results['Tie'] / sum(results.values())) * 100
+        results_lose_percentage = (results['Away Win'] / sum(results.values())) * 100
+
+        # Use the first selected player as the player_name
+        player_name = selected_players[0] if len(selected_players) == 1 else "All Players"
+
+    except (KeyError, TypeError, ValueError) as e:
+        st.error(f"An error occurred while accessing data: {e}")
+        return None
+
+    # Example prompt with data-driven feedback
+    prompt = pie_chart_prompt_template.format(
+        player_name=player_name,
+        win_percentage=win_percentage,
+        draw_percentage=draw_percentage,
+        lose_percentage=lose_percentage,
+        user_draw_percentage=draw_percentage,
+        actual_draw_percentage=actual_draw_percentage,
+        results_win_percentage=results_win_percentage,
+        results_lose_percentage=results_lose_percentage
+    )
+
+    return generate_analysis(prompt)

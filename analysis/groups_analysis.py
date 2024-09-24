@@ -19,38 +19,72 @@ def calculate_prediction_accuracy(predicted_goals, actual_goals):
     return correct_predictions / total_predictions * 100
 
 def generate_pie_chart_analysis(selected_players, matchdays_df):
-    # Unpack the tuple returned by calculate_pie_chart_data
-    predictions, actual_results = calculate_pie_chart_data(matchdays_df, selected_players)
+    # Calculate the data for pie charts
+    predictions, results = calculate_pie_chart_data(matchdays_df, selected_players)
 
     try:
-        # Calculate percentages using the correct dictionaries
-        win_percentage = predictions['Home Win'] / sum(predictions.values()) * 100
-        draw_percentage = predictions['Tie'] / sum(predictions.values()) * 100
-        lose_percentage = predictions['Away Win'] / sum(predictions.values()) * 100
+        # Calculate percentages for player predictions
+        home_win_percentage = (predictions['Home Win'] / sum(predictions.values())) * 100
+        draw_percentage = (predictions['Tie'] / sum(predictions.values())) * 100
+        away_win_percentage = (predictions['Away Win'] / sum(predictions.values())) * 100
 
-        user_draw_percentage = draw_percentage
-        actual_draw_percentage = actual_results['Tie'] / sum(actual_results.values()) * 100
+        # Calculate actual Bundesliga outcomes percentages
+        actual_home_win_percentage = (results['Home Win'] / sum(results.values())) * 100
+        actual_draw_percentage = (results['Tie'] / sum(results.values())) * 100
+        actual_away_win_percentage = (results['Away Win'] / sum(results.values())) * 100
+
+        # Discrepancies between player predictions and actual results
+        discrepancies = {
+            "Home Wins": abs(home_win_percentage - actual_home_win_percentage),
+            "Draws": abs(draw_percentage - actual_draw_percentage),
+            "Away Wins": abs(away_win_percentage - actual_away_win_percentage)
+        }
+
+        # Sort the discrepancies from largest to smallest
+        sorted_discrepancies = sorted(discrepancies.items(), key=lambda x: x[1], reverse=True)
+
+        # Use the first selected player as the player_name
+        player_name = selected_players[0] if len(selected_players) == 1 else "All Players"
 
     except (KeyError, TypeError, ValueError) as e:
         st.error(f"An error occurred while accessing data: {e}")
         return None
 
-    # Example data to fill placeholders
-    example_player_name = selected_players[0] if selected_players else "Player"
-    example_win_success_rate = 75  # Replace with actual calculation if available
-    example_lose_success_rate = 60  # Replace with actual calculation if available
+    # Initialize the analysis sections
+    analysis_sections = []
 
-    # Ensure all placeholders in the template have corresponding values
-    prompt = pie_chart_prompt_template.format(
-        player_name=example_player_name,
-        win_percentage=win_percentage,
-        draw_percentage=draw_percentage,
-        lose_percentage=lose_percentage,
-        user_draw_percentage=user_draw_percentage,
-        actual_draw_percentage=actual_draw_percentage,
-        win_success_rate=example_win_success_rate,
-        lose_success_rate=example_lose_success_rate
-    )
+    # Loop through sorted discrepancies to generate the analysis
+    for category, discrepancy in sorted_discrepancies:
+        if category == "Home Wins":
+            # Analyze home wins
+            if discrepancy > 3:  # Suggest improvement only if discrepancy > 3%
+                analysis_sections.append(f"- **Home Wins**: You predicted home wins in {home_win_percentage:.1f}% of matches, while Bundesliga matches saw home wins {actual_home_win_percentage:.1f}% of the time. You may want to focus on refining your home win predictions by considering team form, injuries, and other factors.")
+            else:
+                analysis_sections.append(f"- **Home Wins**: Your prediction rate for home wins is spot-on with the actual Bundesliga outcomes, both being {home_win_percentage:.1f}%. Excellent job!")
+
+        elif category == "Draws":
+            # Analyze draws
+            if discrepancy > 3:
+                analysis_sections.append(f"- **Draws**: You predicted draws in {draw_percentage:.1f}% of games, but Bundesliga matches ended in a draw {actual_draw_percentage:.1f}% of the time. Draws tend to occur more frequently in closely matched teams. You might want to consider predicting more draws in such matchups.")
+            else:
+                analysis_sections.append(f"- **Draws**: Your draw predictions are very close to the actual Bundesliga outcomes. You predicted draws in {draw_percentage:.1f}% of games, while the actual percentage is {actual_draw_percentage:.1f}. Keep up the good work!")
+
+        elif category == "Away Wins":
+            # Analyze away wins
+            if discrepancy > 3:
+                analysis_sections.append(f"- **Away Wins**: You predicted away wins {away_win_percentage:.1f}% of the time, compared to the Bundesliga’s {actual_away_win_percentage:.1f}%. You might be overestimating away wins slightly. Focusing more on home-field advantage and team performance on the road could help refine this.")
+            else:
+                analysis_sections.append(f"- **Away Wins**: You're nearly spot-on with your away win predictions. You predicted {away_win_percentage:.1f}% for away wins, compared to the actual {actual_away_win_percentage:.1f}%. Great job!")
+
+    # Build the final prompt based on the sorted discrepancies
+    prompt = f"""
+    Hey {player_name}, let’s break down how your predictions compare to the actual Bundesliga results.
+
+    ### Here’s what the numbers say:
+    {''.join(analysis_sections)}
+
+    The more you sync your predictions with actual outcomes, the better your prediction accuracy will be. Keep practicing, and you're bound to improve!
+    """
 
     return generate_analysis(prompt)
 
