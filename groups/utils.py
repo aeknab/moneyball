@@ -59,3 +59,18 @@ def resize_image_to_bounding_box(image: Image.Image, target_width: int, target_h
     resized_image = image.resize((new_width, new_height), Image.ANTIALIAS)
 
     return resized_image
+
+def get_team_colors(team_tag, color_codes_df):
+    """
+    Get the primary and secondary colors of a team.
+    
+    :param team_tag: Team identifier (like the team name or abbreviation).
+    :param color_codes_df: DataFrame that contains color information for teams.
+    :return: Primary and secondary colors of the team.
+    """
+    colors = color_codes_df[color_codes_df['Tag'] == team_tag]
+    if not colors.empty:
+        primary_color = colors.iloc[0]['Primary']
+        secondary_color = colors.iloc[0]['Secondary']
+        return primary_color, secondary_color
+    return "#000000", "#FFFFFF"  # Default to black and white if not found

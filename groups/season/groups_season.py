@@ -12,6 +12,9 @@ from groups.season.donut_chart import display_donut_chart
 from groups.season.histogram_group import display_matchday_histogram
 from groups.season.density_plot import display_season_density_plot
 from groups.season.stacked_bar_chart import display_stacked_bar_chart
+from groups.season.points_per_team import display_points_per_team_bar_chart
+
+
 
 # Define the color palette
 color_palette = {
@@ -97,6 +100,16 @@ def display_season_section(matchday, rankings_df, matchdays_df, selected_player)
         selected_players = rankings_df['Name'].unique().tolist()
     else:
         selected_players = [selected_player]
+
+def display_season_section(matchday, rankings_df, matchdays_df, selected_player):
+    # Ensure selected_player is always a list for proper handling
+    if selected_player == 'All':
+        selected_players = rankings_df['Name'].unique().tolist()
+    else:
+        selected_players = [selected_player]
+
+    # Load team colors DataFrame (assuming it's stored in 'data/team_colors.csv')
+    color_codes_df = pd.read_csv("data/color_codes.csv")
 
     # Filter by the selected matchday
     filtered_df = rankings_df[rankings_df["Spieltag"] == matchday]
@@ -245,3 +258,7 @@ def display_season_section(matchday, rankings_df, matchdays_df, selected_player)
 
     # Donut Chart (Sixth)
     display_donut_chart(matchdays_df, selected_players, matchday)
+    
+    # Points per Game
+    st.subheader("Points Earned from Bundesliga Teams")
+    display_points_per_team_bar_chart(matchdays_df, selected_players, matchday, color_codes_df)
