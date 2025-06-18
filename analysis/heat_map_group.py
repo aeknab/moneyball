@@ -2,42 +2,61 @@ import streamlit as st
 import plotly.graph_objs as go
 import pandas as pd
 
-def calculate_heat_map_data(matchdays_df, selected_players):
-    """Calculate the data for the heatmaps of Group Predictions and Bundesliga Actual Results."""
-    # Initialize a dataframe to accumulate the counts of each home-away goal combination for group predictions
+# Function to calculate the heat map data for both predictions and actual results
+def calculate_heat_map_data(matchdays_df, selected_players, segment_size=5):
+    """Calculate the data for heatmaps and trends of Group Predictions and Bundesliga Actual Results."""
+    
+    # Initialize dataframes to accumulate counts for home-away goal combinations (for group predictions)
     goal_combinations = pd.DataFrame(0, index=range(9), columns=range(9))  # Extend to 9 (0-8)
+    goal_combinations_actual = pd.DataFrame(0, index=range(9), columns=range(9))  # For actual goals
+    
+    # Variable to store trends over segments of matchdays
+    trend_data = {
+        'predictions': [],
+        'actual': [],
+        'matchdays': []
+    }
 
     for player in selected_players:
         home_col = f'{player} Home Goals Predicted'
         away_col = f'{player} Away Goals Predicted'
+        
+        # Loop over segments of matchdays (e.g., last 5 matchdays)
+        for i in range(0, len(matchdays_df), segment_size):
+            matchdays_segment = matchdays_df.iloc[i:i+segment_size]
+            
+            # Count occurrences of each home-away goal combination for the segment
+            counts = matchdays_segment.groupby([home_col, away_col]).size()
+            for (home_goals, away_goals), count in counts.items():
+                h_index = min(home_goals, 8)  # Treat 8+ goals as 8
+                a_index = min(away_goals, 8)  # Treat 8+ goals as 8
+                goal_combinations.at[h_index, a_index] += count
 
-        # Count occurrences of each home-away goal combination
-        counts = matchdays_df.groupby([home_col, away_col]).size()
+            # For actual results
+            actual_home_goals = matchdays_segment['Home Goals']
+            actual_away_goals = matchdays_segment['Away Goals']
+            for h_goal, a_goal in zip(actual_home_goals, actual_away_goals):
+                h_index = h_goal if h_goal < 8 else 8
+                a_index = a_goal if a_goal < 8 else 8
+                goal_combinations_actual.at[h_index, a_index] += 1
 
-        # Add these counts to the goal_combinations dataframe
-        for (home_goals, away_goals), count in counts.items():
-            h_index = min(home_goals, 8)  # Treat 8+ goals as 8
-            a_index = min(away_goals, 8)  # Treat 8+ goals as 8
-            goal_combinations.at[h_index, a_index] += count
+            # Collect trend data over the segment
+            trend_data['predictions'].append(goal_combinations.sum().sum())
+            trend_data['actual'].append(goal_combinations_actual.sum().sum())
+            trend_data['matchdays'].append(f"Matchdays {i+1}-{i+segment_size}")
 
-    # Initialize a dataframe to accumulate the counts of each home-away goal combination for actual results
-    goal_combinations_actual = pd.DataFrame(0, index=range(9), columns=range(9))
+    # Determine the most common scores (for actual and predicted)
+    top_pred_scores = goal_combinations.stack().nlargest(3)
+    top_actual_scores = goal_combinations_actual.stack().nlargest(3)
 
-    home_goals = matchdays_df['Home Goals']
-    away_goals = matchdays_df['Away Goals']
+    return goal_combinations, goal_combinations_actual, trend_data, top_pred_scores, top_actual_scores
 
-    for h_goal, a_goal in zip(home_goals, away_goals):
-        h_index = h_goal if h_goal < 8 else 8
-        a_index = a_goal if a_goal < 8 else 8
-        goal_combinations_actual.at[h_index, a_index] += 1
-
-    return goal_combinations, goal_combinations_actual
-
+# Function to display the heatmaps for group predictions and actual Bundesliga results
 def display_group_heat_map(matchdays_df, selected_players):
     st.subheader("Heatmaps")
 
     # Calculate the heatmap data
-    goal_combinations, goal_combinations_actual = calculate_heat_map_data(matchdays_df, selected_players)
+    goal_combinations, goal_combinations_actual, trend_data, top_pred_scores, top_actual_scores = calculate_heat_map_data(matchdays_df, selected_players)
 
     # Create two columns for side-by-side heatmaps
     heatmap_col1, heatmap_col2 = st.columns(2)

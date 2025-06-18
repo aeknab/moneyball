@@ -113,25 +113,99 @@ def generate_confusion_matrix_analysis(selected_players, matchdays_df, matchday)
     return generate_analysis(prompt)
 
 def generate_heat_map_analysis(selected_players, matchdays_df):
-    # Calculate heat map data
-    data = calculate_heat_map_data(matchdays_df, selected_players)
+    # Step 1: Calculate heat map data (goal combinations and actual results + additional data)
+    goal_combinations, goal_combinations_actual, trend_data, top_pred_scores, top_actual_scores = calculate_heat_map_data(matchdays_df, selected_players)
 
-    # Access the tuple elements by index
-    hot_zone_success_rate = data[0] * 100  # Assuming the hot zone success rate is the first element
-    most_frequent_score = data[1]  # Assuming the most frequent score is the second element, which is a tuple
+    # Step 2: Manually calculate additional metrics for analysis
 
-    # Convert the most frequent score tuple to a string (e.g., "3-1")
-    most_frequent_score_str = f"{most_frequent_score[0]}-{most_frequent_score[1]}"
+    # High scoring threshold (e.g., 3+ goals is considered high-scoring)
+    high_scoring_threshold = 3  # Assuming 3+ goals is high-scoring
 
-    # Use the first selected player as the player_name, or 'All Players' if multiple are selected
+    # Calculate hot zone success rate (based on 1-2 goals for both home and away)
+    hot_zone_range = (1, 2)
+    hot_zone_pred_count = goal_combinations.loc[hot_zone_range[0]:hot_zone_range[1], hot_zone_range[0]:hot_zone_range[1]].sum().sum()
+    hot_zone_actual_count = goal_combinations_actual.loc[hot_zone_range[0]:hot_zone_range[1], hot_zone_range[0]:hot_zone_range[1]].sum().sum()
+    hot_zone_success_rate = (hot_zone_pred_count / hot_zone_actual_count) * 100 if hot_zone_actual_count > 0 else 0
+    hot_zone_description = f"most accurate in the goal range {hot_zone_range[0]}-{hot_zone_range[1]} for both home and away teams"
+
+    # Calculate cold zone accuracy (3+ goals for both home and away)
+    cold_zone_range = (3, 8)
+    cold_zone_pred_count = goal_combinations.loc[cold_zone_range[0]:cold_zone_range[1], cold_zone_range[0]:cold_zone_range[1]].sum().sum()
+    cold_zone_actual_count = goal_combinations_actual.loc[cold_zone_range[0]:cold_zone_range[1], cold_zone_range[0]:cold_zone_range[1]].sum().sum()
+    cold_zone_accuracy = (cold_zone_pred_count / cold_zone_actual_count) * 100 if cold_zone_actual_count > 0 else 0
+    cold_zone_description = f"less accurate in the goal range {cold_zone_range[0]}-{cold_zone_range[1]} for both home and away teams"
+
+    # Calculate low and high scoring game counts
+    low_scoring_pred_count = goal_combinations.loc[0:1, 0:1].sum().sum()
+    low_scoring_actual_count = goal_combinations_actual.loc[0:1, 0:1].sum().sum()
+
+    high_scoring_pred_count = goal_combinations.loc[high_scoring_threshold:8, high_scoring_threshold:8].sum().sum()
+    high_scoring_actual_count = goal_combinations_actual.loc[high_scoring_threshold:8, high_scoring_threshold:8].sum().sum()
+
+    # Calculate home and away goal biases
+    predicted_home_goals = goal_combinations.sum(axis=1).sum()  # Sum over rows (home goals)
+    actual_home_goals = goal_combinations_actual.sum(axis=1).sum()
+
+    predicted_away_goals = goal_combinations.sum(axis=0).sum()  # Sum over columns (away goals)
+    actual_away_goals = goal_combinations_actual.sum(axis=0).sum()
+
+    home_away_goal_bias = "overestimated" if predicted_home_goals > actual_home_goals else "underestimated"
+    home_away_goal_bias_away = "overestimated" if predicted_away_goals > actual_away_goals else "underestimated"
+
+    # Analyze most common scores
+    most_common_predicted_scores = ", ".join([f"{h}-{a}" for h, a in top_pred_scores.index.tolist()])
+    most_common_actual_scores = ", ".join([f"{h}-{a}" for h, a in top_actual_scores.index.tolist()])
+
+    # Step 3: Generate the analysis prompt based on the calculations
+
     player_name = selected_players[0] if len(selected_players) == 1 else "All Players"
 
-    # Format the prompt with the retrieved data
-    prompt = heat_map_prompt_template.format(
-        player_name=player_name,
-        hot_zone_success_rate=hot_zone_success_rate,
-        most_frequent_score=most_frequent_score_str
-    )
+    # Start the analysis with a general introduction about heat maps
+    heat_map_intro = f"""
+    A heat map helps visualize your predictions versus actual match outcomes. It shows the frequency of specific goal combinations, helping identify where your predictions align or deviate from reality.
+
+    Based on the data from {len(matchdays_df)} matches, here’s the analysis:
+    """
+
+    # Prepare the different parts of the analysis
+    low_scoring_analysis = f"- **Low-Scoring Games**: You predicted low-scoring games ({low_scoring_pred_count} times), but they actually occurred {low_scoring_actual_count} times. You {'under-predicted' if low_scoring_pred_count < low_scoring_actual_count else 'over-predicted'} these results."
+    
+    high_scoring_analysis = f"- **High-Scoring Games**: You predicted high-scoring games ({high_scoring_pred_count} times), while they occurred {high_scoring_actual_count} times in reality. You {'under-predicted' if high_scoring_pred_count < high_scoring_actual_count else 'over-predicted'} high-scoring matches."
+    
+    home_vs_away_analysis = f"- **Home vs. Away Goal Bias**: You {home_away_goal_bias} home teams, predicting {predicted_home_goals:.1f} goals on average compared to {actual_home_goals:.1f} actual goals. For away teams, you {home_away_goal_bias_away}, predicting {predicted_away_goals:.1f} goals, while {actual_away_goals:.1f} goals were actually scored."
+    
+    hot_zone_analysis = f"- **Hot Zones**: You were most accurate in predicting scores in the {hot_zone_description}, achieving a success rate of {hot_zone_success_rate:.1f}%."
+    
+    cold_zone_analysis = f"- **Cold Zones**: Your accuracy was lower in the {cold_zone_description}, with only {cold_zone_accuracy:.1f}% success."
+
+    most_common_analysis = f"- **Most Common Scores**: The most common scores you predicted were {most_common_predicted_scores}. The actual most frequent scores were {most_common_actual_scores}."
+
+    # Rank discrepancies to lead with the most significant issue
+    discrepancies = {
+        'low_scoring': abs(low_scoring_pred_count - low_scoring_actual_count),
+        'high_scoring': abs(high_scoring_pred_count - high_scoring_actual_count),
+        'home_vs_away': abs(predicted_home_goals - actual_home_goals) + abs(predicted_away_goals - actual_away_goals),
+        'hot_zone': hot_zone_success_rate,
+        'cold_zone': cold_zone_accuracy
+    }
+
+    # Sort issues by the largest discrepancy
+    sorted_issues = sorted(discrepancies.items(), key=lambda x: x[1], reverse=True)
+
+    # Analysis ordered by most important discrepancy
+    issue_order = {
+        'low_scoring': low_scoring_analysis,
+        'high_scoring': high_scoring_analysis,
+        'home_vs_away': home_vs_away_analysis,
+        'hot_zone': hot_zone_analysis,
+        'cold_zone': cold_zone_analysis
+    }
+
+    # Construct the final analysis based on the ranked issues
+    analysis_body = "\n".join([issue_order[issue] for issue, _ in sorted_issues])
+
+    # Final prompt for the analysis
+    prompt = f"{heat_map_intro}\n\n{analysis_body}\n\n{most_common_analysis}"
 
     return generate_analysis(prompt)
 

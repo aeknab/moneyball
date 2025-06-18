@@ -43,7 +43,7 @@ def plot_heatmap(matchdays_df, selected_matchday):
         x=goal_combinations_actual.columns,
         y=goal_combinations_actual.index,
         colorscale='Viridis',
-        showscale=True,
+        showscale=False,
         text=goal_combinations_actual.values,
         texttemplate="%{text}",  # Display the values in the heatmap cells
         hovertemplate="Home Goals: %{y}<br>Away Goals: %{x}<br>Count: %{z}<extra></extra>"
